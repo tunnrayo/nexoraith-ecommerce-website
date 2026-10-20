@@ -1,0 +1,6 @@
+# Testing
+Run: `npm test` (Node's built-in runner; each file gets its own temporary database and a real HTTP server).
+**Last run (2026-10-20, Node 22.22, Linux): 20 passed, 0 failed.**
+Covered: money maths; validation; webhook signature (valid/tampered/missing); password hashing; HTML escaping; catalogue search/filter/sort; supplier data absent from public HTML; cart add/merge/update/remove and refusal of unavailable/unverified/out-of-stock/over-stock items; CSRF; checkout validation and input preserved; server-computed totals ignoring browser values; order snapshot unaffected by later price change; duplicate checkout key; order link secrecy; webhook bad signature/amount mismatch/success/replay (stock reduced once); return page cannot mark paid; no-key payment path; contact form + honeypot; admin blocked when logged out, login, CSRF, shipped-needs-tracking, unpaid cannot ship, supplier submission off by default; security headers; path traversal; production mode hides/blocks sample products.
+Manual checks done: all main routes return expected status codes; screenshots of home, shop, product at 1280px and 390px (home desktop and product mobile viewed).
+**Not tested:** real Paystack/CJ calls, real browser checkout, accessibility audit with assistive tech (semantic HTML/labels/focus styles implemented), load, Windows/Mac, email.

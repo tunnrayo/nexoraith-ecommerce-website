@@ -1,0 +1,40 @@
+{
+  "_comment": "DEVELOPMENT SAMPLE DATA ONLY. Prices, availability and stock are invented for testing and are NOT live. Replace with real products before launch.",
+  "categories": [
+    { "slug": "home-living", "name": "Home & Living (sample category)", "sort_order": 1 },
+    { "slug": "accessories", "name": "Accessories (sample category)", "sort_order": 2 },
+    { "slug": "tech-accessories", "name": "Tech Accessories (sample category)", "sort_order": 3 }
+  ],
+  "products": [
+    { "slug": "sample-ceramic-mug", "name": "Sample Ceramic Mug", "category": "home-living", "status": "published", "is_development": true,
+      "description": "SAMPLE PRODUCT for testing the store. A stoneware-style mug used to test product pages, options and the cart.",
+      "images": [{ "url": "/img/products/sample-ceramic-mug.svg", "alt": "Placeholder illustration of a mug (sample image)" }],
+      "variants": [
+        { "sku": "DEV-MUG-WHT", "label": "White", "options": { "Colour": "White" }, "price": "4500.00", "availability": "available", "stock": 25 },
+        { "sku": "DEV-MUG-BLK", "label": "Black", "options": { "Colour": "Black" }, "price": "4500.00", "availability": "unavailable" }
+      ] },
+    { "slug": "sample-linen-cushion", "name": "Sample Linen Cushion", "category": "home-living", "status": "published", "is_development": true,
+      "description": "SAMPLE PRODUCT for testing. Used to test a product with unverified availability.",
+      "images": [{ "url": "/img/products/sample-linen-cushion.svg", "alt": "Placeholder illustration of a cushion (sample image)" }],
+      "variants": [{ "sku": "DEV-CUSH-BEI", "label": "Beige", "options": { "Colour": "Beige" }, "price": "12000.00", "availability": "unverified" }] },
+    { "slug": "sample-leather-wallet", "name": "Sample Leather Wallet", "category": "accessories", "status": "published", "is_development": true,
+      "description": "SAMPLE PRODUCT for testing sorting, filtering and the cart.",
+      "images": [{ "url": "/img/products/sample-leather-wallet.svg", "alt": "Placeholder illustration of a wallet (sample image)" }],
+      "variants": [{ "sku": "DEV-WAL-BRN", "label": "Brown", "options": { "Colour": "Brown" }, "price": "9500.50", "availability": "available", "stock": 3 }] },
+    { "slug": "sample-canvas-tote", "name": "Sample Canvas Tote Bag", "category": "accessories", "status": "published", "is_development": true,
+      "description": "SAMPLE PRODUCT for testing. Has two sizes at different prices.",
+      "images": [{ "url": "/img/products/sample-canvas-tote.svg", "alt": "Placeholder illustration of a tote bag (sample image)" }],
+      "variants": [
+        { "sku": "DEV-TOTE-S", "label": "Small", "options": { "Size": "Small" }, "price": "6000.00", "availability": "available" },
+        { "sku": "DEV-TOTE-L", "label": "Large", "options": { "Size": "Large" }, "price": "8000.00", "availability": "available" }
+      ] },
+    { "slug": "sample-phone-stand", "name": "Sample Phone Stand", "category": "tech-accessories", "status": "published", "is_development": true,
+      "description": "SAMPLE PRODUCT for testing the tech accessories category.",
+      "images": [{ "url": "/img/products/sample-phone-stand.svg", "alt": "Placeholder illustration of a phone stand (sample image)" }],
+      "variants": [{ "sku": "DEV-STAND-1", "label": "Standard", "price": "3500.00", "availability": "available", "stock": 40 }] },
+    { "slug": "sample-cable-organiser", "name": "Sample Cable Organiser", "category": "tech-accessories", "status": "published", "is_development": true,
+      "description": "SAMPLE PRODUCT for testing an out-of-stock state.",
+      "images": [{ "url": "/img/products/sample-cable-organiser.svg", "alt": "Placeholder illustration of a cable organiser (sample image)" }],
+      "variants": [{ "sku": "DEV-CABLE-1", "label": "Standard", "price": "2500.00", "availability": "available", "stock": 0 }] }
+  ]
+}
