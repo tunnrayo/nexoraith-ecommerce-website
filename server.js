@@ -35,6 +35,8 @@ if (cfg.isProd) SECURITY_HEADERS['Strict-Transport-Security'] = 'max-age=3153600
 function send(ctx, status, body, type = 'text/html; charset=utf-8', extra = {}) {
   const { res } = ctx;
   const headers = { 'Content-Type': type, 'Cache-Control': 'no-store', ...SECURITY_HEADERS, ...extra };
+  // Plain-text and XML responses (robots.txt, sitemap.xml, webhooks) contain no scripts; a page-style CSP only stops the browser's own viewer styling them.
+  if (!/^text\/html/.test(type)) headers['Content-Security-Policy'] = "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'";
   if (ctx.setCookies.length) headers['Set-Cookie'] = ctx.setCookies;
   res.writeHead(status, headers); res.end(ctx.method === 'HEAD' ? undefined : body);
 }
@@ -66,7 +68,12 @@ function serveStatic(ctx) {
   if (!st.isFile()) return false;
   const type = MIME[path.extname(file).toLowerCase()];
   if (!type) return false;
-  ctx.res.writeHead(200, { 'Content-Type': type, 'Content-Length': st.size, 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
+  // Caching: uploaded/downloaded images have unique names that never change -> cache for a year.
+  // Other images and fonts: a week. CSS/JS: an hour (so design updates show quickly). Browsers revalidate with Last-Modified.
+  const cache = up ? 'public, max-age=31536000, immutable' : /^\/(img|fonts)\//.test(rel) ? 'public, max-age=604800' : 'public, max-age=3600';
+  const lastMod = st.mtime.toUTCString();
+  if (ctx.req.headers['if-modified-since'] === lastMod) { ctx.res.writeHead(304, { 'Cache-Control': cache, 'Last-Modified': lastMod }); ctx.res.end(); return true; }
+  ctx.res.writeHead(200, { 'Content-Type': type, 'Content-Length': st.size, 'Cache-Control': cache, 'Last-Modified': lastMod, 'X-Content-Type-Options': 'nosniff' });
   if (ctx.method === 'HEAD') ctx.res.end(); else fs.createReadStream(file).pipe(ctx.res);
   return true;
 }
@@ -211,7 +218,9 @@ route('GET', '/health', (ctx) => { q.get('SELECT 1 x'); send(ctx, 200, JSON.stri
 route('GET', '/robots.txt', (ctx) => send(ctx, 200, `User-agent: *\nDisallow: /admin\nDisallow: /cart\nDisallow: /checkout\nDisallow: /order/\nDisallow: /payment/\nSitemap: ${cfg.siteUrl}/sitemap.xml\n`, 'text/plain; charset=utf-8'));
 route('GET', '/sitemap.xml', (ctx) => {
   const urls = ['/', '/shop', '/about', '/contact', '/faq', '/shipping', '/returns', '/privacy', '/terms'];
-  for (const p of catalog.listProducts({ page: 1 }).items) if (!p.is_development) urls.push(`/product/${p.slug}`);
+  // every active catalogue product (not just the first page)
+  for (const p of q.all("SELECT slug FROM products WHERE status='published' AND availability<>'discontinued' AND is_development=0 ORDER BY id")) urls.push(`/product/${p.slug}`);
+  for (const c of catalog.categories()) urls.push(`/shop?category=${encodeURIComponent(c.slug)}`);
   send(ctx, 200, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map((u) => `<url><loc>${esc(cfg.siteUrl + u)}</loc></url>`).join('')}</urlset>`, 'application/xml');
 });
 admin.register(route, helpers);

@@ -50,11 +50,18 @@ Statuses are kept separate: **Order** (Pending review, Awaiting payment, Order c
 - Product images show "Image not available" -> the image link is broken or blocked; upload a photo in Admin > Products.
 - Admin login says "Incorrect" -> rerun step 7 (it resets that admin's password).
 
+## 2b. Product images (how they work, and how to see them before deploying)
+The catalogue's photos come from DummyJSON's own image server (`cdn.dummyjson.com`). To make them permanent, the store downloads each image **once** and keeps its own copy, so the shop never depends on DummyJSON afterwards:
+- **On Railway**: automatic. On start-up the server saves copies into `/data/uploads/catalog` (the volume) and checks them. Admin > Settings > **Product images** shows how many products have a verified image and has "Save permanent copies" / "Check images" buttons.
+- **On your computer** (to see the real photos before deploying): `npm run seed`, then `npm run images:download`, then `npm start`, and open http://localhost:3000/shop. Expected: `Saved 668 ... Checked 668 image(s): 668 working` and `With a verified working image: 194`.
+- **To keep the images inside the project/Git instead**: `npm run images:download -- --to-repo` saves them into `public/img/catalog` (about 3-15 MB), then commit them.
+- Any product without a working image shows a designed **category placeholder** ("Photo coming soon"), never a blank or broken image. `npm run images:check` lists those products; Admin > Products > `?images=missing` shows them too. Upload your own photo for any of them in Admin > Products.
+
 ## 3. Try the whole workflow
 As a customer: pick a product and option -> Add to cart -> Checkout -> Place order (no payment yet). As the owner (in another browser window): Admin > Orders > open the order -> mark items **Available in market** -> **Request payment**. The customer's order page now shows the Pay button (once Paystack keys are set; until then it says online payment is not switched on). To rehearse the payment step without Paystack, set `DEMO_CHECKOUT=true` on your computer: customers then also see a clearly labelled "Demonstration checkout (no payment)"; such orders are labelled DEMO in Admin and never count as paid. Leave it `false` on the live site.
 
 ## 4. Run the automated tests
-`npm test` (expect `# pass 39`, `# fail 0`). Details in `TESTING.md`.
+`npm test` (expect `# pass 45`, `# fail 0`). Details in `TESTING.md`.
 
 ## 5. Turn on payments (Paystack, Mastercard)
 1. Create a Paystack account at https://paystack.com and complete **business verification** (typically your CAC registration (RC 9921594), director ID and a business bank account; Paystack shows the exact list in your dashboard). Card payments, including Mastercard, are part of Paystack's "card" channel once your account is activated.
@@ -82,7 +89,7 @@ Without email, customers still see every update on their private order page. To 
 3. Variables: `NODE_ENV=production`, `DATABASE_PATH=/data/nexoraith.db`, `UPLOAD_DIR=/data/uploads`, `SITE_URL=https://<your Railway or custom domain>` (no trailing slash), `ADMIN_EMAIL` + `ADMIN_PASSWORD` (delete the password after the first start), `PAYMENT_TIMING=review_first`, `BUSINESS_TIMEZONE=Africa/Lagos`, later `PAYSTACK_SECRET_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `OWNER_NOTIFY_EMAIL`, `COMPANY_PHONE`/`COMPANY_ADDRESS` once confirmed.
 4. Settings > Networking > Generate Domain (or add your domain; HTTPS is automatic). Make `SITE_URL` match. Set the Paystack webhook to `https://<domain>/webhooks/paystack`.
 5. Check the deploy logs for `Nexoraith store running at ...` and open `/health` (`{"ok":true}`).
-6. The catalogue is imported from DummyJSON automatically on the first start (check the log for `[setup] Empty catalogue: imported ...`). If it failed, use Admin > Settings > **Import catalogue**.
+6. The catalogue is imported automatically on the first start (from DummyJSON, or from the copy bundled in the project if DummyJSON is unreachable), and product images are saved to the volume. Check the log for `[setup] Empty catalogue: imported ...` and `[setup] Product images: ... saved`. Then open Admin > Settings > Product images: it should say 194 of 194 products have a verified working image.
 7. In **Admin > Delivery**, tick **Confirmed** on the Lagos and other-Nigeria zones once you are happy with the fees. In production, checkout refuses unconfirmed zones (or set `ALLOW_UNCONFIRMED_DELIVERY=true` to accept them while they are marked preliminary).
 8. Keep **one** instance (SQLite). Back up `/data` (database + uploads) regularly. No CORS setup is needed (the site and its server are the same address).
 

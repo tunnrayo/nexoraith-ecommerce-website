@@ -1,6 +1,13 @@
-# Project Status (updated 2026-10-21, v0.4.0)
+# Project Status (updated 2026-10-21, v0.5.0)
 
 **Business model (owner instruction, 2026-10-21):** customers order exact items; the owner sources them personally in the market and arranges delivery. No dropshipping, no automatic supplier fulfilment. DummyJSON is only a temporary source of demo product data.
+
+## v0.5: product images investigated and made durable
+- **Cause of missing images in the preview**: the build/preview environment's network blocks `cdn.dummyjson.com` (and dummyjson.com, Unsplash, Wikimedia, Hugging Face); every one of the 668 DummyJSON image URLs fails here. The website code was not the cause. DummyJSON's GitHub repository contains the product data but not the images (they are only on its CDN).
+- **Fix**: product data snapshot bundled (`data/catalogue`, MIT); cards use DummyJSON's small thumbnails; images are downloaded once and stored locally (volume or Git), verified, served with year-long caching; any product without a working image shows a designed category placeholder; known-broken images are never sent to the browser; JS fallback for runtime failures.
+- **Verified here** with 668 labelled test images served by a stand-in image server (because the real host is blocked): 668/668 saved, 194/194 products verified, every product page and shop card rendered from local copies with the stand-in server switched off, again after a restart; zero requests to other hosts.
+- **Not verifiable here**: the real DummyJSON photos (blocked). In this environment all 194 products show category placeholders. On Railway / your computer the same code downloads the real photos.
+- Also fixed: sitemap listed only 24 of 194 products; plain-text/XML responses had a page CSP that blocked the browser's viewer styles; logo/emblem served as 6 KB WebP copies (were 222 KB / 117 KB PNG) without changing the artwork.
 
 ## v0.4 (owner instruction 2026-10-21): imported DummyJSON products are the regular catalogue
 - Imported products are normal catalogue items (not flagged demo), priced exactly at NGN 1,500 per USD (e.g. 9.99 USD = NGN 14,985.00), saved in the database with the source price recorded for the admin. First start with an empty catalogue imports automatically; `npm run seed` imports; Admin > Settings > Import catalogue.
@@ -8,7 +15,7 @@
 - Re-imports: match by DummyJSON id, then SKU, then web address; never overwrite products edited in Admin; never change availability or visibility; orders and payments untouched. JSON-LD no longer claims "InStock".
 - Catalogue orders are real orders (no longer flagged demo because a delivery fee is preliminary).
 
-## Completed AND tested (39 automated tests + real-browser runs, local)
+## Completed AND tested (45 automated tests + real-browser runs, local)
 - Storefront (unchanged design: navy + champagne gold, teal for actions): home, shop (search, category chips/filter, sort, 24 per page), product pages (gallery, exact options with Colour/Size/Model values, quantity, store-owned availability), cart, checkout (contact, delivery zone + fee, address, country, instructions, payment method, payment-timing explanation, 10-day estimate preview), order page, track order, contact, info pages.
 - **Exact order records**: each line stores product name, option label, option values, SKU, unit price, quantity, line total and image reference; order stores customer contact, address, instructions, totals, currency, dates, payment status. Shown to the customer and in Admin.
 - **Workflow**: review-first (default) or pay-first (Admin > Settings); request payment only after every item is marked available; payment marked confirmed only after Paystack verification (webhook signature + amount/currency check, idempotent); confirmation = payment verified; failed/abandoned payments never confirm.

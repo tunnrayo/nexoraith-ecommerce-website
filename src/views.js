@@ -3,6 +3,7 @@
 const cfg = require('./config');
 const { esc } = require('./security');
 const money = require('./money');
+const images = require('./images');
 const dd = require('./delivery-date');
 const COUNTRY = { NG: 'Nigeria' };
 const C = cfg.company;
@@ -11,6 +12,12 @@ const csrfField = (ctx) => `<input type="hidden" name="_csrf" value="${esc(ctx.c
 const price = (p) => money.format(p, cfg.currency);
 // Long email address: allow wrapping after the @ so it never overflows small screens.
 const mail = () => `<a class="email" href="mailto:${esc(C.email)}">${esc(C.email).replace('@', '@<wbr>')}</a>`;
+// Product image tag: always has a category placeholder to fall back to (server-side when there is no image,
+// in the browser via app.js if a file fails), fixed dimensions (no layout shift) and lazy loading below the fold.
+const pimg = (src, cat, { w = 800, h = 800, alt = '', eager = false, id = '' } = {}) => {
+  const fb = images.placeholderFor(cat);
+  return `<img${id ? ` id="${id}"` : ''} src="${esc(src || fb)}" data-fallback="${esc(fb)}" alt="${esc(alt)}" width="${w}" height="${h}" decoding="async"${eager ? ' fetchpriority="high"' : ' loading="lazy"'}>`;
+};
 const absUrl = (u) => (/^https:\/\//.test(u) ? u : cfg.siteUrl + u);
 const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
@@ -44,7 +51,7 @@ ${noindex ? '<meta name="robots" content="noindex,nofollow">' : `<link rel="cano
 <link rel="preload" href="/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/css/styles.css">${jsonld ? `<script type="application/ld+json">${jsonld.replace(/</g, '\\u003c')}</script>` : ''}
 </head><body${bodyClass ? ` class="${bodyClass}"` : ''}><a class="skip" href="#main">Skip to main content</a>${devBar}
 <header class="site-header"><div class="wrap header-row">
-<a class="brand" href="/" aria-label="${esc(C.short)} home"><img src="/img/logo-dark.png" alt="${esc(C.short)}" width="612" height="354"></a>
+<a class="brand" href="/" aria-label="${esc(C.short)} home"><img src="/img/logo-dark-320.webp" alt="${esc(C.short)}" width="320" height="185"></a>
 <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav"><span class="bars" aria-hidden="true"></span>Menu</button>
 <nav id="site-nav" class="nav" aria-label="Main">${nav}</nav>
 <form class="search" action="/shop" method="get" role="search"><label class="sr" for="hs">Search products</label><input id="hs" name="q" type="search" placeholder="Search products" maxlength="80" value="${esc(ctx.search || '')}"><button type="submit" class="search-btn" aria-label="Search">${I.search}</button></form>
@@ -52,7 +59,7 @@ ${noindex ? '<meta name="robots" content="noindex,nofollow">' : `<link rel="cano
 </div></header>
 <main id="main" tabindex="-1">${flash}${body}</main>
 <footer class="site-footer"><div class="wrap footer-grid">
-<div class="footer-brand"><img src="/img/logo-dark.png" alt="${esc(C.short)}" width="612" height="354" loading="lazy"><p class="tagline">${esc(C.tagline)}</p>
+<div class="footer-brand"><img src="/img/logo-dark-320.webp" alt="${esc(C.short)}" width="320" height="185" loading="lazy"><p class="tagline">${esc(C.tagline)}</p>
 <p class="small">${esc(C.name)}<br>RC No: ${esc(C.rc)}</p></div>
 <div><h2>Shop</h2><ul><li><a href="/shop">All products</a></li><li><a href="/cart">Cart</a></li><li><a href="/track">Track an order</a></li></ul></div>
 <div><h2>Help</h2><ul><li><a href="/faq">FAQs</a></li><li><a href="/shipping">Shipping &amp; delivery</a></li><li><a href="/returns">Returns &amp; refunds</a></li><li><a href="/contact">Contact us</a></li></ul></div>
@@ -63,13 +70,13 @@ ${noindex ? '<meta name="robots" content="noindex,nofollow">' : `<link rel="cano
 }
 
 const AVAIL_TEXT = { available: 'Available', unavailable: 'Currently unavailable', unverified: 'Availability to be confirmed' };
-function card(p, ctx) {
+function card(p, ctx, i = 99) {
   const range = p.max_price != null && p.max_price !== p.min_price ? `From ${price(p.min_price)}` : price(p.min_price ?? 0);
   const avail = p.n_available === undefined ? '' : p.availability === 'temporarily_unavailable' ? '<span class="tag tag-muted">Temporarily unavailable</span>' : p.n_available > 0 ? '<span class="tag tag-ok">Available to order</span>' : '<span class="tag tag-muted">Not available to order</span>';
   const quick = ctx && p.buy_variant && p.n_variants === 1
     ? `<form method="post" action="/cart/add" class="card-buy">${csrfField(ctx)}<input type="hidden" name="variant_id" value="${p.buy_variant}"><input type="hidden" name="quantity" value="1"><input type="hidden" name="back" value="${esc(ctx.path)}"><button class="btn btn-small btn-block" type="submit">Add to cart<span class="sr">: ${esc(p.name)}</span></button></form>`
     : `<a class="btn btn-small btn-outline btn-block" href="/product/${esc(p.slug)}">${p.buy_variant ? 'Choose options' : 'View details'}<span class="sr">: ${esc(p.name)}</span></a>`;
-  return `<article class="card"><a class="card-img" href="/product/${esc(p.slug)}" tabindex="-1" aria-hidden="true">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy" width="800" height="800">` : '<span class="noimg">Image coming soon</span>'}</a>
+  return `<article class="card"><a class="card-img" href="/product/${esc(p.slug)}" tabindex="-1" aria-hidden="true">${pimg(p.image, p.category_slug, { alt: p.image_alt || p.name, eager: i < 4 })}</a>
 <div class="card-body">${p.category_name ? `<p class="card-cat">${esc(p.category_name)}</p>` : ''}<h3><a href="/product/${esc(p.slug)}">${esc(p.name)}</a></h3>
 ${p.summary ? `<p class="card-sum">${esc(p.summary)}</p>` : ''}<div class="card-meta"><p class="price">${range}</p>${avail}</div>${quick}</div></article>`;
 }
@@ -80,10 +87,10 @@ function home(ctx, { cats, featured }) {
 <p class="lead">A simple, secure way to shop online. Quality products, clear prices and a checkout that shows your full total, including delivery, before you pay.</p>
 <div class="hero-cta"><a class="btn btn-lg" href="/shop">Shop the collection ${I.arrow}</a><a class="btn btn-lg btn-ghost" href="#categories">Browse categories</a></div>
 <ul class="assure"><li>${I.check}Full price shown before payment</li><li>${I.shield}Card details handled by our payment provider, never stored by us</li><li>${I.truck}Follow every order with your reference</li></ul></div>
-<div class="hero-art" aria-hidden="true"><div class="emblem"><img src="/img/icon-crop.png" alt="" width="296" height="288"></div><span class="hero-line"></span></div>
+<div class="hero-art" aria-hidden="true"><div class="emblem"><img src="/img/icon-crop.webp" alt="" width="296" height="288" fetchpriority="high"></div><span class="hero-line"></span></div>
 </div></section>
-${cats.length ? `<section class="wrap section" id="categories"><div class="sec-head row"><div><p class="kicker">Collections</p><h2>Shop by category</h2></div>${cats.length > 6 ? `<a class="more" href="/shop">All ${cats.length} categories ${I.arrow}</a>` : ''}</div><ul class="cat-grid">${cats.slice(0, 6).map((c) => `<li><a class="cat" href="/shop?category=${esc(c.slug)}">${c.image ? `<img src="${esc(c.image)}" alt="" loading="lazy" width="800" height="800">` : ''}<span class="cat-txt"><strong>${esc(c.name)}</strong>${c.description ? `<span>${esc(c.description)}</span>` : ''}<em>${plural(c.n, 'product')} ${I.arrow}</em></span></a></li>`).join('')}</ul></section>` : ''}
-${featured.length ? `<section class="wrap section"><div class="sec-head row"><div><p class="kicker">Featured</p><h2>New in the store</h2></div><a class="more" href="/shop">View all products ${I.arrow}</a></div><div class="grid">${featured.map((p) => card(p, ctx)).join('')}</div></section>` : `<section class="wrap section"><p class="empty">Products are being added. Please check back soon.</p></section>`}
+${cats.length ? `<section class="wrap section" id="categories"><div class="sec-head row"><div><p class="kicker">Collections</p><h2>Shop by category</h2></div>${cats.length > 6 ? `<a class="more" href="/shop">All ${cats.length} categories ${I.arrow}</a>` : ''}</div><ul class="cat-grid">${cats.slice(0, 6).map((c) => `<li><a class="cat" href="/shop?category=${esc(c.slug)}">${pimg(c.image, c.slug, { w: 120, h: 120 })}<span class="cat-txt"><strong>${esc(c.name)}</strong>${c.description ? `<span>${esc(c.description)}</span>` : ''}<em>${plural(c.n, 'product')} ${I.arrow}</em></span></a></li>`).join('')}</ul></section>` : ''}
+${featured.length ? `<section class="wrap section"><div class="sec-head row"><div><p class="kicker">Featured</p><h2>New in the store</h2></div><a class="more" href="/shop">View all products ${I.arrow}</a></div><div class="grid">${featured.map((p, i) => card(p, ctx, i)).join('')}</div></section>` : `<section class="wrap section"><p class="empty">Products are being added. Please check back soon.</p></section>`}
 <section class="band"><div class="wrap"><div class="sec-head center"><p class="kicker">Our promise</p><h2>Shopping you can trust</h2></div>
 <ul class="pillars"><li>${I.shield}<h3>Trust</h3><p>Honest product information. If availability or delivery has not been confirmed, we say so.</p></li>
 <li>${I.star}<h3>Quality</h3><p>Products are chosen for the store and described plainly, without exaggerated claims.</p></li>
@@ -98,7 +105,7 @@ function shop(ctx, { res, cats, query, current }) {
   const qs = (o) => { const p = new URLSearchParams({ ...query, ...o }); for (const [k, v] of [...p]) if (!v || (k === 'page' && v === '1') || k === 'search') p.delete(k); const s = p.toString(); return '/shop' + (s ? `?${s}` : ''); };
   const sortOpts = [['newest', 'Newest'], ['price_asc', 'Price: low to high'], ['price_desc', 'Price: high to low'], ['name', 'Name A to Z']];
   const t = current ? current.name : 'Shop';
-  const body = `<section class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / ${current ? `<a href="/shop">Shop</a> / <span>${esc(current.name)}</span>` : '<span>Shop</span>'}</nav><h1>${esc(current ? current.name : 'All products')}</h1>${current?.description ? `<p class="lead-sm">${esc(current.description)}</p>` : '<p class="lead-sm">Browse the full catalogue. Search, filter by category and sort by price.</p>'}</div></section>
+  const body = `<section class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / ${current ? `<a href="/shop">Shop</a> / <span>${esc(current.name)}</span>` : '<span>Shop</span>'}</nav><h1>${esc(current ? current.name : 'All products')}</h1>${current?.description ? `<p class="lead-sm">${esc(current.description)}</p>` : current ? `<p class="lead-sm">All ${esc(current.name)} products. Search within the category or sort by price.</p>` : '<p class="lead-sm">Browse the full catalogue. Search, filter by category and sort by price.</p>'}</div></section>
 <div class="wrap section">
 <ul class="chips" aria-label="Categories"><li><a class="chip" href="/shop"${!query.category ? ' aria-current="page"' : ''}>All</a></li>${cats.map((c) => `<li><a class="chip" href="/shop?category=${esc(c.slug)}"${query.category === c.slug ? ' aria-current="page"' : ''}>${esc(c.name)} <span>${c.n}</span></a></li>`).join('')}</ul>
 <form class="filters" action="/shop" method="get"><div><label for="q">Search</label><input id="q" name="q" type="search" maxlength="80" value="${esc(query.search)}" placeholder="Product name or keyword"></div>
@@ -106,7 +113,7 @@ function shop(ctx, { res, cats, query, current }) {
 <div><label for="sort">Sort by</label><select id="sort" name="sort">${sortOpts.map(([v, x]) => `<option value="${v}"${query.sort === v ? ' selected' : ''}>${x}</option>`).join('')}</select></div>
 <div class="filters-actions"><button class="btn" type="submit">Apply</button> <a class="btn btn-outline" href="/shop">Clear</a></div></form>
 <p class="muted count" aria-live="polite">${res.total} product${res.total === 1 ? '' : 's'} found</p>
-${res.items.length ? `<div class="grid">${res.items.map((p) => card(p, ctx)).join('')}</div>` : `<div class="empty"><h2>No products found</h2><p>Try a different search or <a href="/shop">clear the filters</a>.</p></div>`}
+${res.items.length ? `<div class="grid">${res.items.map((p, i) => card(p, ctx, i)).join('')}</div>` : `<div class="empty"><h2>No products found</h2><p>Try a different search or <a href="/shop">clear the filters</a>.</p></div>`}
 ${res.pages > 1 ? `<nav class="pager" aria-label="Pages">${res.page > 1 ? `<a class="btn btn-outline" href="${qs({ page: res.page - 1 })}" rel="prev">Previous</a>` : ''}<span>Page ${res.page} of ${res.pages}</span>${res.page < res.pages ? `<a class="btn btn-outline" href="${qs({ page: res.page + 1 })}" rel="next">Next</a>` : ''}</nav>` : ''}</div>`;
   return layout(ctx, { title: t, desc: current?.description || `Browse ${t.toLowerCase()} at ${C.short}.`, body, canonicalPath: '/shop' + (query.category ? `?category=${query.category}` : ''), noindex: !!(query.search || res.page > 1) });
 }
@@ -122,8 +129,8 @@ function product(ctx, p, rel, zones = [], x = {}) {
   const why = (v) => (ok(v) ? 'Available' : v.availability === 'available' ? 'Out of stock' : AVAIL_TEXT[v.availability]);
   const opts = p.variants.map((v) => `<label class="opt${ok(v) ? '' : ' opt-off'}"><input type="radio" name="variant_id" value="${v.id}"${ok(v) ? '' : ' disabled'}${first && v.id === first.id && ok(v) ? ' checked' : ''} required data-price="${esc(price(v.price_minor))}"><span><strong>${esc(v.label)}</strong> <span class="opt-p">${price(v.price_minor)}</span>${optText(v.options_json) ? `<small>${esc(optText(v.options_json))}</small>` : ''}<small>${why(v)}${ok(v) && v.stock_qty != null && v.stock_qty <= 5 ? `: only ${v.stock_qty} left` : ''}</small></span></label>`).join('');
   const body = `<div class="wrap section"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/shop">Shop</a>${p.category_name ? ` / <a href="/shop?category=${esc(p.category_slug)}">${esc(p.category_name)}</a>` : ''} / <span>${esc(p.name)}</span></nav>
-<div class="pdp"><div class="gallery"><div class="main-img">${main ? `<img id="main-img" src="${esc(main.url)}" alt="${esc(main.alt || p.name)}" width="800" height="800">` : '<div class="noimg">No image</div>'}</div>
-${p.images.length > 1 ? `<ul class="thumbs">${p.images.map((i) => `<li><button type="button" class="thumb" data-src="${esc(i.url)}" data-alt="${esc(i.alt || p.name)}"><img src="${esc(i.url)}" alt="Show image: ${esc(i.alt || p.name)}" width="80" height="80" loading="lazy"></button></li>`).join('')}</ul>` : ''}</div>
+<div class="pdp"><div class="gallery"><div class="main-img">${pimg(main?.url, p.category_slug, { alt: main?.alt || p.name, eager: true, id: 'main-img' })}</div>
+${p.images.length > 1 ? `<ul class="thumbs">${p.images.map((i) => `<li><button type="button" class="thumb" data-src="${esc(i.url)}" data-alt="${esc(i.alt || p.name)}">${pimg(i.url, p.category_slug, { w: 80, h: 80, alt: `Show image: ${i.alt || p.name}` })}</button></li>`).join('')}</ul>` : ''}</div>
 <div class="info">${p.category_name ? `<p class="kicker">${esc(p.category_name)}</p>` : ''}<h1>${esc(p.name)}</h1>${p.summary ? `<p class="lead-sm">${esc(p.summary)}</p>` : ''}
 <p class="price big" id="pdp-price">${prices.length > 1 && Math.min(...prices) !== Math.max(...prices) ? `From ${price(Math.min(...prices))}` : price(prices[0] ?? 0)}</p>
 ${purchasable.length ? `<form method="post" action="/cart/add" class="buy">${csrfField(ctx)}<input type="hidden" name="back" value="/product/${esc(p.slug)}">
@@ -142,7 +149,7 @@ function cartPage(ctx, ls, t, zones = []) {
   const bad = ls.some((l) => l.problem);
   const fees = zones.map((z) => z.fee_minor);
   const body = `<section class="page-head"><div class="wrap"><h1>Your cart</h1></div></section><div class="wrap section">${ls.length ? `
-<div class="cart-layout"><ul class="lines">${ls.map((l) => `<li class="line"><a href="/product/${esc(l.slug)}" tabindex="-1" aria-hidden="true">${l.image ? `<img src="${esc(l.image)}" alt="" width="96" height="96">` : ''}</a>
+<div class="cart-layout"><ul class="lines">${ls.map((l) => `<li class="line"><a href="/product/${esc(l.slug)}" tabindex="-1" aria-hidden="true">${pimg(l.image, l.category_slug, { w: 96, h: 96 })}</a>
 <div class="line-main"><a href="/product/${esc(l.slug)}"><strong>${esc(l.name)}</strong></a><br><span class="muted">${esc(l.variant_label)}${optText(l.options_json) ? ` &middot; ${esc(optText(l.options_json))}` : ''}</span>
 <div class="small">${price(l.price_minor)} each</div>${l.problem ? `<p class="alert" role="alert">${esc(l.problem)}</p>` : ''}
 <div class="line-actions"><form method="post" action="/cart/update" class="qty-form">${csrfField(ctx)}<input type="hidden" name="variant_id" value="${l.variant_id}"><label class="sr" for="q${l.variant_id}">Quantity for ${esc(l.name)}</label><input id="q${l.variant_id}" name="quantity" type="number" min="1" max="20" value="${l.quantity}" inputmode="numeric"><button class="btn btn-small btn-outline" type="submit">Update</button></form>
@@ -177,7 +184,7 @@ ${field('address', 'Street address', v, e, 'autocomplete="street-address" requir
 <div class="info-box">${info.timing === 'review_first' ? `<p><strong>How payment works:</strong> after you place your order we check that your <strong>exact items</strong> are available, then send you a secure payment link. You are not charged when you place the order.</p>` : `<p><strong>How payment works:</strong> you pay securely on the next page. If an exact item cannot be obtained, we contact you before changing anything and refund what you paid for it.</p>`}<p><strong>Estimated delivery:</strong> ${info.days || 10} calendar days after your order is confirmed (when your payment is verified)${info.ifToday ? `. If confirmed today: ${esc(info.ifToday)}` : ''}.</p></div>
 <p class="small muted">We collect only what we need to process and deliver your order. See our <a href="/privacy">privacy policy</a>. The next page shows your order and final total before any payment.</p>
 <button class="btn btn-lg btn-block" type="submit">${info.timing === 'review_first' ? 'Place order (no payment yet)' : 'Review order and total'}</button></form>
-<aside class="summary" aria-label="Order summary"><h2>Your items</h2><ul class="mini">${ls.map((l) => `<li>${l.image ? `<img src="${esc(l.image)}" alt="" width="48" height="48">` : ''}<span>${esc(l.name)}<br><small class="muted">${esc(l.variant_label)}${optText(l.options_json) ? ` (${esc(optText(l.options_json))})` : ''} &times; ${l.quantity}</small></span><span>${price(l.line_total)}</span></li>`).join('')}</ul>
+<aside class="summary" aria-label="Order summary"><h2>Your items</h2><ul class="mini">${ls.map((l) => `<li>${pimg(l.image, l.category_slug, { w: 48, h: 48 })}<span>${esc(l.name)}<br><small class="muted">${esc(l.variant_label)}${optText(l.options_json) ? ` (${esc(optText(l.options_json))})` : ''} &times; ${l.quantity}</small></span><span>${price(l.line_total)}</span></li>`).join('')}</ul>
 <dl><dt>Subtotal</dt><dd>${price(sub)}</dd><dt>Delivery</dt><dd id="sum-del">${z0 ? price(z0.fee_minor) : 'Choose destination'}</dd><dt class="grand">Total</dt><dd class="grand" id="sum-total" data-sub="${sub}" data-currency="${esc(cfg.currency)}" data-locale="${esc(cfg.locale)}">${price(sub + (z0?.fee_minor || 0))}</dd></dl>
 <p class="small muted">Totals are recalculated by our server from current prices when you continue.</p></aside></div></div>`;
   return layout(ctx, { title: 'Checkout', body, noindex: true });
@@ -204,7 +211,7 @@ ${estBox}
 <dl class="kv"><dt>Order status</dt><dd>${esc(ctx.labels.order)}</dd><dt>Payment</dt><dd>${esc(ctx.labels.payment)}</dd><dt>Delivery progress</dt><dd>${esc(ctx.labels.fulfil)}</dd><dt>Order date</dt><dd>${esc(dd.formatDateTime(o.created_at))}</dd>
 ${o.tracking_number ? `<dt>Tracking</dt><dd>${esc(o.tracking_number)}${/^https:\/\//.test(o.tracking_url || '') ? ` (<a href="${esc(o.tracking_url)}" rel="noopener noreferrer">track</a>)` : ''}</dd>` : ''}</dl>
 <h2>What you ordered</h2><p class="small muted">We source exactly these items. We never substitute a different product, brand, size, colour or model without your approval.</p>
-<ul class="olines">${its.map((i) => `<li class="oline${i.item_status === 'removed' ? ' removed' : ''}">${i.image_url ? `<img src="${esc(i.image_url)}" alt="" width="72" height="72" loading="lazy">` : '<span class="noimg-s"></span>'}<div><strong>${esc(i.product_name)}</strong><br><span class="muted small">${esc(i.variant_label)}${optText(i.options_json) ? ` &middot; ${esc(optText(i.options_json))}` : ''} &middot; SKU ${esc(i.sku)}</span><br><span class="small">${money.format(i.unit_price_minor, o.currency)} &times; ${i.quantity}</span>${ITEM_CUSTOMER[i.item_status] ? ` <span class="tag ${i.item_status === 'unavailable' ? 'tag-dev' : i.item_status === 'removed' ? 'tag-muted' : 'tag-ok'}">${ITEM_CUSTOMER[i.item_status]}</span>` : ''}</div><div class="num">${money.format(i.line_total_minor, o.currency)}</div></li>`).join('')}</ul>
+<ul class="olines">${its.map((i) => `<li class="oline${i.item_status === 'removed' ? ' removed' : ''}">${pimg(i.image_url, '', { w: 72, h: 72 })}<div><strong>${esc(i.product_name)}</strong><br><span class="muted small">${esc(i.variant_label)}${optText(i.options_json) ? ` &middot; ${esc(optText(i.options_json))}` : ''} &middot; SKU ${esc(i.sku)}</span><br><span class="small">${money.format(i.unit_price_minor, o.currency)} &times; ${i.quantity}</span>${ITEM_CUSTOMER[i.item_status] ? ` <span class="tag ${i.item_status === 'unavailable' ? 'tag-dev' : i.item_status === 'removed' ? 'tag-muted' : 'tag-ok'}">${ITEM_CUSTOMER[i.item_status]}</span>` : ''}</div><div class="num">${money.format(i.line_total_minor, o.currency)}</div></li>`).join('')}</ul>
 <dl class="totals"><dt>Subtotal</dt><dd>${money.format(o.subtotal_minor, o.currency)}</dd><dt>Delivery (${esc(o.delivery_zone_name)})${o.delivery_confirmed ? '' : ' <span class="tag tag-dev">preliminary</span>'}</dt><dd>${money.format(o.delivery_fee_minor, o.currency)}</dd>
 ${o.discount_minor ? `<dt>Discount</dt><dd>-${money.format(o.discount_minor, o.currency)}</dd>` : ''}<dt class="grand">Total${demo ? ' (demonstration, not charged)' : ''}</dt><dd class="grand">${money.format(o.total_minor, o.currency)}</dd></dl>
 ${x.canPay ? `<form method="post" action="/order/${esc(o.reference)}/pay" class="pay-box">${csrfField(ctx)}<input type="hidden" name="t" value="${esc(token)}"><button class="btn btn-lg btn-block" type="submit">${o.payment_status === 'unpaid' ? 'Pay' : 'Try payment again'} ${money.format(o.total_minor, o.currency)} securely</button><p class="small muted center">You will be taken to Paystack's secure page (card payments including Mastercard, where enabled). We never see or store your card details.</p></form>` : ''}

@@ -19,7 +19,7 @@ const demoMode = bool(e.DEMO_MODE, !isProd);
 module.exports = {
   root, isProd, port,
   siteUrl: (e.SITE_URL || `http://localhost:${port}`).replace(/\/$/, ''),
-  dbPath: path.isAbsolute(e.DATABASE_PATH || '') ? e.DATABASE_PATH : path.join(root, e.DATABASE_PATH || 'data/nexoraith.db'),
+  dbPath: e.DATABASE_PATH === ':memory:' || path.isAbsolute(e.DATABASE_PATH || '') ? e.DATABASE_PATH : path.join(root, e.DATABASE_PATH || 'data/nexoraith.db'),
   currency: e.STORE_CURRENCY || 'NGN',
   locale: e.STORE_LOCALE || 'en-NG',
   demoMode,
@@ -27,6 +27,8 @@ module.exports = {
   demoCheckout: bool(e.DEMO_CHECKOUT, false),
   // On first start with an empty catalogue, import the DummyJSON catalogue automatically (needs internet).
   autoImportCatalogue: bool(e.AUTO_IMPORT_DUMMYJSON, true),
+  // On each start, save permanent local copies of any product images still loaded from other websites (default on in production).
+  autoDownloadImages: bool(e.AUTO_DOWNLOAD_IMAGES, isProd),
   importRate: Number(e.IMPORT_NGN_PER_USD) > 0 ? Number(e.IMPORT_NGN_PER_USD) : 1500,
   allowDevProducts: bool(e.ALLOW_DEVELOPMENT_PRODUCTS, demoMode),
   allowUnconfirmedDelivery: bool(e.ALLOW_UNCONFIRMED_DELIVERY, demoMode),

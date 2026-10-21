@@ -1,9 +1,11 @@
 // Small progressive enhancements. The site works fully without JavaScript; the server always recalculates totals.
 (function () {
-  // Image fallback: if a product image fails to load (e.g. an external demo image host is down), show a neutral placeholder.
+  // Image fallback: if a product image fails to load, show its category placeholder (set by the server in data-fallback).
   document.addEventListener('error', function (e) {
     var img = e.target;
-    if (img && img.tagName === 'IMG' && !img.dataset.fallback) { img.dataset.fallback = '1'; img.src = '/img/placeholder.svg'; img.classList.add('img-fallback'); }
+    if (!img || img.tagName !== 'IMG' || img.dataset.failed) return;
+    img.dataset.failed = '1'; // only once, so a missing placeholder can never loop
+    img.src = img.dataset.fallback || '/img/categories/default.svg'; img.classList.add('img-fallback');
   }, true);
   var btn = document.querySelector('.menu-btn'), nav = document.getElementById('site-nav');
   if (btn && nav) btn.addEventListener('click', function () {
@@ -12,7 +14,7 @@
   // Product gallery thumbnails
   var main = document.getElementById('main-img');
   document.querySelectorAll('.thumb').forEach(function (t) {
-    t.addEventListener('click', function () { if (main) { main.src = t.dataset.src; main.alt = t.dataset.alt || ''; } });
+    t.addEventListener('click', function () { if (main) { delete main.dataset.failed; main.classList.remove('img-fallback'); main.src = t.dataset.src; main.alt = t.dataset.alt || ''; } });
   });
   // Quantity stepper
   document.querySelectorAll('.step').forEach(function (b) {

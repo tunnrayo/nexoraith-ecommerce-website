@@ -12,6 +12,7 @@ const paystack = require('./payments/paystack');
 const settings = require('./settings');
 const notify = require('./notify');
 const dd = require('./delivery-date');
+const images = require('./images');
 const fs = require('fs');
 const path = require('path');
 const { imageType } = require('./multipart');
@@ -208,6 +209,7 @@ ${o.admin_notes.trim() ? `<h2>System notes</h2><pre class="notes">${esc(o.admin_
     if (f.category) { w.push('c.slug=?'); a.push(f.category); }
     if (['draft', 'published', 'archived'].includes(f.status)) { w.push('p.status=?'); a.push(f.status); }
     if (PAVAIL[f.availability]) { w.push('p.availability=?'); a.push(f.availability); }
+    if (sp.get('images') === 'missing') w.push("p.status='published' AND NOT ((p.card_image_url<>'' AND p.card_image_status<>'broken') OR EXISTS(SELECT 1 FROM product_images i WHERE i.product_id=p.id AND i.status<>'broken'))");
     if (f.kind === 'demo') w.push('p.is_development=1'); else if (f.kind === 'real') w.push('p.is_development=0'); else if (f.kind === 'imported') w.push("p.source='dummyjson'");
     const where = w.length ? 'WHERE ' + w.join(' AND ') : '';
     const total = q.get(`SELECT COUNT(*) n FROM products p LEFT JOIN categories c ON c.id=p.category_id ${where}`, ...a).n; const per = 50; const pages = Math.max(1, Math.ceil(total / per)); const pg = Math.min(f.page, pages);
@@ -459,6 +461,9 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
 <p class="small muted">Imported so far: ${dj}. Re-importing adds missing products only. "Refresh" also updates imported products you have <strong>not</strong> edited; products you edited are never overwritten.</p>
 <form method="post" action="/admin/settings/import-dummyjson" class="inline-form">${csrf(s)}<div class="field"><label for="lim">How many</label><input id="lim" name="limit" value="200" inputmode="numeric" maxlength="3"></div><div class="field"><label for="rate">NGN per 1 US dollar</label><input id="rate" name="rate" value="${cfg.importRate}" inputmode="decimal" maxlength="6"></div>
 <label class="small"><input type="checkbox" name="update" value="1"> Refresh imported products I have not edited</label><label class="small"><input type="checkbox" name="download" value="1"> Save copies of the images on this server</label><button class="btn" type="submit">Import catalogue</button></form></div>
+<div class="card-a" id="images"><h2>Product images</h2>${(() => { const st = images.stats(); return `<p><strong>${st.verified}</strong> of ${st.active} active products have a verified working image. ${st.unchecked ? `${st.unchecked} not checked yet. ` : ''}${st.needImage.length ? `<strong>${st.needImage.length} show a category placeholder</strong> (no working image): <a href="/admin/products?images=missing">see list</a>. ` : ''}${st.remoteOnly ? `${st.remoteOnly} still load images from another website (not yet saved here).` : 'All images are stored on this server.'}</p>`; })()}
+<p class="small muted">"Save permanent copies" downloads each image once from its source (for example DummyJSON's image server) and stores it on this server's disk (on Railway: the /data volume), so the shop no longer depends on the other website. Run "Check images" afterwards to confirm every image opens.</p>
+<form method="post" action="/admin/settings/images" class="inline-form">${csrf(s)}<button class="btn" type="submit" name="action" value="download">Save permanent copies</button><button class="btn btn-outline" type="submit" name="action" value="check">Check images</button></form></div>
 <div class="card-a"><h2>Built-in sample products</h2><p>${demoCount} built-in sample illustration(s) are not archived. They are hidden automatically after a catalogue import.</p><form method="post" action="/admin/settings/archive-demo" class="inline-form">${csrf(s)}<label class="small"><input type="checkbox" name="confirm" value="yes" required> Archive (hide) all built-in samples. Past orders are kept.</label><button class="btn btn-outline" type="submit">Archive samples</button></form></div>`));
   }));
   route('POST', '/admin/settings', guard((ctx) => {
@@ -475,7 +480,17 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
     const { importDummyJson } = require('./importers/dummyjson');
     let r; try { r = await importDummyJson({ limit: ctx.body.limit, rate: Number(ctx.body.rate) > 0 ? Number(ctx.body.rate) : undefined, update: !!ctx.body.update, downloadImages: !!ctx.body.download }); }
     catch (e) { throw new UserError(e.message); }
-    h.redirect(ctx, ctx.back, { type: r.failed.length ? 'error' : 'ok', text: `DummyJSON: fetched ${r.fetched}; created ${r.created}, updated ${r.updated}, skipped ${r.skipped}, kept your edits ${r.keptEdits}, failed ${r.failed.length}; built-in samples hidden ${r.samplesArchived}${r.failed.length ? ` (first: ${r.failed[0].item}: ${r.failed[0].errors.join(', ')})` : ''}.` });
+    h.redirect(ctx, ctx.back, { type: r.failed.length ? 'error' : 'ok', text: `DummyJSON${r.source === 'snapshot' ? ' (bundled copy, because the live API was not reachable)' : ''}: fetched ${r.fetched}; created ${r.created}, updated ${r.updated}, skipped ${r.skipped}, kept your edits ${r.keptEdits}, failed ${r.failed.length}; built-in samples hidden ${r.samplesArchived}${r.failed.length ? ` (first: ${r.failed[0].item}: ${r.failed[0].errors.join(', ')})` : ''}.` });
+  }));
+  route('POST', '/admin/settings/images', guard(async (ctx) => {
+    ctx.back = '/admin/settings#images';
+    if (!rateLimit(`img:${ctx.ip}`, 6, 10 * 60 * 1000)) throw new UserError('Please wait a few minutes before running this again.');
+    if (ctx.body.action === 'download') {
+      const r = await images.downloadAll(); const c = await images.checkAll();
+      return h.redirect(ctx, ctx.back, { type: r.failed ? 'error' : 'ok', text: `Images: ${r.saved} saved, ${r.reused} already saved, ${r.failed} could not be downloaded${r.errors[0] ? ` (e.g. ${r.errors[0].slice(0, 120)})` : ''}. Check: ${c.ok} working, ${c.broken} broken.` });
+    }
+    const c = await images.checkAll();
+    h.redirect(ctx, ctx.back, { type: c.broken ? 'error' : 'ok', text: `Checked ${c.checked} image(s): ${c.ok} working, ${c.broken} broken (broken ones are replaced by the category placeholder).` });
   }));
   route('POST', '/admin/settings/archive-demo', guard((ctx) => {
     ctx.back = '/admin/settings'; if (ctx.body.confirm !== 'yes') throw new UserError('Tick the box to confirm.');

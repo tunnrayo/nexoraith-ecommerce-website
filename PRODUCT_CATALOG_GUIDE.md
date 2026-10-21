@@ -5,6 +5,9 @@
 `npm run seed`, `npm run import:dummyjson`, Admin > Settings > **Import catalogue**, or the automatic first-start import load up to 200 products into your database as normal catalogue products. Price = DummyJSON price (USD) x NGN 1,500 exactly (change with `--rate=` / the admin field / `IMPORT_NGN_PER_USD`). The source price is shown to you on each product's admin page. These are not verified Nigerian market prices: edit any price, name, description or photo in Admin; edited products are never overwritten by re-imports. `--update` (or "Refresh imported products I have not edited") refreshes only products you have not edited. Re-imports never change availability or visibility, and never touch orders or payments. Products that DummyJSON renames are matched by their DummyJSON id, so no duplicates are created.
 Ratings, reviews, stock numbers and shipping/warranty/return text from DummyJSON are never imported or shown.
 
+## Images
+Cards use the small thumbnail; product pages use the full photos. `npm run images:download` saves permanent copies (add `--to-repo` to keep them in Git), `npm run images:check` verifies every image and lists products that need one. Products without a working image show a category placeholder until you upload a photo in Admin.
+
 ## Easiest way: Admin
 Admin > Products > **+ Add product** (name, short description, description, category, first option and price), then upload photos on the product page and add more options. Leave status `draft` until checked, then `published`.
 

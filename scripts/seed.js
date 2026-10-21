@@ -20,7 +20,7 @@ console.log(z ? `Delivery zones added: ${z} (preliminary; confirm them in Admin 
   }
   try {
     const r = await require('../src/importers/dummyjson').importDummyJson({});
-    console.log(`Catalogue from DummyJSON: fetched ${r.fetched}; created ${r.created}, skipped (already there) ${r.skipped}, kept your edits ${r.keptEdits}, failed ${r.failed.length}. Built-in samples hidden: ${r.samplesArchived}.`);
+    console.log(`Catalogue from DummyJSON${r.source === 'snapshot' ? ' (bundled copy; the live API was not reachable)' : ''}: fetched ${r.fetched}; created ${r.created}, skipped (already there) ${r.skipped}, kept your edits ${r.keptEdits}, failed ${r.failed.length}. Built-in samples hidden: ${r.samplesArchived}.`);
     for (const f of r.failed) console.log(' FAILED', f.item, f.errors.join('; '));
   } catch (err) { console.error(err.message, 'Run "npm run seed" again when you are online.'); process.exitCode = 1; }
 })();

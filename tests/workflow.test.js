@@ -199,7 +199,7 @@ test('database upgrade from v0.2 keeps orders, items and payments and maps old s
   old.exec("INSERT INTO payments(order_id,provider,reference,amount_minor,currency,status,paid_at) VALUES(1,'paystack','NX-OLD1-P1',1500,'NGN','success','2026-10-21 10:00:00')"); old.close();
   const out = execFileSync(process.execPath, ['--disable-warning=ExperimentalWarning', '-e', "const {q}=require('./src/db');console.log(JSON.stringify({v:q.get('PRAGMA user_version').user_version,o:q.all('SELECT reference,status,fulfillment_status,estimated_delivery_date FROM orders ORDER BY id'),i:q.get('SELECT COUNT(*) n FROM order_items').n,p:q.get('SELECT COUNT(*) n FROM payments').n}))"], { cwd: path.join(__dirname, '..'), env: { ...process.env, DATABASE_PATH: file } }).toString();
   const r = JSON.parse(out.trim().split('\n').pop());
-  assert.equal(r.v, 4); assert.equal(r.i, 2); assert.equal(r.p, 1);
+  assert.equal(r.v, 5); assert.equal(r.i, 2); assert.equal(r.p, 1);
   assert.deepEqual(r.o.map((x) => [x.reference, x.status, x.fulfillment_status]), [['NX-OLD1', 'confirmed', 'out_for_delivery'], ['NX-OLD2', 'awaiting_payment', 'not_started']]);
   assert.equal(r.o[0].estimated_delivery_date, '2026-10-31');
 });

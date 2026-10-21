@@ -29,11 +29,21 @@ function bootstrap(log = console.log) {
 }
 // Called after the server is listening: if the catalogue is completely empty, import it from DummyJSON (needs internet).
 async function autoImport(log = console.log) {
-  if (!cfg.autoImportCatalogue || db.q.get('SELECT 1 x FROM products LIMIT 1')) return null;
-  try {
-    const r = await require('./importers/dummyjson').importDummyJson({});
-    log(`[setup] Empty catalogue: imported ${r.created} products from DummyJSON (failed ${r.failed.length}).`);
-    return r;
-  } catch (err) { log(`[setup] Could not import the catalogue automatically: ${err.message} Use Admin > Settings > Import catalogue to try again.`); return null; }
+  let r = null;
+  if (cfg.autoImportCatalogue && !db.q.get('SELECT 1 x FROM products LIMIT 1')) {
+    try {
+      r = await require('./importers/dummyjson').importDummyJson({});
+      log(`[setup] Empty catalogue: imported ${r.created} products (${r.source === 'snapshot' ? 'from the bundled DummyJSON data, because the live API was unreachable' : 'from DummyJSON'}; failed ${r.failed.length}).`);
+    } catch (err) { log(`[setup] Could not import the catalogue automatically: ${err.message} Use Admin > Settings > Import catalogue to try again.`); }
+  }
+  // Save permanent copies of product images that are still loaded from another website (once; later starts reuse them).
+  if (cfg.autoDownloadImages) {
+    const images = require('./images');
+    try {
+      const d = await images.downloadAll();
+      if (d.remote) { const c = await images.checkAll(); log(`[setup] Product images: ${d.saved} saved, ${d.reused} already saved, ${d.failed} failed; check: ${c.ok} working, ${c.broken} broken.`); }
+    } catch (err) { log(`[setup] Image download skipped: ${err.message}`); }
+  }
+  return r;
 }
 module.exports = { bootstrap, ensureZones, autoImport };

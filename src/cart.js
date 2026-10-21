@@ -24,7 +24,7 @@ function problemFor(r) {
 function lines(token) {
   return q.all(`SELECT ci.variant_id, ci.quantity, v.sku, v.label variant_label, v.options_json, v.price_minor, v.availability, v.stock_qty,
       p.id product_id, p.slug, p.name, p.status, p.availability product_availability, p.is_development, p.currency,
-      (SELECT url FROM product_images WHERE product_id=p.id ORDER BY sort_order,id LIMIT 1) image
+      CASE WHEN p.card_image_url<>'' AND p.card_image_status<>'broken' THEN p.card_image_url ELSE (SELECT url FROM product_images i WHERE i.product_id=p.id AND i.status<>'broken' ORDER BY sort_order,id LIMIT 1) END image, (SELECT slug FROM categories c WHERE c.id=p.category_id) category_slug
     FROM cart_items ci JOIN variants v ON v.id=ci.variant_id JOIN products p ON p.id=v.product_id WHERE ci.cart_token=? ORDER BY ci.rowid`, token)
     .map((r) => ({ ...r, line_total: r.price_minor * r.quantity, problem: problemFor(r) }));
 }

@@ -132,6 +132,20 @@ UPDATE products SET is_development=0,
   WHERE source='dummyjson';
 UPDATE product_images SET alt=substr(alt, 1, instr(alt, ' (demo image ')-1)
   WHERE instr(alt, ' (demo image ')>0 AND product_id IN (SELECT id FROM products WHERE source='dummyjson');
+`, `
+-- v5 (2026-10-21): durable product images. card_image_url = small image for product cards (DummyJSON thumbnail).
+-- Image check results are stored so customers are never shown an image already known to be broken.
+ALTER TABLE products ADD COLUMN card_image_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE products ADD COLUMN card_image_original TEXT NOT NULL DEFAULT '';
+ALTER TABLE product_images ADD COLUMN status TEXT NOT NULL DEFAULT 'unchecked' CHECK(status IN('unchecked','ok','broken'));
+ALTER TABLE product_images ADD COLUMN checked_at TEXT;
+ALTER TABLE product_images ADD COLUMN original_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE products ADD COLUMN card_image_status TEXT NOT NULL DEFAULT 'unchecked' CHECK(card_image_status IN('unchecked','ok','broken'));
+UPDATE products SET card_image_url=(SELECT url FROM product_images i WHERE i.product_id=products.id AND i.url LIKE '%/thumbnail.%' ORDER BY id LIMIT 1)
+  WHERE source='dummyjson' AND EXISTS(SELECT 1 FROM product_images i WHERE i.product_id=products.id AND i.url LIKE '%/thumbnail.%');
+DELETE FROM product_images WHERE url LIKE 'https://cdn.dummyjson.com/%/thumbnail.%'
+  AND product_id IN (SELECT id FROM products WHERE source='dummyjson' AND admin_edited_at IS NULL)
+  AND (SELECT COUNT(*) FROM product_images j WHERE j.product_id=product_images.product_id) > 1;
 `];
 
 let db;

@@ -1,4 +1,11 @@
 # Changelog
+## 0.5.0 - 2026-10-21
+- Investigated missing images: preview network blocks cdn.dummyjson.com (not a code bug).
+- Bundled DummyJSON product data snapshot (MIT) with automatic fallback; thumbnails for cards; gallery without duplicate thumbnail.
+- Durable images: one-time download to local storage (volume or Git), image health check, admin Product images panel, npm run images:check / images:download, auto-download on start in production.
+- Designed category placeholders (28) instead of blank/broken images; eager first row, lazy rest, fixed dimensions, year-long caching for saved images, Last-Modified/304.
+- Sitemap now lists every product and category; minimal CSP for text/XML; logo and emblem served as small WebP copies.
+- Migration v5. Tests: 45.
 ## 0.4.0 - 2026-10-21
 - DummyJSON products become the regular storefront catalogue: exact NGN 1,500/USD prices, no demo flag, auto-import on first start, seed imports.
 - Removed all customer-facing demo presentation (banner, ribbons, notices, demo tags); demonstration checkout only with DEMO_CHECKOUT=true.
