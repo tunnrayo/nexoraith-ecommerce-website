@@ -64,6 +64,13 @@ function map(p, rate) {
 // options: { limit=200, rate=cfg.importRate (NGN per 1 USD), update=false (refresh unedited imports), downloadImages=false, publish=true, archiveSamples=true }
 // The bundled copy of DummyJSON's product data (MIT licence), used when the live API cannot be reached.
 const SNAPSHOT = path.join(cfg.root, 'data', 'catalogue', 'dummyjson-products.json');
+// Photos already installed in the project (public/images/products, listed in data/catalogue/image-manifest.json):
+// a fresh database uses these local files straight away instead of linking to the remote source.
+function installedPhotos() {
+  const f = path.join(cfg.root, 'data', 'catalogue', 'image-manifest.json'); const m = new Map();
+  try { for (const e of JSON.parse(fs.readFileSync(f, 'utf8')).products || []) for (const ph of e.photos || []) if (ph.status === 'installed' && ph.source_url && fs.existsSync(path.join(cfg.root, 'public', ph.local_path))) m.set(ph.source_url, ph.local_path); } catch { /* no manifest yet */ }
+  return m;
+}
 function snapshotProducts(limit) { return JSON.parse(fs.readFileSync(SNAPSHOT, 'utf8')).products.slice(0, limit); }
 // source: 'auto' (live API, else bundled snapshot), 'api' (live only), 'snapshot' (bundled only)
 async function importDummyJson({ limit = 200, rate = cfg.importRate, update = false, downloadImages = false, publish = true, archiveSamples = true, base, source = base ? 'api' : 'auto' } = {}) {
@@ -76,6 +83,7 @@ async function importDummyJson({ limit = 200, rate = cfg.importRate, update = fa
     catch (err) { if (source !== 'auto') throw err; list = snapshotProducts(limit); report.source = 'snapshot'; report.apiError = err.message; }
   }
   report.fetched = list.length;
+  const installed = installedPhotos(); report.installedPhotosUsed = 0;
   for (const raw of list) {
     const m = map(raw, rate);
     if (m.errors) { report.failed.push({ item: `DummyJSON id ${raw?.id ?? '?'}`, errors: m.errors }); continue; }
@@ -104,9 +112,11 @@ async function importDummyJson({ limit = 200, rate = cfg.importRate, update = fa
         // Keep permanent local copies already saved for the same original image (refreshing must not undo a download).
         const kept = new Map(q.all("SELECT url, original_url, status FROM product_images WHERE product_id=? AND original_url<>'' AND url NOT LIKE 'https://%'", pid).map((r) => [r.original_url, r]));
         q.run('DELETE FROM product_images WHERE product_id=?', pid);
-        urls.forEach((u, i) => { const k = kept.get(u); q.run('INSERT INTO product_images(product_id,url,alt,sort_order,original_url,status) VALUES(?,?,?,?,?,?)', pid, k ? k.url : u, i ? `${m.alt}, view ${i + 1}` : m.alt, i, u, k ? k.status : 'unchecked'); });
+        urls.forEach((u, i) => { const k = kept.get(u); const loc = installed.get(u); if (loc) report.installedPhotosUsed++; q.run('INSERT INTO product_images(product_id,url,alt,sort_order,original_url,status) VALUES(?,?,?,?,?,?)', pid, loc || (k ? k.url : u), i ? `${m.alt}, view ${i + 1}` : m.alt, i, u, loc ? 'ok' : k ? k.status : 'unchecked'); });
         const keepCard = q.get("SELECT 1 x FROM products WHERE id=? AND card_image_original=? AND card_image_url<>'' AND card_image_url NOT LIKE 'https://%'", pid, m.thumb);
-        if (!keepCard) q.run("UPDATE products SET card_image_url=?, card_image_original=?, card_image_status='unchecked' WHERE id=?", m.thumb, m.thumb, pid);
+        const locCard = installed.get(m.thumb);
+        if (locCard) q.run("UPDATE products SET card_image_url=?, card_image_original=?, card_image_status='ok' WHERE id=?", locCard, m.thumb, pid);
+        else if (!keepCard) q.run("UPDATE products SET card_image_url=?, card_image_original=?, card_image_status='unchecked' WHERE id=?", m.thumb, m.thumb, pid);
         const v = q.get('SELECT id, product_id FROM variants WHERE sku=?', m.sku);
         if (v && v.product_id !== pid) throw new Error(`SKU ${m.sku} already belongs to another product`);
         if (v) q.run("UPDATE variants SET price_minor=?, updated_at=datetime('now') WHERE id=?", m.price_minor, v.id);

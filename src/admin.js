@@ -35,7 +35,7 @@ function currentSession(ctx) {
   if (new Date(s.expires_at.replace(' ', 'T') + 'Z') < new Date()) { q.run('DELETE FROM admin_sessions WHERE token_hash=?', s.token_hash); return null; }
   return s;
 }
-const nav = (active) => `<nav class="admin-nav" aria-label="Admin">${[['', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['categories', 'Categories'], ['delivery', 'Delivery'], ['inquiries', 'Inquiries'], ['settings', 'Settings'], ...(cfg.supplierIntegration ? [['supplier', 'Supplier sync']] : [])].map(([h, t]) => `<a href="/admin${h ? '/' + h : ''}"${active === h ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
+const nav = (active) => `<nav class="admin-nav" aria-label="Admin">${[['', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['categories', 'Categories'], ['delivery', 'Delivery'], ['inquiries', 'Inquiries'], ['photos', 'Product photos'], ['settings', 'Settings'], ...(cfg.supplierIntegration ? [['supplier', 'Supplier sync']] : [])].map(([h, t]) => `<a href="/admin${h ? '/' + h : ''}"${active === h ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
 <form method="post" action="/admin/logout" class="inline">__CSRF__<button class="link-btn" type="submit">Log out</button></form></nav>`;
 function page(ctx, s, active, title, inner) {
   const body = `<div class="wrap section"><h1>${esc(title)}</h1>${nav(active).replace('__CSRF__', `<input type="hidden" name="_csrf" value="${esc(s.csrf)}">`)}${inner}</div>`;
@@ -447,6 +447,37 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
     ctx.back = '/admin/supplier'; const r = await cj.syncVariant(Number(ctx.params.id));
     h.redirect(ctx, ctx.back, r.ok ? { type: 'ok', text: 'Supplier record checked.' } : { type: 'error', text: `Supplier check failed: ${r.error}` });
   }));
+  // Product photos: the owner confirms, product by product, that the installed photo really shows the product being sold.
+  route('GET', '/admin/photos', guard((ctx, s) => {
+    const f = ctx.url.searchParams.get('show') || 'pending'; const pg = Math.max(parseInt(ctx.url.searchParams.get('page'), 10) || 1, 1);
+    const base = `FROM products p LEFT JOIN categories c ON c.id=p.category_id LEFT JOIN photo_reviews r ON r.product_id=p.id WHERE p.status='published'`;
+    const local = "(p.card_image_url LIKE '/images/products/%' OR EXISTS(SELECT 1 FROM product_images i WHERE i.product_id=p.id AND i.url LIKE '/images/products/%'))";
+    const where = { pending: `AND r.verdict IS NULL AND ${local}`, matches: "AND r.verdict='matches'", wrong: "AND r.verdict='wrong'", none: `AND NOT ${local}`, all: '' }[f] ?? '';
+    const n = (w) => q.get(`SELECT COUNT(*) n ${base} ${w}`).n;
+    const counts = { all: n(''), installed: n(`AND ${local}`), pending: n(`AND r.verdict IS NULL AND ${local}`), matches: n("AND r.verdict='matches'"), wrong: n("AND r.verdict='wrong'"), none: n(`AND NOT ${local}`) };
+    const per = 30; const rows = q.all(`SELECT p.id, p.name, p.slug, p.card_image_url, p.card_image_original, c.slug cat, c.name catname, r.verdict, r.note, r.reviewed_at,
+      (SELECT url FROM product_images i WHERE i.product_id=p.id ORDER BY sort_order,id LIMIT 1) g ${base} ${where} ORDER BY p.id LIMIT ${per} OFFSET ${(pg - 1) * per}`);
+    const tab = (k, t) => `<a class="chip" href="/admin/photos?show=${k}"${f === k ? ' aria-current="page"' : ''}>${t} <span>${counts[k] ?? counts.all}</span></a>`;
+    const img = (u, cat) => `<img src="${esc(u || images.placeholderFor(cat))}" data-fallback="${esc(images.placeholderFor(cat))}" alt="" width="120" height="120" loading="lazy" class="thumb120">`;
+    h.send(ctx, 200, page(ctx, s, 'photos', 'Product photos', `<p>Installed photos: <strong>${counts.installed}</strong> of ${counts.all} active products. Visually confirmed: <strong>${counts.matches}</strong>. Rejected: ${counts.wrong}. Without an installed photo (showing a category placeholder): ${counts.none}.</p>
+<p class="small muted">Look at each photo and confirm it shows the product named. "Wrong photo" hides it immediately (the category placeholder is shown instead) until you upload the right photo in the product editor. Commercial reuse permission is a separate question: see data/catalogue/image-manifest.json.</p>
+<ul class="chips">${['pending', 'matches', 'wrong', 'none', 'all'].map((k) => `<li>${tab(k, { pending: 'To check', matches: 'Confirmed', wrong: 'Rejected', none: 'No installed photo', all: 'All' }[k])}</li>`).join('')}</ul>
+${rows.length ? `<div class="photo-grid">${rows.map((r) => `<div class="card-a photo-row">${img(r.card_image_url || r.g, r.cat)}${r.g && r.g !== r.card_image_url ? img(r.g, r.cat) : ''}<div><strong><a href="/admin/products/${r.id}">${esc(r.name)}</a></strong><br><span class="small muted">${esc(r.catname || '')}${r.card_image_original ? ` &middot; source: <a href="${esc(r.card_image_original)}" rel="noopener noreferrer" target="_blank">original</a>` : ''}</span>${r.verdict ? `<br><span class="badge ${r.verdict === 'matches' ? 'b-ok' : 'b-err'}">${r.verdict === 'matches' ? 'Confirmed' : 'Rejected'}</span> <span class="small muted">${esc(r.note)}</span>` : ''}
+<form method="post" action="/admin/photos/${r.id}" class="inline-form">${csrf(s)}<input name="note" maxlength="200" placeholder="Note (optional)" aria-label="Note"><button class="btn btn-small" type="submit" name="verdict" value="matches">Photo matches</button><button class="btn btn-small btn-outline" type="submit" name="verdict" value="wrong">Wrong photo</button></form></div></div>`).join('')}</div>` : '<p class="empty">Nothing in this list.</p>'}
+${counts[f] > pg * per ? `<p><a class="btn btn-outline" href="/admin/photos?show=${esc(f)}&page=${pg + 1}">Next page</a></p>` : ''}`));
+  }));
+  route('POST', '/admin/photos/:id', guard((ctx, s) => {
+    const id = Number(ctx.params.id); ctx.back = '/admin/photos';
+    if (!['matches', 'wrong'].includes(ctx.body.verdict)) throw new UserError('Choose "Photo matches" or "Wrong photo".');
+    if (!q.get('SELECT 1 x FROM products WHERE id=?', id)) throw new UserError('Product not found.');
+    q.run("INSERT INTO photo_reviews(product_id,verdict,note,reviewed_by,reviewed_at) VALUES(?,?,?,?,datetime('now')) ON CONFLICT(product_id) DO UPDATE SET verdict=excluded.verdict, note=excluded.note, reviewed_by=excluded.reviewed_by, reviewed_at=excluded.reviewed_at", id, ctx.body.verdict, String(ctx.body.note || '').trim().slice(0, 200), s.email);
+    // A rejected photo is hidden at once (category placeholder shown); confirming restores installed photos.
+    const st = ctx.body.verdict === 'wrong' ? 'broken' : 'ok';
+    q.run("UPDATE products SET card_image_status=? WHERE id=? AND card_image_url<>'' AND card_image_url NOT LIKE '/uploads/p%'", st, id);
+    q.run("UPDATE product_images SET status=? WHERE product_id=? AND url NOT LIKE '/uploads/p%'", st, id);
+    h.redirect(ctx, ctx.back, { type: 'ok', text: ctx.body.verdict === 'wrong' ? 'Photo rejected and hidden. Upload the correct photo in the product editor.' : 'Photo confirmed.' });
+  }));
+
   route('GET', '/admin/settings', guard((ctx, s) => {
     const demoCount = q.get('SELECT COUNT(*) n FROM products WHERE is_development=1 AND status<>\'archived\'').n;
     const dj = q.get("SELECT COUNT(*) n FROM products WHERE source='dummyjson'").n;

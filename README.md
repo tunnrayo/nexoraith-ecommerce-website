@@ -57,6 +57,18 @@ The catalogue's photos come from DummyJSON's own image server (`cdn.dummyjson.co
 - **To keep the images inside the project/Git instead**: `npm run images:download -- --to-repo` saves them into `public/img/catalog` (about 3-15 MB), then commit them.
 - Any product without a working image shows a designed **category placeholder** ("Photo coming soon"), never a blank or broken image. `npm run images:check` lists those products; Admin > Products > `?images=missing` shows them too. Upload your own photo for any of them in Admin > Products.
 
+## 2c. Install the original product photos into the project (do this once, on your computer)
+This puts the real catalogue photos **inside the project** (`public/images/products/<sku>/`), so the website never depends on another website for them. It also writes `data/catalogue/image-manifest.json`, a record for every active product: photo source URL, local file, pixel size, SHA-256, usage-permission status, match confidence and verification result. It works on your **existing** database: nothing is reset, re-seeded or deleted; photos you uploaded yourself are kept.
+
+1. Open the **Terminal** (Mac) or **PowerShell** (Windows) in your existing `nexoraith` project folder (the one that contains `package.json`). You need internet.
+2. Run: `npm run photos:install`
+   Expected at the end: `"active_products_checked": 194` (or your current number), `"with_installed_photo": 194`, `"unresolved": 0` and `Manifest written to data/catalogue/image-manifest.json`. If some say `Failed downloads`, run the same command again later; anything that still fails stays on its category placeholder and is listed in the manifest with the reason.
+3. Run `npm start`, open http://localhost:3000/admin and sign in, then click **Product photos**. For each product, look at the photo next to the product name and click **Photo matches** or **Wrong photo** (a wrong photo is hidden at once and the product shows its category placeholder until you upload the right one in Admin > Products).
+4. Run `npm run photos:install -- --manifest-only` so the manifest records your visual checks.
+5. Save them in Git (GitHub Desktop: tick the new files and click Commit, or in the terminal: `git add public/images/products data/catalogue/image-manifest.json` then `git commit -m "Add product photos"`). Push when you are ready to deploy.
+
+**Permission (important):** DummyJSON publishes no licence for its product photos, and photos of branded products (Apple, Samsung, Rolex, etc.: 102 of the 194 products have a brand) normally belong to the brand. The manifest marks every photo `usage_permission: not confirmed`. Before relying on them commercially, confirm permission with the brand, its authorised distributor or your supplier, or replace them with photos you take yourself of the item you actually source (Admin > Products > the product > upload image). Your own photos are always the safest option.
+
 ## 3. Try the whole workflow
 As a customer: pick a product and option -> Add to cart -> Checkout -> Place order (no payment yet). As the owner (in another browser window): Admin > Orders > open the order -> mark items **Available in market** -> **Request payment**. The customer's order page now shows the Pay button (once Paystack keys are set; until then it says online payment is not switched on). To rehearse the payment step without Paystack, set `DEMO_CHECKOUT=true` on your computer: customers then also see a clearly labelled "Demonstration checkout (no payment)"; such orders are labelled DEMO in Admin and never count as paid. Leave it `false` on the live site.
 

@@ -21,10 +21,31 @@ function placeholderFor(categorySlug) {
   const slug = String(categorySlug || '').replace(/[^a-z0-9-]/g, '');
   return slug && fs.existsSync(path.join(CAT_DIR, `${slug}.svg`)) ? `/img/categories/${slug}.svg` : '/img/categories/default.svg';
 }
+// Read the real pixel size from the file header (PNG, JPEG, WebP). Returns null if the bytes are not a decodable image header.
+function imageInfo(buf) {
+  const t = imageType(buf); if (!t) return null;
+  try {
+    if (t === 'png') return { type: t, width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+    if (t === 'webp') {
+      const chunk = buf.slice(12, 16).toString();
+      if (chunk === 'VP8 ') return { type: t, width: buf.readUInt16LE(26) & 0x3fff, height: buf.readUInt16LE(28) & 0x3fff };
+      if (chunk === 'VP8L') { const b = buf.readUInt32LE(21); return { type: t, width: (b & 0x3fff) + 1, height: ((b >> 14) & 0x3fff) + 1 }; }
+      if (chunk === 'VP8X') return { type: t, width: 1 + buf.readUIntLE(24, 3), height: 1 + buf.readUIntLE(27, 3) };
+      return null;
+    }
+    for (let i = 2; i < buf.length - 9;) { // JPEG: walk the segments to the start-of-frame marker
+      if (buf[i] !== 0xff) return null;
+      const m = buf[i + 1]; const len = buf.readUInt16BE(i + 2);
+      if (m >= 0xc0 && m <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(m)) return { type: t, height: buf.readUInt16BE(i + 5), width: buf.readUInt16BE(i + 7) };
+      i += 2 + len;
+    }
+  } catch { /* truncated */ }
+  return null;
+}
 const isRemote = (u) => /^https?:\/\//.test(String(u || ''));
 function localFile(u) {
   if (String(u).startsWith('/uploads/')) return path.join(cfg.uploadDir, path.normalize(u.slice(9)).replace(/^(\.\.[/\\])+/, ''));
-  if (String(u).startsWith('/img/')) return path.join(PUBLIC, path.normalize(u).replace(/^(\.\.[/\\])+/, ''));
+  if (/^\/(img|images)\//.test(String(u))) return path.join(PUBLIC, path.normalize(u).replace(/^(\.\.[/\\])+/, ''));
   return null;
 }
 function localOk(u) {
@@ -102,4 +123,4 @@ function stats() {
   }
   return s;
 }
-module.exports = { placeholderFor, checkAll, downloadAll, stats, localOk, isRemote };
+module.exports = { placeholderFor, checkAll, downloadAll, stats, localOk, isRemote, imageInfo };

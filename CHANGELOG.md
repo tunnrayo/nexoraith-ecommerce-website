@@ -1,4 +1,8 @@
 # Changelog
+## 0.6.0 - 2026-10-21
+- `npm run photos:install`: installs each active product's original catalogue photos into `public/images/products/<sku>/` with validation (decodable JPG/PNG/WebP, >=100x100 px, <=5 MB, HTML rejected), re-points products and order snapshots, keeps owner uploads, never substitutes; writes `data/catalogue/image-manifest.json` (source, local path, SHA-256, permission, match confidence, verification, sources checked, resolution).
+- Admin > Product photos: owner confirms or rejects each photo; rejected photos hidden. Migration v6 (photo_reviews). Importer reuses installed photos. `/images/` cached 1 week.
+- Run here on 194 products: 0 photos obtainable (all image hosts blocked in this workspace); manifest lists all 194 as unresolved. Tests: 48.
 ## 0.5.0 - 2026-10-21
 - Investigated missing images: preview network blocks cdn.dummyjson.com (not a code bug).
 - Bundled DummyJSON product data snapshot (MIT) with automatic fallback; thumbnails for cards; gallery without duplicate thumbnail.

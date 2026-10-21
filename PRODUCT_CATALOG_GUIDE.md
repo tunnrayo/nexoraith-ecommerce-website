@@ -8,6 +8,8 @@ Ratings, reviews, stock numbers and shipping/warranty/return text from DummyJSON
 ## Images
 Cards use the small thumbnail; product pages use the full photos. `npm run images:download` saves permanent copies (add `--to-repo` to keep them in Git), `npm run images:check` verifies every image and lists products that need one. Products without a working image show a category placeholder until you upload a photo in Admin.
 
+**Recommended (v0.6):** `npm run photos:install` puts the original photos inside the project (`public/images/products/<sku>/`) with a manifest (`data/catalogue/image-manifest.json`); then confirm each one in Admin > **Product photos**. See README section 2c. Usage permission for DummyJSON/brand photos is not confirmed; your own photos of the items you source are the safest.
+
 ## Easiest way: Admin
 Admin > Products > **+ Add product** (name, short description, description, category, first option and price), then upload photos on the product page and add more options. Leave status `draft` until checked, then `published`.
 

@@ -146,6 +146,10 @@ UPDATE products SET card_image_url=(SELECT url FROM product_images i WHERE i.pro
 DELETE FROM product_images WHERE url LIKE 'https://cdn.dummyjson.com/%/thumbnail.%'
   AND product_id IN (SELECT id FROM products WHERE source='dummyjson' AND admin_edited_at IS NULL)
   AND (SELECT COUNT(*) FROM product_images j WHERE j.product_id=product_images.product_id) > 1;
+`, `
+-- v6 (2026-10-21): owner's visual confirmation that a product photo really shows the product.
+CREATE TABLE photo_reviews(product_id INTEGER PRIMARY KEY REFERENCES products(id) ON DELETE CASCADE,
+  verdict TEXT NOT NULL CHECK(verdict IN('matches','wrong')), note TEXT NOT NULL DEFAULT '', reviewed_by TEXT NOT NULL, reviewed_at TEXT NOT NULL DEFAULT (datetime('now')));
 `];
 
 let db;

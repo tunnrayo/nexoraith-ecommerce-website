@@ -1,6 +1,12 @@
-# Project Status (updated 2026-10-21, v0.5.0)
+# Project Status (updated 2026-10-21, v0.6.0)
 
 **Business model (owner instruction, 2026-10-21):** customers order exact items; the owner sources them personally in the market and arranges delivery. No dropshipping, no automatic supplier fulfilment. DummyJSON is only a temporary source of demo product data.
+
+## v0.6: original product photos - installer, manifest, owner photo review
+- **Built and tested**: `npm run photos:install` downloads each active product's original catalogue photos (the photos attached to the same DummyJSON record), validates every file (real JPG/PNG/WebP, decodes the header, at least 100x100 px, max 5 MB, rejects HTML error pages), installs them in `public/images/products/<sku>/`, re-points the product and existing order snapshots to the local file, keeps owner uploads, never substitutes another photo, and writes `data/catalogue/image-manifest.json` (per product: source URL, local path, size, SHA-256, source type, usage permission, match confidence, verification, sources checked, resolution). Admin > **Product photos** lets the owner confirm each photo matches the product or reject it (rejected photos are hidden immediately). Importer reuses installed photos on a fresh database. Migration v6 (`photo_reviews`).
+- **Actually obtained in this workspace: 0 photos.** Every image host is blocked here (cdn.dummyjson.com, dummyjson.com, apple.com, samsung.com, wikimedia, etc. - rechecked 2026-10-21, also via the proxy). The installer was run on the full 194-product catalogue: 668 of 668 downloads failed ("could not reach the image server"), so `public/images/products/` is empty and the manifest lists all 194 as UNRESOLVED with the reason. No test or placeholder image is counted as a product photo.
+- **Permission**: confirmed for 0 products. DummyJSON states no licence for its photos; 102 products are branded (brand owns the photos); 92 have no brand, so no manufacturer can be identified without inventing one.
+- **Owner action**: README section 2c (run `npm run photos:install` on her computer, review in Admin > Product photos, commit).
 
 ## v0.5: product images investigated and made durable
 - **Cause of missing images in the preview**: the build/preview environment's network blocks `cdn.dummyjson.com` (and dummyjson.com, Unsplash, Wikimedia, Hugging Face); every one of the 668 DummyJSON image URLs fails here. The website code was not the cause. DummyJSON's GitHub repository contains the product data but not the images (they are only on its CDN).
@@ -15,7 +21,7 @@
 - Re-imports: match by DummyJSON id, then SKU, then web address; never overwrite products edited in Admin; never change availability or visibility; orders and payments untouched. JSON-LD no longer claims "InStock".
 - Catalogue orders are real orders (no longer flagged demo because a delivery fee is preliminary).
 
-## Completed AND tested (45 automated tests + real-browser runs, local)
+## Completed AND tested (48 automated tests + real-browser runs, local)
 - Storefront (unchanged design: navy + champagne gold, teal for actions): home, shop (search, category chips/filter, sort, 24 per page), product pages (gallery, exact options with Colour/Size/Model values, quantity, store-owned availability), cart, checkout (contact, delivery zone + fee, address, country, instructions, payment method, payment-timing explanation, 10-day estimate preview), order page, track order, contact, info pages.
 - **Exact order records**: each line stores product name, option label, option values, SKU, unit price, quantity, line total and image reference; order stores customer contact, address, instructions, totals, currency, dates, payment status. Shown to the customer and in Admin.
 - **Workflow**: review-first (default) or pay-first (Admin > Settings); request payment only after every item is marked available; payment marked confirmed only after Paystack verification (webhook signature + amount/currency check, idempotent); confirmation = payment verified; failed/abandoned payments never confirm.

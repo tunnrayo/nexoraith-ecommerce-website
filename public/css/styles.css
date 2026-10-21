@@ -183,6 +183,8 @@ details{background:#fff;border:1px solid var(--line);border-radius:var(--r);padd
 @media (max-width:900px){.admin-cols{grid-template-columns:1fr}}
 .stats dd .badge{font-size:1.6rem;padding:2px 14px} .stats dt a{color:var(--muted)}
 .mt{margin-top:12px} .w100{width:100%} .thumb48{width:48px;height:48px;border-radius:6px;object-fit:cover;background:var(--beige)}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:12px} .photo-row{display:flex;gap:12px;align-items:flex-start;margin:0} .thumb120{width:120px;height:120px;object-fit:cover;border-radius:8px;background:var(--beige);flex:none}
+@media (max-width:560px){.photo-grid{grid-template-columns:1fr}.photo-row{flex-wrap:wrap}}
 /* responsive */
 @media (max-width:980px){ .pillars,.steps{grid-template-columns:1fr 1fr} .hero-in{grid-template-columns:1fr;padding-top:48px;padding-bottom:56px} .hero-art{min-height:0;order:-1} .emblem{width:180px} .hero-line{display:none} }
 @media (max-width:860px){

@@ -1,6 +1,6 @@
 {
   "name": "nexoraith-store",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Nexoraith Absolute Ventures Ltd - e-commerce storefront, orders, payments and supplier groundwork",
   "engines": {
@@ -16,6 +16,7 @@
     "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.js",
     "import:dummyjson": "node scripts/import-dummyjson.js",
     "images:check": "node scripts/images.js check",
-    "images:download": "node scripts/images.js download"
+    "images:download": "node scripts/images.js download",
+    "photos:install": "node scripts/install-product-photos.js"
   }
 }

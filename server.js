@@ -70,7 +70,7 @@ function serveStatic(ctx) {
   if (!type) return false;
   // Caching: uploaded/downloaded images have unique names that never change -> cache for a year.
   // Other images and fonts: a week. CSS/JS: an hour (so design updates show quickly). Browsers revalidate with Last-Modified.
-  const cache = up ? 'public, max-age=31536000, immutable' : /^\/(img|fonts)\//.test(rel) ? 'public, max-age=604800' : 'public, max-age=3600';
+  const cache = up ? 'public, max-age=31536000, immutable' : /^\/(img|images|fonts)\//.test(rel) ? 'public, max-age=604800' : 'public, max-age=3600';
   const lastMod = st.mtime.toUTCString();
   if (ctx.req.headers['if-modified-since'] === lastMod) { ctx.res.writeHead(304, { 'Cache-Control': cache, 'Last-Modified': lastMod }); ctx.res.end(); return true; }
   ctx.res.writeHead(200, { 'Content-Type': type, 'Content-Length': st.size, 'Cache-Control': cache, 'Last-Modified': lastMod, 'X-Content-Type-Options': 'nosniff' });
