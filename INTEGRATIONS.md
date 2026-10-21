@@ -14,3 +14,9 @@ Not built: scheduled sync, tracking back-fill, CJ shipping-cost quotes (use `/lo
 Missing: CJ account, API key, a test product, your approval of the fulfilment workflow.
 ## Email
 Not integrated. Contact messages are stored (Admin > Inquiries). Order emails are not sent.
+## Demonstration checkout (not a payment integration)
+Built-in, active only with `DEMO_MODE=true`. Takes no money and talks to no provider. Demo orders cannot be paid or fulfilled. Turn off before trading.
+## Hosting (Railway)
+Prepared only (`railway.json`, README section 7). **Not deployed and no Railway resources were created**: the owner will connect Railway herself.
+## Supplier options (not yet chosen; no agreement secured)
+CJdropshipping (adapter exists, see above), BigBuy and Alibaba are under consideration. Their reseller/API terms have not been reviewed against an actual account in this build; the supplier adapter pattern (`src/suppliers/`) and private `supplier_mappings` table allow adding another supplier without changing the storefront.

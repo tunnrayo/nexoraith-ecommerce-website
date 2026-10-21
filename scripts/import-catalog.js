@@ -9,12 +9,14 @@ const money = require('../src/money');
 const { q, tx } = db;
 const AV = ['available', 'unavailable', 'unverified'];
 const ST = ['draft', 'published', 'archived'];
+const imageFile = (url) => (url.startsWith('/uploads/') ? path.join(cfg.uploadDir, url.slice(9)) : path.join(cfg.root, 'public', url));
 const slugOk = (s) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(s || '');
 
 function validateProduct(p) {
   const errs = [];
   if (!slugOk(p.slug)) errs.push('slug must be lowercase letters, numbers and hyphens');
   if (!p.name || String(p.name).length > 150) errs.push('name is required (max 150 chars)');
+  if (p.summary && String(p.summary).length > 160) errs.push('summary must be 160 characters or fewer');
   if (p.status && !ST.includes(p.status)) errs.push(`status must be one of ${ST.join(', ')}`);
   if (!Array.isArray(p.variants) || !p.variants.length) errs.push('at least one variant is required');
   const skus = new Set();
@@ -27,8 +29,8 @@ function validateProduct(p) {
     if (v.supplier?.cost != null && money.parseToMinor(v.supplier.cost) == null) errs.push(`variant ${i + 1}: supplier.cost invalid`);
   }
   for (const [i, im] of (p.images || []).entries()) {
-    if (!/^\/img\/[A-Za-z0-9._\/-]+$/.test(im.url || '') || im.url.includes('..')) errs.push(`image ${i + 1}: url must be a local path starting with /img/`);
-    else if (!fs.existsSync(path.join(cfg.root, 'public', im.url))) errs.push(`image ${i + 1}: file not found in public${im.url}`);
+    if (!/^\/(img|uploads)\/[A-Za-z0-9._\/-]+$/.test(im.url || '') || im.url.includes('..')) errs.push(`image ${i + 1}: url must be a local path starting with /img/ or /uploads/`);
+    else if (!fs.existsSync(imageFile(im.url))) errs.push(`image ${i + 1}: file not found (${im.url})`);
   }
   return errs;
 }
@@ -37,7 +39,7 @@ function importCatalog(data) {
   db.open();
   for (const c of data.categories || []) {
     if (!slugOk(c.slug) || !c.name) { report.failed.push({ item: `category ${c.slug}`, errors: ['invalid slug or name'] }); continue; }
-    q.run('INSERT INTO categories(slug,name,sort_order) VALUES(?,?,?) ON CONFLICT(slug) DO UPDATE SET name=excluded.name, sort_order=excluded.sort_order', c.slug, c.name, c.sort_order || 0);
+    q.run('INSERT INTO categories(slug,name,description,sort_order) VALUES(?,?,?,?) ON CONFLICT(slug) DO UPDATE SET name=excluded.name, description=excluded.description, sort_order=excluded.sort_order', c.slug, c.name, String(c.description || '').slice(0, 200), c.sort_order || 0);
   }
   for (const p of data.products || []) {
     const errs = validateProduct(p);
@@ -48,8 +50,8 @@ function importCatalog(data) {
       tx(() => {
         const ex = q.get('SELECT id FROM products WHERE slug=?', p.slug);
         let id;
-        if (ex) { id = ex.id; q.run("UPDATE products SET name=?, description=?, category_id=?, status=?, is_development=?, currency=?, updated_at=datetime('now') WHERE id=?", p.name, p.description || '', cat?.id ?? null, p.status || 'draft', p.is_development ? 1 : 0, cfg.currency, id); report.updated++; }
-        else { id = Number(q.run('INSERT INTO products(slug,name,description,category_id,status,is_development,currency) VALUES(?,?,?,?,?,?,?)', p.slug, p.name, p.description || '', cat?.id ?? null, p.status || 'draft', p.is_development ? 1 : 0, cfg.currency).lastInsertRowid); report.created++; }
+        if (ex) { id = ex.id; q.run("UPDATE products SET name=?, summary=?, description=?, category_id=?, status=?, is_development=?, currency=?, updated_at=datetime('now') WHERE id=?", p.name, p.summary || '', p.description || '', cat?.id ?? null, p.status || 'draft', p.is_development ? 1 : 0, cfg.currency, id); report.updated++; }
+        else { id = Number(q.run('INSERT INTO products(slug,name,summary,description,category_id,status,is_development,currency) VALUES(?,?,?,?,?,?,?,?)', p.slug, p.name, p.summary || '', p.description || '', cat?.id ?? null, p.status || 'draft', p.is_development ? 1 : 0, cfg.currency).lastInsertRowid); report.created++; }
         if (p.images) { q.run('DELETE FROM product_images WHERE product_id=?', id); p.images.forEach((im, i) => q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,?)', id, im.url, im.alt || '', i)); }
         p.variants.forEach((v, i) => {
           const other = q.get('SELECT product_id FROM variants WHERE sku=?', v.sku);
@@ -67,7 +69,7 @@ function importCatalog(data) {
   }
   return report;
 }
-module.exports = { importCatalog, validateProduct };
+module.exports = { importCatalog, validateProduct, imageFile };
 if (require.main === module) {
   const file = process.argv[2];
   if (!file) { console.error('Usage: npm run import -- path/to/catalog.json'); process.exit(1); }

@@ -19,20 +19,24 @@ function listProducts({ search = '', category = '', sort = 'newest', page = 1 } 
   const total = q.get(`SELECT COUNT(*) n ${base}`, ...args).n;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const pg = Math.min(Math.max(parseInt(page, 10) || 1, 1), pages);
-  const items = q.all(`SELECT p.id, p.slug, p.name, p.currency, p.is_development, c.name category_name, c.slug category_slug,
+  const items = q.all(`SELECT p.id, p.slug, p.name, p.summary, p.currency, p.is_development, c.name category_name, c.slug category_slug,
       (SELECT MIN(price_minor) FROM variants v WHERE v.product_id=p.id) min_price,
       (SELECT MAX(price_minor) FROM variants v WHERE v.product_id=p.id) max_price,
       (SELECT COUNT(*) FROM variants v WHERE v.product_id=p.id AND v.availability='available') n_available,
+      (SELECT COUNT(*) FROM variants v WHERE v.product_id=p.id) n_variants,
+      (SELECT v.id FROM variants v WHERE v.product_id=p.id AND v.availability='available' AND (v.stock_qty IS NULL OR v.stock_qty>0) ORDER BY v.sort_order,v.id LIMIT 1) buy_variant,
       (SELECT url FROM product_images i WHERE i.product_id=p.id ORDER BY sort_order,id LIMIT 1) image,
       (SELECT alt FROM product_images i WHERE i.product_id=p.id ORDER BY sort_order,id LIMIT 1) image_alt
     ${base} ORDER BY ${order} LIMIT ${PAGE_SIZE} OFFSET ${(pg - 1) * PAGE_SIZE}`, ...args);
   return { items, total, page: pg, pages };
 }
 function categories() {
-  return q.all(`SELECT c.slug, c.name, COUNT(p.id) n FROM categories c JOIN products p ON p.category_id=c.id AND p.status='published' AND ${devOk()} GROUP BY c.id ORDER BY c.sort_order, c.name`);
+  return q.all(`SELECT c.slug, c.name, c.description, COUNT(p.id) n,
+      (SELECT i.url FROM product_images i JOIN products p2 ON p2.id=i.product_id WHERE p2.category_id=c.id AND p2.status='published' ORDER BY p2.id DESC, i.sort_order LIMIT 1) image
+    FROM categories c JOIN products p ON p.category_id=c.id AND p.status='published' AND ${devOk()} GROUP BY c.id ORDER BY c.sort_order, c.name`);
 }
 function getProduct(slug) {
-  const p = q.get(`SELECT p.id, p.slug, p.name, p.description, p.currency, p.is_development, c.name category_name, c.slug category_slug
+  const p = q.get(`SELECT p.id, p.slug, p.name, p.summary, p.description, p.currency, p.is_development, c.name category_name, c.slug category_slug
     FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.slug=? AND p.status='published' AND ${devOk()}`, slug);
   if (!p) return null;
   p.images = q.all('SELECT url, alt FROM product_images WHERE product_id=? ORDER BY sort_order,id', p.id);
@@ -41,9 +45,11 @@ function getProduct(slug) {
   return p;
 }
 function related(product, n = 4) {
-  return q.all(`SELECT p.slug, p.name, p.currency, p.is_development, (SELECT MIN(price_minor) FROM variants v WHERE v.product_id=p.id) min_price,
+  return q.all(`SELECT p.slug, p.name, p.summary, c.name category_name, (SELECT COUNT(*) FROM variants v WHERE v.product_id=p.id) n_variants,
+    (SELECT v.id FROM variants v WHERE v.product_id=p.id AND v.availability='available' AND (v.stock_qty IS NULL OR v.stock_qty>0) ORDER BY v.sort_order,v.id LIMIT 1) buy_variant, p.currency, p.is_development, (SELECT COUNT(*) FROM variants v WHERE v.product_id=p.id AND v.availability='available') n_available, (SELECT MAX(price_minor) FROM variants v WHERE v.product_id=p.id) max_price, (SELECT MIN(price_minor) FROM variants v WHERE v.product_id=p.id) min_price,
     (SELECT url FROM product_images i WHERE i.product_id=p.id ORDER BY sort_order,id LIMIT 1) image, (SELECT alt FROM product_images i WHERE i.product_id=p.id ORDER BY sort_order,id LIMIT 1) image_alt
-    FROM products p WHERE p.status='published' AND ${devOk()} AND p.id<>? AND p.category_id=(SELECT category_id FROM products WHERE id=?) LIMIT ?`, product.id, product.id, n);
+    FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.status='published' AND ${devOk()} AND p.id<>? AND p.category_id=(SELECT category_id FROM products WHERE id=?) LIMIT ?`, product.id, product.id, n);
 }
-const featured = (n = 4) => listProducts({ sort: 'newest' }).items.slice(0, n);
-module.exports = { listProducts, categories, getProduct, related, featured, PAGE_SIZE, SORTS };
+const featured = (n = 8) => listProducts({ sort: 'newest' }).items.slice(0, n);
+const category = (slug) => q.get('SELECT slug, name, description FROM categories WHERE slug=?', slug);
+module.exports = { listProducts, categories, category, getProduct, related, featured, PAGE_SIZE, SORTS };

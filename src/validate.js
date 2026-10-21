@@ -1,11 +1,11 @@
 'use strict';
 const clean = (s, max) => String(s ?? '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').trim().slice(0, max);
 const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
-function checkout(f, zones) {
+function checkout(f, zones, methods = ['paystack']) {
   const v = {
     name: clean(f.name, 100), email: clean(f.email, 254).toLowerCase(), phone: clean(f.phone, 25),
     address: clean(f.address, 200), city: clean(f.city, 80), state: clean(f.state, 80), postal: clean(f.postal, 20),
-    notes: clean(f.notes, 300), zone_id: Number(f.zone_id),
+    notes: clean(f.notes, 300), zone_id: Number(f.zone_id), payment_method: String(f.payment_method || methods[0]),
   };
   const e = {};
   if (v.name.length < 2) e.name = 'Please enter your full name.';
@@ -16,6 +16,7 @@ function checkout(f, zones) {
   if (v.city.length < 2) e.city = 'Please enter your city or town.';
   if (v.state.length < 2) e.state = 'Please enter your state or region.';
   if (!zones.some((z) => z.id === v.zone_id)) e.zone_id = 'Please choose a delivery destination.';
+  if (!methods.includes(v.payment_method)) e.payment_method = 'Please choose a payment method.';
   return { v, e, ok: !Object.keys(e).length };
 }
 function contact(f) {

@@ -3,7 +3,7 @@
 const os = require('os'); const path = require('path'); const fs = require('fs');
 function setup(env = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nx-'));
-  process.env.DATABASE_PATH = path.join(dir, 't.db');
+  process.env.DATABASE_PATH = path.join(dir, 't.db'); process.env.UPLOAD_DIR = path.join(dir, 'uploads');
   process.env.NODE_ENV = env.NODE_ENV || 'development';
   process.env.PAYSTACK_SECRET_KEY = env.PAYSTACK_SECRET_KEY ?? 'sk_test_unit_test_secret';
   process.env.ALLOW_DEVELOPMENT_PRODUCTS = env.ALLOW_DEVELOPMENT_PRODUCTS ?? 'true';

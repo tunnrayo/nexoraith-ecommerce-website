@@ -1,10 +1,11 @@
 # Handover (for a new Claude account or developer)
 **Start here, do not rebuild.** Everything is in this folder (a Git repo). Read, in order: `PROJECT_STATUS.md`, `ARCHITECTURE.md`, `INTEGRATIONS.md`, then `README.md`.
-1. Requirements: Node >= 22.13. No `npm install` needed.
-2. Setup: `cp .env.example .env`; `npm run migrate`; `npm run seed`; set `ADMIN_EMAIL`/`ADMIN_PASSWORD` and run `npm run create-admin`; `npm start`; open http://localhost:3000.
-3. Verify the baseline: `npm test` must show 20 pass.
-4. Business facts (source of truth): Nexoraith Absolute Ventures Ltd, RC 9921594, NEXORAITHABSOLUTEVENTURES@GMAIL.COM. No address or phone supplied: do not invent. Brand: navy + champagne gold primary, teal for buttons/interactive. Supplier intended: CJdropshipping. Payment candidate: Paystack. Owner is a beginner: give exact steps.
-5. Never: expose supplier costs, trust browser prices, mark paid from a redirect, auto-submit supplier orders, claim integrations work without testing, add unapproved policies as final.
-6. Next work, in priority order: (a) owner supplies Paystack TEST key -> run a real sandbox payment end to end and fix anything the docs disagree with; (b) owner supplies CJ key -> verify parameter names in `src/suppliers/cj.js`, add tracking sync; (c) real catalogue import; (d) confirm delivery zones/policies and replace draft policy text in `src/views.js` (`PAGES`); (e) email service for order confirmations; (f) original logo files + self-hosted fonts; (g) deploy per README section 6.
-7. Reproduce an issue: write a test in `tests/shop.test.js` using `setup()` and `client()` helpers (real HTTP against a temp DB).
-8. Memory/handoff note: chat history is not needed; all state is in these files and Git.
+1. Requirements: Node >= 22.13. No `npm install` needed (zero dependencies).
+2. Setup: `cp .env.example .env`; `npm run migrate`; `npm run seed`; `ADMIN_EMAIL=... ADMIN_PASSWORD=... npm run create-admin`; `npm start`; open http://localhost:3000.
+3. Verify the baseline: `npm test` must show **25 pass, 0 fail**.
+4. Business facts (source of truth): Nexoraith Absolute Ventures Ltd, RC 9921594, NEXORAITHABSOLUTEVENTURES@GMAIL.COM. No address or phone supplied: do not invent. Brand: **deep navy + champagne gold primary; teal only for buttons, interactive states and supporting graphics** (owner instruction, 2026-10-21). No supplier agreement yet. Payment candidate: Paystack. Preliminary delivery: Lagos NGN 2,500, other Nigeria NGN 4,500. Owner is a beginner: give exact steps.
+5. Never: expose supplier costs, trust browser prices, mark paid from a redirect, let demo orders become paid, auto-submit supplier orders, claim integrations work without testing, publish draft policies as final, regenerate the logo.
+6. **Railway:** the owner said she will connect Railway herself when the website is done. Do not create Railway projects/services or deploy unless she asks. `railway.json` + README section 7 are ready.
+7. Next work, in priority order: (a) owner connects Railway (help only when asked); (b) Paystack TEST key -> real sandbox payment end to end; (c) supplier decision -> CJ key -> verify `src/suppliers/cj.js`; (d) real catalogue + photos, then `DEMO_MODE=false`; (e) confirm delivery fees/policies and replace draft text in `src/views.js` (`PAGES`); (f) email service for order confirmations; (g) original logo files.
+8. Reproduce an issue: write a test in `tests/` using `setup()` and `client()` from `tests/helpers.js` (real HTTP against a temp DB and temp upload folder). Browser checks used Playwright scripts kept outside the repo (see `TESTING.md`).
+9. Chat history is not needed; all state is in these files and Git.

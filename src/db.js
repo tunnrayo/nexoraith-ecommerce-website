@@ -57,6 +57,14 @@ CREATE TABLE admin_users(id INTEGER PRIMARY KEY, email TEXT NOT NULL UNIQUE, pas
 CREATE TABLE admin_sessions(token_hash TEXT PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES admin_users(id) ON DELETE CASCADE, csrf TEXT NOT NULL, expires_at TEXT NOT NULL);
 CREATE TABLE inquiries(id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, subject TEXT NOT NULL DEFAULT '', message TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'new' CHECK(status IN('new','handled')), created_at TEXT NOT NULL DEFAULT (datetime('now')));
 CREATE TABLE settings(key TEXT PRIMARY KEY, value TEXT NOT NULL);
+`, `
+-- v2 (2026-10-21): short product summaries, category descriptions, demo orders and payment method
+ALTER TABLE products ADD COLUMN summary TEXT NOT NULL DEFAULT '';
+ALTER TABLE categories ADD COLUMN description TEXT NOT NULL DEFAULT '';
+ALTER TABLE orders ADD COLUMN is_demo INTEGER NOT NULL DEFAULT 0 CHECK(is_demo IN(0,1));
+ALTER TABLE orders ADD COLUMN payment_method TEXT NOT NULL DEFAULT 'paystack' CHECK(payment_method IN('paystack','demo'));
+ALTER TABLE orders ADD COLUMN demo_confirmed_at TEXT;
+CREATE INDEX idx_orders_demo ON orders(is_demo);
 `];
 
 let db;

@@ -26,12 +26,17 @@ function createOrder(cartToken, f, checkoutKey) {
     if (!zone.confirmed && !cfg.allowUnconfirmedDelivery) throw new UserError('Delivery charges for this destination have not been confirmed yet, so we cannot take orders for it.');
     const t = cart.totals(ls, zone.fee_minor, 0);
     if (t.total <= 0) throw new UserError('The order total must be greater than zero.');
+    const method = f.payment_method === 'demo' ? 'demo' : 'paystack';
+    if (method === 'demo' && !cfg.demoMode) throw new UserError('Demonstration orders are switched off on this store.');
+    const hasDev = ls.some((l) => l.is_development);
+    // A demo order is any order placed with demo products, unconfirmed delivery, or the demo payment method. It can never become "paid".
+    const isDemo = hasDev || method === 'demo' || (!zone.confirmed && cfg.demoMode) ? 1 : 0;
     const reference = newReference();
     const r = q.run(`INSERT INTO orders(reference,checkout_key,customer_name,customer_email,customer_phone,ship_address,ship_city,ship_state,ship_country,ship_postal,delivery_notes,
-        currency,subtotal_minor,delivery_fee_minor,discount_minor,total_minor,delivery_zone_name,delivery_confirmed,has_development_items)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        currency,subtotal_minor,delivery_fee_minor,discount_minor,total_minor,delivery_zone_name,delivery_confirmed,has_development_items,is_demo,payment_method)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       reference, checkoutKey, f.name, f.email, f.phone, f.address, f.city, f.state, zone.country_code, f.postal, f.notes,
-      ls[0].currency, t.subtotal, t.delivery, t.discount, t.total, zone.name, zone.confirmed, ls.some((l) => l.is_development) ? 1 : 0);
+      ls[0].currency, t.subtotal, t.delivery, t.discount, t.total, zone.name, zone.confirmed, hasDev ? 1 : 0, isDemo, method);
     const oid = Number(r.lastInsertRowid);
     for (const l of ls) {
       q.run('INSERT INTO order_items(order_id,variant_id,product_name,variant_label,sku,unit_price_minor,quantity,line_total_minor) VALUES(?,?,?,?,?,?,?,?)',
@@ -46,6 +51,7 @@ const items = (orderId) => q.all('SELECT * FROM order_items WHERE order_id=? ORD
 
 // Start a payment attempt with Paystack. Order stays unpaid unless the provider accepts the request.
 async function startPayment(order) {
+  if (order.payment_method === 'demo') throw new UserError('This is a demonstration order. No payment can be taken for it.');
   if (!paystack.isConfigured()) throw new UserError('Online payment is not switched on for this store yet. Your order has been saved and no money has been taken.', { code: 'payment_unconfigured' });
   if (order.payment_status === 'paid') throw new UserError('This order has already been paid.');
   const n = q.get('SELECT COUNT(*) n FROM payments WHERE order_id=?', order.id).n + 1;
@@ -111,6 +117,23 @@ function handleWebhook(evt) {
   return { handled: false };
 }
 
+// Demonstration "checkout": records that the customer completed the demo journey. It NEVER sets payment_status to paid,
+// never reduces stock and never makes the order eligible for supplier fulfilment.
+function confirmDemo(order) {
+  if (!cfg.demoMode) throw new UserError('Demonstration orders are switched off on this store.');
+  if (!order.is_demo || order.payment_method !== 'demo') throw new UserError('Only demonstration orders can be confirmed this way.');
+  if (order.status === 'cancelled') throw new UserError('This order has been cancelled.');
+  q.run("UPDATE orders SET demo_confirmed_at=COALESCE(demo_confirmed_at, datetime('now')), updated_at=datetime('now') WHERE id=? AND payment_status='unpaid'", order.id);
+  return byReference(order.reference);
+}
+// Find an order from reference + email (guest "track my order"). Returns null when they don't match.
+function lookup(reference, email) {
+  const o = byReference(String(reference || '').trim().toUpperCase().slice(0, 40));
+  if (!o) return null;
+  const a = Buffer.from(o.customer_email), b = Buffer.from(String(email || '').trim().toLowerCase());
+  return a.length === b.length && crypto.timingSafeEqual(a, b) ? o : null;
+}
+
 const STATUS_TEXT = {
   pending_payment: 'We have received your order details. It will be confirmed once payment is verified.',
   paid: 'Payment confirmed. Your order is awaiting processing.',
@@ -123,9 +146,10 @@ const STATUS_TEXT = {
 };
 function customerStatus(o) {
   if (o.status === 'cancelled') return STATUS_TEXT.cancelled;
+  if (o.payment_method === 'demo') return o.demo_confirmed_at ? 'Demonstration order received. This was a test of the checkout: no payment was taken and nothing will be delivered.' : 'Demonstration order saved. Review the total below, then complete the demonstration (no money is taken).';
   if (o.payment_status === 'failed') return 'The payment did not go through. No order has been confirmed. You can try paying again.';
   if (o.payment_status === 'abandoned') return 'The payment was not completed. You can try paying again.';
   if (o.payment_status !== 'paid') return o.payment_status === 'pending' ? 'Waiting for payment confirmation from the payment provider.' : STATUS_TEXT.pending_payment;
   return STATUS_TEXT[o.fulfillment_status] || STATUS_TEXT.paid;
 }
-module.exports = { createOrder, byReference, items, startPayment, applyPaymentResult, handleWebhook, accessToken, tokenOk, customerStatus, newReference };
+module.exports = { createOrder, byReference, items, startPayment, applyPaymentResult, handleWebhook, accessToken, tokenOk, customerStatus, newReference, confirmDemo, lookup };

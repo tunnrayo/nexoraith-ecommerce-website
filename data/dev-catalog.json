@@ -1,40 +1,398 @@
 {
-  "_comment": "DEVELOPMENT SAMPLE DATA ONLY. Prices, availability and stock are invented for testing and are NOT live. Replace with real products before launch.",
-  "categories": [
-    { "slug": "home-living", "name": "Home & Living (sample category)", "sort_order": 1 },
-    { "slug": "accessories", "name": "Accessories (sample category)", "sort_order": 2 },
-    { "slug": "tech-accessories", "name": "Tech Accessories (sample category)", "sort_order": 3 }
-  ],
-  "products": [
-    { "slug": "sample-ceramic-mug", "name": "Sample Ceramic Mug", "category": "home-living", "status": "published", "is_development": true,
-      "description": "SAMPLE PRODUCT for testing the store. A stoneware-style mug used to test product pages, options and the cart.",
-      "images": [{ "url": "/img/products/sample-ceramic-mug.svg", "alt": "Placeholder illustration of a mug (sample image)" }],
-      "variants": [
-        { "sku": "DEV-MUG-WHT", "label": "White", "options": { "Colour": "White" }, "price": "4500.00", "availability": "available", "stock": 25 },
-        { "sku": "DEV-MUG-BLK", "label": "Black", "options": { "Colour": "Black" }, "price": "4500.00", "availability": "unavailable" }
-      ] },
-    { "slug": "sample-linen-cushion", "name": "Sample Linen Cushion", "category": "home-living", "status": "published", "is_development": true,
-      "description": "SAMPLE PRODUCT for testing. Used to test a product with unverified availability.",
-      "images": [{ "url": "/img/products/sample-linen-cushion.svg", "alt": "Placeholder illustration of a cushion (sample image)" }],
-      "variants": [{ "sku": "DEV-CUSH-BEI", "label": "Beige", "options": { "Colour": "Beige" }, "price": "12000.00", "availability": "unverified" }] },
-    { "slug": "sample-leather-wallet", "name": "Sample Leather Wallet", "category": "accessories", "status": "published", "is_development": true,
-      "description": "SAMPLE PRODUCT for testing sorting, filtering and the cart.",
-      "images": [{ "url": "/img/products/sample-leather-wallet.svg", "alt": "Placeholder illustration of a wallet (sample image)" }],
-      "variants": [{ "sku": "DEV-WAL-BRN", "label": "Brown", "options": { "Colour": "Brown" }, "price": "9500.50", "availability": "available", "stock": 3 }] },
-    { "slug": "sample-canvas-tote", "name": "Sample Canvas Tote Bag", "category": "accessories", "status": "published", "is_development": true,
-      "description": "SAMPLE PRODUCT for testing. Has two sizes at different prices.",
-      "images": [{ "url": "/img/products/sample-canvas-tote.svg", "alt": "Placeholder illustration of a tote bag (sample image)" }],
-      "variants": [
-        { "sku": "DEV-TOTE-S", "label": "Small", "options": { "Size": "Small" }, "price": "6000.00", "availability": "available" },
-        { "sku": "DEV-TOTE-L", "label": "Large", "options": { "Size": "Large" }, "price": "8000.00", "availability": "available" }
-      ] },
-    { "slug": "sample-phone-stand", "name": "Sample Phone Stand", "category": "tech-accessories", "status": "published", "is_development": true,
-      "description": "SAMPLE PRODUCT for testing the tech accessories category.",
-      "images": [{ "url": "/img/products/sample-phone-stand.svg", "alt": "Placeholder illustration of a phone stand (sample image)" }],
-      "variants": [{ "sku": "DEV-STAND-1", "label": "Standard", "price": "3500.00", "availability": "available", "stock": 40 }] },
-    { "slug": "sample-cable-organiser", "name": "Sample Cable Organiser", "category": "tech-accessories", "status": "published", "is_development": true,
-      "description": "SAMPLE PRODUCT for testing an out-of-stock state.",
-      "images": [{ "url": "/img/products/sample-cable-organiser.svg", "alt": "Placeholder illustration of a cable organiser (sample image)" }],
-      "variants": [{ "sku": "DEV-CABLE-1", "label": "Standard", "price": "2500.00", "availability": "available", "stock": 0 }] }
-  ]
+ "_comment": "DEVELOPMENT / DEMO DATA ONLY. Products, prices, availability and stock are invented for presentation and testing. They are NOT supplier data and are NOT live. Replace with real products before launch (see PRODUCT_CATALOG_GUIDE.md).",
+ "categories": [
+  {
+   "slug": "home-living",
+   "name": "Home & Living",
+   "description": "Everyday pieces for a calm, well-kept home.",
+   "sort_order": 1
+  },
+  {
+   "slug": "accessories",
+   "name": "Accessories",
+   "description": "Finishing touches for work, travel and weekends.",
+   "sort_order": 2
+  },
+  {
+   "slug": "tech-accessories",
+   "name": "Tech Accessories",
+   "description": "Practical add-ons for phones and devices.",
+   "sort_order": 3
+  }
+ ],
+ "products": [
+  {
+   "slug": "demo-ceramic-mug",
+   "name": "Stoneware Ceramic Mug",
+   "category": "home-living",
+   "status": "published",
+   "is_development": true,
+   "summary": "A weighty 350 ml mug with a satin glaze.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate colour options: one colour is available, the other is shown as unavailable.",
+   "images": [
+    {
+     "url": "/img/products/demo-ceramic-mug.svg",
+     "alt": "Demo illustration of the stoneware ceramic mug (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-MUG-WHT",
+     "label": "Ivory",
+     "options": {
+      "Colour": "Ivory"
+     },
+     "price": "4500.00",
+     "availability": "available",
+     "stock": 25
+    },
+    {
+     "sku": "DEV-MUG-BLK",
+     "label": "Charcoal",
+     "options": {
+      "Colour": "Charcoal"
+     },
+     "price": "4500.00",
+     "availability": "unavailable"
+    }
+   ]
+  },
+  {
+   "slug": "demo-linen-cushion",
+   "name": "Linen Throw Cushion",
+   "category": "home-living",
+   "status": "published",
+   "is_development": true,
+   "summary": "Textured linen-look cover with a hidden zip.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a product whose availability has not yet been verified, so it cannot be added to the cart.",
+   "images": [
+    {
+     "url": "/img/products/demo-linen-cushion.svg",
+     "alt": "Demo illustration of the linen throw cushion (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-CUSH-BEI",
+     "label": "Sand, 45 x 45 cm",
+     "options": {
+      "Colour": "Sand",
+      "Size": "45 x 45 cm"
+     },
+     "price": "12000.00",
+     "availability": "unverified"
+    }
+   ]
+  },
+  {
+   "slug": "demo-soy-candle",
+   "name": "Scented Soy Candle",
+   "category": "home-living",
+   "status": "published",
+   "is_development": true,
+   "summary": "Hand-poured soy wax in a reusable gold-tone jar.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate scent variants at the same price.",
+   "images": [
+    {
+     "url": "/img/products/demo-soy-candle.svg",
+     "alt": "Demo illustration of the scented soy candle (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-CAN-OUD",
+     "label": "Oud & Amber",
+     "options": {
+      "Scent": "Oud & Amber"
+     },
+     "price": "8500.00",
+     "availability": "available",
+     "stock": 12
+    },
+    {
+     "sku": "DEV-CAN-VAN",
+     "label": "Vanilla Bean",
+     "options": {
+      "Scent": "Vanilla Bean"
+     },
+     "price": "8500.00",
+     "availability": "available",
+     "stock": 8
+    }
+   ]
+  },
+  {
+   "slug": "demo-glass-bottle",
+   "name": "Glass Water Bottle",
+   "category": "home-living",
+   "status": "published",
+   "is_development": true,
+   "summary": "750 ml borosilicate glass with a protective sleeve.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a single-option product.",
+   "images": [
+    {
+     "url": "/img/products/demo-glass-bottle.svg",
+     "alt": "Demo illustration of the glass water bottle (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-BOT-750",
+     "label": "750 ml",
+     "options": {
+      "Size": "750 ml"
+     },
+     "price": "6500.00",
+     "availability": "available",
+     "stock": 30
+    }
+   ]
+  },
+  {
+   "slug": "demo-leather-wallet",
+   "name": "Leather Bifold Wallet",
+   "category": "accessories",
+   "status": "published",
+   "is_development": true,
+   "summary": "Slim bifold with six card slots and a note pocket.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate low stock: only three are recorded in the demo data.",
+   "images": [
+    {
+     "url": "/img/products/demo-leather-wallet.svg",
+     "alt": "Demo illustration of the leather bifold wallet (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-WAL-BRN",
+     "label": "Tan",
+     "options": {
+      "Colour": "Tan"
+     },
+     "price": "9500.50",
+     "availability": "available",
+     "stock": 3
+    }
+   ]
+  },
+  {
+   "slug": "demo-canvas-tote",
+   "name": "Canvas Tote Bag",
+   "category": "accessories",
+   "status": "published",
+   "is_development": true,
+   "summary": "Heavy cotton canvas with reinforced handles.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate sizes at different prices.",
+   "images": [
+    {
+     "url": "/img/products/demo-canvas-tote.svg",
+     "alt": "Demo illustration of the canvas tote bag (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-TOTE-S",
+     "label": "Standard",
+     "options": {
+      "Size": "Standard"
+     },
+     "price": "6000.00",
+     "availability": "available",
+     "stock": 40
+    },
+    {
+     "sku": "DEV-TOTE-L",
+     "label": "Large",
+     "options": {
+      "Size": "Large"
+     },
+     "price": "7500.00",
+     "availability": "available",
+     "stock": 15
+    }
+   ]
+  },
+  {
+   "slug": "demo-wrist-watch",
+   "name": "Minimalist Wrist Watch",
+   "category": "accessories",
+   "status": "published",
+   "is_development": true,
+   "summary": "Clean dial, gold-tone case, navy strap.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a higher-priced item.",
+   "images": [
+    {
+     "url": "/img/products/demo-wrist-watch.svg",
+     "alt": "Demo illustration of the minimalist wrist watch (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-WAT-NVY",
+     "label": "Navy strap",
+     "options": {
+      "Strap": "Navy"
+     },
+     "price": "28000.00",
+     "availability": "available",
+     "stock": 6
+    }
+   ]
+  },
+  {
+   "slug": "demo-sunglasses",
+   "name": "Classic Sunglasses",
+   "category": "accessories",
+   "status": "published",
+   "is_development": true,
+   "summary": "Lightweight frame with tinted lenses.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate frame colour options.",
+   "images": [
+    {
+     "url": "/img/products/demo-sunglasses.svg",
+     "alt": "Demo illustration of the classic sunglasses (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-SUN-BLK",
+     "label": "Black frame",
+     "options": {
+      "Frame": "Black"
+     },
+     "price": "11500.00",
+     "availability": "available",
+     "stock": 10
+    },
+    {
+     "sku": "DEV-SUN-TOR",
+     "label": "Tortoise frame",
+     "options": {
+      "Frame": "Tortoise"
+     },
+     "price": "11500.00",
+     "availability": "available",
+     "stock": 4
+    }
+   ]
+  },
+  {
+   "slug": "demo-phone-stand",
+   "name": "Aluminium Phone Stand",
+   "category": "tech-accessories",
+   "status": "published",
+   "is_development": true,
+   "summary": "Adjustable desk stand for phones and small tablets.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a simple accessory.",
+   "images": [
+    {
+     "url": "/img/products/demo-phone-stand.svg",
+     "alt": "Demo illustration of the aluminium phone stand (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-STAND-SLV",
+     "label": "Champagne",
+     "options": {
+      "Finish": "Champagne"
+     },
+     "price": "3500.00",
+     "availability": "available",
+     "stock": 50
+    }
+   ]
+  },
+  {
+   "slug": "demo-cable-organiser",
+   "name": "Cable Organiser Set",
+   "category": "tech-accessories",
+   "status": "published",
+   "is_development": true,
+   "summary": "Reusable silicone ties and a desk clip.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nThe lowest-priced demo item, used to test sorting.",
+   "images": [
+    {
+     "url": "/img/products/demo-cable-organiser.svg",
+     "alt": "Demo illustration of the cable organiser set (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-CABLE-SET",
+     "label": "Set of 6",
+     "options": {
+      "Pack": "Set of 6"
+     },
+     "price": "2500.00",
+     "availability": "available",
+     "stock": 60
+    }
+   ]
+  },
+  {
+   "slug": "demo-wireless-earbuds",
+   "name": "Wireless Earbuds",
+   "category": "tech-accessories",
+   "status": "published",
+   "is_development": true,
+   "summary": "Compact charging case with USB-C.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a gadget listing. Specifications would come from the confirmed supplier.",
+   "images": [
+    {
+     "url": "/img/products/demo-wireless-earbuds.svg",
+     "alt": "Demo illustration of the wireless earbuds (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-EAR-WHT",
+     "label": "White case",
+     "options": {
+      "Colour": "White"
+     },
+     "price": "18500.00",
+     "availability": "available",
+     "stock": 9
+    }
+   ]
+  },
+  {
+   "slug": "demo-power-bank",
+   "name": "Slim Power Bank",
+   "category": "tech-accessories",
+   "status": "published",
+   "is_development": true,
+   "summary": "Pocket-size battery pack with LED level indicator.",
+   "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate capacity options at different prices.",
+   "images": [
+    {
+     "url": "/img/products/demo-power-bank.svg",
+     "alt": "Demo illustration of the slim power bank (not a product photo)"
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DEV-PWR-10K",
+     "label": "10,000 mAh",
+     "options": {
+      "Capacity": "10,000 mAh"
+     },
+     "price": "15000.00",
+     "availability": "available",
+     "stock": 14
+    },
+    {
+     "sku": "DEV-PWR-20K",
+     "label": "20,000 mAh",
+     "options": {
+      "Capacity": "20,000 mAh"
+     },
+     "price": "21000.00",
+     "availability": "available",
+     "stock": 0
+    }
+   ]
+  }
+ ]
 }

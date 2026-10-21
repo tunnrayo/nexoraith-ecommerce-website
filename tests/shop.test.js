@@ -21,17 +21,17 @@ async function placeOrder(cl, extra = {}) {
 test('storefront pages render with real catalogue data', async () => {
   c = client(ctx.base);
   const home = await c.get('/'); assert.equal(home.status, 200); assert.match(home.text, /Shop Smarter\. Live Better\./); assert.match(home.text, /NEXORAITHABSOLUTEVENTURES@GMAIL\.COM/);
-  const shop = await c.get('/shop'); assert.match(shop.text, /Sample Ceramic Mug/); assert.match(shop.text, /6 products found/);
+  const shop = await c.get('/shop'); assert.match(shop.text, /Stoneware Ceramic Mug/); assert.match(shop.text, /12 products found/);
   assert.match((await c.get('/shop?q=wallet')).text, /1 product found/);
   assert.match((await c.get('/shop?q=zzzzqq')).text, /No products found/);
-  assert.match((await c.get('/shop?category=tech-accessories')).text, /2 products found/);
-  const asc = (await c.get('/shop?sort=price_asc')).text; assert.ok(asc.indexOf('Sample Cable Organiser') < asc.indexOf('Sample Linen Cushion'));
+  assert.match((await c.get('/shop?category=tech-accessories')).text, /4 products found/);
+  const asc = (await c.get('/shop?sort=price_asc')).text; assert.ok(asc.indexOf('Cable Organiser Set') < asc.indexOf('Linen Throw Cushion'));
   assert.equal((await c.get('/product/does-not-exist')).status, 404);
 });
 test('supplier cost and ids never appear in public HTML', async () => {
   const v = variantId('DEV-MUG-WHT');
   ctx.db.q.run("INSERT INTO supplier_mappings(variant_id,supplier_product_id,supplier_variant_id,cost_minor) VALUES(?,?,?,?)", v, 'SECRETPID', 'SECRETVID', 123456);
-  const html = (await c.get('/product/sample-ceramic-mug')).text + (await c.get('/shop')).text;
+  const html = (await c.get('/product/demo-ceramic-mug')).text + (await c.get('/shop')).text;
   assert.ok(!/SECRETPID|SECRETVID|1234\.56|123456/.test(html));
 });
 test('cart: add, merge, update, remove; unavailable/unverified/out-of-stock rejected', async () => {
@@ -41,9 +41,9 @@ test('cart: add, merge, update, remove; unavailable/unverified/out-of-stock reje
   let cart = (await cl.get('/cart')).text; assert.match(cart, /value="3"/); assert.match(cart, /13,500\.00/);
   await cl.post('/cart/update', { _csrf: csrf(cart), variant_id: variantId('DEV-MUG-WHT'), quantity: 1 });
   cart = (await cl.get('/cart')).text; assert.match(cart, /4,500\.00/);
-  for (const sku of ['DEV-MUG-BLK', 'DEV-CUSH-BEI', 'DEV-CABLE-1']) await addToCart(cl, sku);
+  for (const sku of ['DEV-MUG-BLK', 'DEV-CUSH-BEI', 'DEV-PWR-20K']) await addToCart(cl, sku);
   assert.equal(ctx.db.q.get('SELECT COUNT(*) n FROM cart_items').n >= 1, true);
-  const unavailable = ctx.db.q.all("SELECT 1 FROM cart_items WHERE variant_id IN (SELECT id FROM variants WHERE sku IN ('DEV-MUG-BLK','DEV-CUSH-BEI','DEV-CABLE-1'))");
+  const unavailable = ctx.db.q.all("SELECT 1 FROM cart_items WHERE variant_id IN (SELECT id FROM variants WHERE sku IN ('DEV-MUG-BLK','DEV-CUSH-BEI','DEV-PWR-20K'))");
   assert.equal(unavailable.length, 0, 'unavailable, unverified and out-of-stock items must not enter the cart');
   await addToCart(cl, 'DEV-WAL-BRN', 50); // capped by max quantity and stock (3)
   assert.equal(ctx.db.q.all("SELECT quantity FROM cart_items WHERE variant_id=?", variantId('DEV-WAL-BRN')).length, 0, 'quantity above stock is refused');
@@ -55,28 +55,28 @@ test('CSRF: cart POST without token is rejected', async () => {
   assert.equal((await cl.post('/cart/add', { variant_id: variantId('DEV-MUG-WHT'), quantity: 1 })).status, 403);
 });
 test('checkout validation preserves input and shows errors', async () => {
-  const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-1');
+  const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-SLV');
   const r = await placeOrder(cl, { email: 'nope' });
   assert.equal(r.status, 422); assert.match(r.text, /valid email/); assert.match(r.text, /value="Ada Obi"/);
 });
 test('order: server computes totals, snapshots items, ignores browser prices, blocks duplicates', async () => {
-  const cl = client(ctx.base); await addToCart(cl, 'DEV-TOTE-L', 2); await addToCart(cl, 'DEV-STAND-1', 1);
+  const cl = client(ctx.base); await addToCart(cl, 'DEV-TOTE-L', 2); await addToCart(cl, 'DEV-STAND-SLV', 1);
   const page = await cl.get('/checkout'); const key = page.text.match(/name="checkout_key" value="([^"]+)"/)[1];
   const body = { _csrf: csrf(page.text), checkout_key: key, ...form(), total: '1', price: '1', total_minor: '1' };
   const r = await cl.post('/checkout', body); assert.equal(r.status, 303); assert.match(r.location, /^\/order\/NX-[A-Z0-9]+\?t=/);
   const o = ctx.db.q.get('SELECT * FROM orders WHERE reference=?', refOf(r));
-  assert.equal(o.subtotal_minor, 1950000); assert.equal(o.delivery_fee_minor, 150000); assert.equal(o.total_minor, 2100000);
+  assert.equal(o.subtotal_minor, 1850000); assert.equal(o.delivery_fee_minor, 150000); assert.equal(o.total_minor, 2000000);
   assert.equal(o.status, 'pending_payment'); assert.equal(o.payment_status, 'unpaid'); assert.equal(o.fulfillment_status, 'not_started');
   assert.equal(ctx.db.q.all('SELECT * FROM order_items WHERE order_id=?', o.id).length, 2);
   ctx.db.q.run("UPDATE variants SET price_minor=999999 WHERE sku='DEV-TOTE-L'");
-  assert.equal(ctx.db.q.get('SELECT unit_price_minor u FROM order_items WHERE order_id=? AND sku=?', o.id, 'DEV-TOTE-L').u, 800000, 'snapshot keeps the order-time price');
-  ctx.db.q.run("UPDATE variants SET price_minor=800000 WHERE sku='DEV-TOTE-L'");
-  const n = ctx.db.q.get('SELECT COUNT(*) n FROM orders').n; await addToCart(cl, 'DEV-STAND-1');
+  assert.equal(ctx.db.q.get('SELECT unit_price_minor u FROM order_items WHERE order_id=? AND sku=?', o.id, 'DEV-TOTE-L').u, 750000, 'snapshot keeps the order-time price');
+  ctx.db.q.run("UPDATE variants SET price_minor=750000 WHERE sku='DEV-TOTE-L'");
+  const n = ctx.db.q.get('SELECT COUNT(*) n FROM orders').n; await addToCart(cl, 'DEV-STAND-SLV');
   const dup = await cl.post('/checkout', body); assert.equal(dup.status, 303); assert.equal(ctx.db.q.get('SELECT COUNT(*) n FROM orders').n, n, 'same checkout key must not create a second order');
   const emptied = client(ctx.base); assert.match((await emptied.get('/cart')).text, /empty/);
 });
 test('order page needs the secret token; other customers cannot view it', async () => {
-  const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-1'); const r = await placeOrder(cl);
+  const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-SLV'); const r = await placeOrder(cl);
   const [path] = r.location.split('?'); const anon = client(ctx.base);
   assert.equal((await anon.get(path)).status, 404); assert.equal((await anon.get(path + '?t=wrong')).status, 404);
   const ok = await anon.get(r.location); assert.equal(ok.status, 200); assert.match(ok.text, /Total payable/);
@@ -99,7 +99,7 @@ test('payment: webhook rejects bad signature; success needs matching amount; ide
   assert.equal(ctx.db.q.get("SELECT stock_qty s FROM variants WHERE sku='DEV-WAL-BRN'").s, stockBefore - 1, 'replayed webhook must not process twice');
 });
 test('payment return page alone never marks an order paid', async () => {
-  const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-1', 1); const r = await placeOrder(cl);
+  const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-SLV', 1); const r = await placeOrder(cl);
   const ref = refOf(r); const o = ctx.db.q.get('SELECT * FROM orders WHERE reference=?', ref);
   ctx.db.q.run("INSERT INTO payments(order_id,provider,reference,amount_minor,currency,status) VALUES(?,?,?,?,?,'pending')", o.id, 'paystack', `${ref}-P1-zz`, o.total_minor, 'NGN');
   assert.equal((await cl.get(`/payment/callback?reference=${ref}-P1-zz`)).status, 303);
@@ -107,13 +107,13 @@ test('payment return page alone never marks an order paid', async () => {
   assert.equal((await cl.get('/payment/callback?reference=unknown')).status, 404);
 });
 test('paying without a Paystack key keeps the order, takes no money, explains why', async () => {
-  const config = require('../src/config'); const keep = config.paystack.secret; config.paystack.secret = '';
+  const config = require('../src/config'); const keep = config.paystack.secret; const keepDemo = config.demoMode; config.paystack.secret = ''; config.demoMode = false;
   try {
-    const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-1'); const r = await placeOrder(cl); const page = await cl.get(r.location);
+    const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-SLV'); const r = await placeOrder(cl); const page = await cl.get(r.location);
     const pay = await cl.post(`/order/${refOf(r)}/pay`, { _csrf: csrf(page.text), t: r.location.split('t=')[1] });
     assert.equal(pay.status, 303); assert.match(pay.location, /^\/order\//);
     assert.match((await cl.get(pay.location)).text, /not switched on/);
-  } finally { config.paystack.secret = keep; }
+  } finally { config.paystack.secret = keep; config.demoMode = keepDemo; }
 });
 test('contact form validates, stores, and ignores honeypot bots', async () => {
   const cl = client(ctx.base); const t = csrf((await cl.get('/contact')).text);

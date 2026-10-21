@@ -1,5 +1,5 @@
 # Architecture
-**Stack:** Node.js 22 (built-in `http`, built-in `node:sqlite`), server-rendered HTML, one stylesheet, ~15 lines of progressive-enhancement JS. **Zero npm dependencies** (chosen so a beginner has nothing to install and nothing to keep patched, and because the build environment had no package network).
+**Stack:** Node.js 22 (built-in `http`, built-in `node:sqlite`), server-rendered HTML, one stylesheet, ~35 lines of progressive-enhancement JS (the site works without JS), self-hosted fonts. **Zero npm dependencies** (chosen so a beginner has nothing to install and nothing to keep patched, and because the build environment had no package network).
 
 | Layer | Files |
 |---|---|
@@ -11,7 +11,9 @@
 | Orders, payment state machine | `src/orders.js` |
 | Paystack | `src/payments/paystack.js` |
 | CJdropshipping adapter | `src/suppliers/cj.js` |
-| Admin | `src/admin.js` |
+| Admin (orders, products, variants, images, categories, delivery, inquiries, supplier) | `src/admin.js` |
+| Image upload parsing + file-signature check | `src/multipart.js` |
+| First-start setup (migrate, demo seed, first admin) | `src/bootstrap.js` |
 | HTML templates | `src/views.js` |
 | Validation, security helpers, money | `src/validate.js`, `src/security.js`, `src/money.js` |
 
@@ -25,3 +27,7 @@
 - **Supplier orders** can never be created automatically: needs env flag + paid order + all variants mapped + admin ticks authorisation; UNIQUE(order, supplier) blocks duplicates.
 - **Sample data** carries `is_development=1`; hidden/blocked in production unless explicitly allowed.
 - **Single-process SQLite** (WAL). Rate limiter is in-memory (per process). Scale-out would need Postgres + shared rate limit store.
+- **Demo mode** (`DEMO_MODE`, default on locally, off in production): enables demo products, unconfirmed delivery fees and the `demo` payment method. Orders get `is_demo=1` when they contain demo products, use the demo method, or use an unconfirmed zone in demo mode. `confirmDemo` only sets `demo_confirmed_at`; payment_status stays `unpaid`, stock untouched, fulfilment impossible. `startPayment` refuses demo orders.
+- **Uploads** are stored in `UPLOAD_DIR` (default `data/uploads`, outside `public/`) and served from `/uploads/` (png/jpg/webp only). Type is decided from the file's first bytes, not the name.
+- **Routing**: exact paths win over `:param` paths (e.g. `/admin/products/new` before `/admin/products/:id`).
+- **Hosting**: `railway.json` (start `npm start`, health `/health`); one instance + persistent volume for `/data`.
