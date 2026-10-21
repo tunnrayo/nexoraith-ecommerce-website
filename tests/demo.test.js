@@ -3,7 +3,7 @@
 const test = require('node:test'); const assert = require('node:assert/strict');
 const { setup, client } = require('./helpers');
 let ctx;
-test.before(async () => { ctx = await setup(); require('../scripts/seed'); }); // seed adds Lagos / Other Nigerian locations
+test.before(async () => { ctx = await setup(); require('../src/bootstrap').ensureZones(true); }); // seed adds Lagos / Other Nigerian locations
 test.after(() => ctx.server.close());
 const csrf = (html) => html.match(/name="_csrf" value="([^"]+)"/)[1];
 const vid = (sku) => ctx.db.q.get('SELECT id FROM variants WHERE sku=?', sku).id;
@@ -37,10 +37,12 @@ test('demo checkout: totals from server, completes without payment, never marked
   assert.equal(ctx.db.q.get("SELECT stock_qty s FROM variants WHERE sku='DEV-WAL-BRN'").s, stock);
   assert.equal((await client(ctx.base).post(`/order/${ref}/demo-confirm`, { _csrf: 'x', t: 'wrong' })).status, 403);
 });
-test('demo method is refused when demo mode is off', async () => {
-  const config = require('../src/config'); config.demoMode = false;
-  try { const { r } = await order(client(ctx.base), { payment_method: 'demo' }); assert.equal(r.status, 422); assert.match(r.text, /payment method/); }
-  finally { config.demoMode = true; }
+test('demo method is refused (and not shown) when the demonstration checkout is off', async () => {
+  const config = require('../src/config'); config.demoCheckout = false;
+  try {
+    const page = await client(ctx.base).get('/'); assert.doesNotMatch(page.text, /Demonstration store/);
+    const { r } = await order(client(ctx.base), { payment_method: 'demo' }); assert.equal(r.status, 422); assert.match(r.text, /payment method/); assert.doesNotMatch(r.text, /Demonstration checkout/);
+  } finally { config.demoCheckout = true; }
 });
 test('track order: right reference + email opens the order; wrong email does not', async () => {
   const cl = client(ctx.base); const { r } = await order(cl, {}, 'DEV-CABLE-SET'); const ref = r.location.split('/')[2].split('?')[0];

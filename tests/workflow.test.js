@@ -7,7 +7,7 @@ const { execFileSync } = require('child_process');
 const { setup, client } = require('./helpers');
 let ctx; let adm; let T;
 test.before(async () => {
-  ctx = await setup({ PAYMENT_TIMING: 'review_first' }); require('../scripts/seed');
+  ctx = await setup({ PAYMENT_TIMING: 'review_first' }); require('../src/bootstrap').ensureZones(true);
   const sec = require('../src/security'); ctx.db.q.run('INSERT INTO admin_users(email,password_hash) VALUES(?,?)', 'owner@example.test', sec.hashPassword('owner-long-password'));
   adm = client(ctx.base); await adm.post('/admin/login', { _csrf: csrf((await adm.get('/admin/login')).text), email: 'owner@example.test', password: 'owner-long-password' });
   T = csrf((await adm.get('/admin')).text);
@@ -156,19 +156,23 @@ test('DummyJSON demo import: imports names/images/categories into our DB, sample
   await new Promise((r) => mock.listen(0, r)); const base = `http://localhost:${mock.address().port}/products`;
   const { importDummyJson } = require('../src/importers/dummyjson');
   try {
-    const r = await importDummyJson({ limit: 200, rate: 1500, base });
+    const r = await importDummyJson({ limit: 200, rate: 1500, base, archiveSamples: false });
     assert.equal(r.fetched, 3); assert.equal(r.created, 2); assert.equal(r.failed.length, 1); assert.match(r.failed[0].errors.join(), /title|price/);
-    const p = ctx.db.q.get("SELECT * FROM products WHERE slug LIKE 'dj-1-%'"); assert.equal(p.is_development, 1); assert.equal(p.source, 'dummyjson');
-    assert.doesNotMatch(p.description, /Great!|Ships in 1 month|Low Stock|4\.94/); assert.match(p.description, /DEMONSTRATION PRODUCT/);
-    const v = ctx.db.q.get("SELECT * FROM variants WHERE sku='DJ-1'"); assert.equal(v.price_minor, 1500000); assert.equal(v.stock_qty, null, 'DummyJSON stock is not trusted');
+    const p = ctx.db.q.get("SELECT * FROM products WHERE slug LIKE 'dj-1-%'"); assert.equal(p.is_development, 0, 'imported products are the regular catalogue'); assert.equal(p.source, 'dummyjson'); assert.equal(p.availability, 'available');
+    assert.doesNotMatch(p.description, /Great!|Ships in 1 month|Low Stock|4\.94|DEMONSTRATION/); assert.equal(p.source_price_text, '9.99 USD x 1500 = NGN 14985.00');
+    const v = ctx.db.q.get("SELECT * FROM variants WHERE sku='DJ-1'"); assert.equal(v.price_minor, 1498500, '9.99 USD x NGN 1,500 exactly'); assert.equal(v.stock_qty, null, 'DummyJSON stock is not trusted');
     assert.equal(ctx.db.q.get("SELECT name FROM categories WHERE slug='mens-shirts'").name, "Men's Shirts");
     assert.equal(ctx.db.q.get("SELECT COUNT(*) n FROM product_images WHERE product_id=(SELECT id FROM products WHERE slug LIKE 'dj-2-%')").n, 0, 'images from non-allowed hosts are refused');
     const html = await fetch(`${ctx.base}/product/${p.slug}`); const text = await html.text();
     assert.match(text, /cdn\.dummyjson\.com\/product-images\/1\/1\.webp/); assert.match(html.headers.get('content-security-policy'), /img-src 'self' data: https:\/\/cdn\.dummyjson\.com/);
     ctx.db.q.run("UPDATE variants SET price_minor=777700 WHERE sku='DJ-1'");
-    const again = await importDummyJson({ base }); assert.equal(again.skipped, 2); assert.equal(ctx.db.q.get("SELECT price_minor p FROM variants WHERE sku='DJ-1'").p, 777700, 'owner edits kept');
+    const again = await importDummyJson({ base, archiveSamples: false }); assert.equal(again.skipped, 2);
+    products[0].title = 'Essence Mascara Renamed'; // DummyJSON renames a product: same id, so it is the same product (no duplicate, no SKU clash)
+    const renamed = await importDummyJson({ base, archiveSamples: false, update: true }); assert.equal(renamed.failed.length, 1, 'only the invalid record'); assert.equal(renamed.updated, 2);
+    assert.equal(ctx.db.q.get("SELECT COUNT(*) n FROM products WHERE source='dummyjson'").n, 2); assert.equal(ctx.db.q.get("SELECT name FROM products WHERE source_ref='dummyjson:1'").name, 'Essence Mascara Renamed');
+    ctx.db.q.run("UPDATE variants SET price_minor=777700 WHERE sku='DJ-1'"); assert.equal(ctx.db.q.get("SELECT price_minor p FROM variants WHERE sku='DJ-1'").p, 777700, 'owner edits kept');
     fail = true; const before = ctx.db.q.get('SELECT COUNT(*) n FROM products').n;
-    await assert.rejects(importDummyJson({ base }), /Could not reach DummyJSON.*Nothing was changed/);
+    await assert.rejects(importDummyJson({ base, archiveSamples: false }), /Could not reach DummyJSON.*Nothing was changed/);
     assert.equal(ctx.db.q.get('SELECT COUNT(*) n FROM products').n, before);
     fail = false;
     // the store keeps working with no access to DummyJSON at all (catalogue is in our DB)
@@ -195,7 +199,7 @@ test('database upgrade from v0.2 keeps orders, items and payments and maps old s
   old.exec("INSERT INTO payments(order_id,provider,reference,amount_minor,currency,status,paid_at) VALUES(1,'paystack','NX-OLD1-P1',1500,'NGN','success','2026-10-21 10:00:00')"); old.close();
   const out = execFileSync(process.execPath, ['--disable-warning=ExperimentalWarning', '-e', "const {q}=require('./src/db');console.log(JSON.stringify({v:q.get('PRAGMA user_version').user_version,o:q.all('SELECT reference,status,fulfillment_status,estimated_delivery_date FROM orders ORDER BY id'),i:q.get('SELECT COUNT(*) n FROM order_items').n,p:q.get('SELECT COUNT(*) n FROM payments').n}))"], { cwd: path.join(__dirname, '..'), env: { ...process.env, DATABASE_PATH: file } }).toString();
   const r = JSON.parse(out.trim().split('\n').pop());
-  assert.equal(r.v, 3); assert.equal(r.i, 2); assert.equal(r.p, 1);
+  assert.equal(r.v, 4); assert.equal(r.i, 2); assert.equal(r.p, 1);
   assert.deepEqual(r.o.map((x) => [x.reference, x.status, x.fulfillment_status]), [['NX-OLD1', 'confirmed', 'out_for_delivery'], ['NX-OLD2', 'awaiting_payment', 'not_started']]);
   assert.equal(r.o[0].estimated_delivery_date, '2026-10-31');
 });

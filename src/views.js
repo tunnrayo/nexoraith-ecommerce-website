@@ -32,7 +32,7 @@ function layout(ctx, { title, desc = '', body, noindex = false, image = '', json
   const d = desc || `${C.name}: an online store. ${C.tagline}`;
   const canon = cfg.siteUrl + (canonicalPath ?? ctx.path);
   const flash = ctx.flash ? `<div class="flash flash-${esc(ctx.flash.type)}" role="status"><div class="wrap">${esc(ctx.flash.text)}</div></div>` : '';
-  const devBar = cfg.demoMode || cfg.allowDevProducts ? `<div class="devbar"><div class="wrap"><strong>Demonstration store.</strong> Products, prices and stock shown are demo data for presentation only. They are not for sale and no real payments are taken.</div></div>` : '';
+  const devBar = ''; // no customer-facing demo banner
   const nav = [['/', 'Home'], ['/shop', 'Shop'], ['/about', 'About'], ['/track', 'Track order'], ['/contact', 'Contact']]
     .map(([h, t]) => `<a href="${h}"${ctx.path === h ? ' aria-current="page"' : ''}>${t}</a>`).join('');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -69,7 +69,7 @@ function card(p, ctx) {
   const quick = ctx && p.buy_variant && p.n_variants === 1
     ? `<form method="post" action="/cart/add" class="card-buy">${csrfField(ctx)}<input type="hidden" name="variant_id" value="${p.buy_variant}"><input type="hidden" name="quantity" value="1"><input type="hidden" name="back" value="${esc(ctx.path)}"><button class="btn btn-small btn-block" type="submit">Add to cart<span class="sr">: ${esc(p.name)}</span></button></form>`
     : `<a class="btn btn-small btn-outline btn-block" href="/product/${esc(p.slug)}">${p.buy_variant ? 'Choose options' : 'View details'}<span class="sr">: ${esc(p.name)}</span></a>`;
-  return `<article class="card"><a class="card-img" href="/product/${esc(p.slug)}" tabindex="-1" aria-hidden="true">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy" width="800" height="800">` : '<span class="noimg">Image coming soon</span>'}${p.is_development ? '<span class="ribbon">Demo product</span>' : ''}</a>
+  return `<article class="card"><a class="card-img" href="/product/${esc(p.slug)}" tabindex="-1" aria-hidden="true">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy" width="800" height="800">` : '<span class="noimg">Image coming soon</span>'}</a>
 <div class="card-body">${p.category_name ? `<p class="card-cat">${esc(p.category_name)}</p>` : ''}<h3><a href="/product/${esc(p.slug)}">${esc(p.name)}</a></h3>
 ${p.summary ? `<p class="card-sum">${esc(p.summary)}</p>` : ''}<div class="card-meta"><p class="price">${range}</p>${avail}</div>${quick}</div></article>`;
 }
@@ -122,11 +122,10 @@ function product(ctx, p, rel, zones = [], x = {}) {
   const why = (v) => (ok(v) ? 'Available' : v.availability === 'available' ? 'Out of stock' : AVAIL_TEXT[v.availability]);
   const opts = p.variants.map((v) => `<label class="opt${ok(v) ? '' : ' opt-off'}"><input type="radio" name="variant_id" value="${v.id}"${ok(v) ? '' : ' disabled'}${first && v.id === first.id && ok(v) ? ' checked' : ''} required data-price="${esc(price(v.price_minor))}"><span><strong>${esc(v.label)}</strong> <span class="opt-p">${price(v.price_minor)}</span>${optText(v.options_json) ? `<small>${esc(optText(v.options_json))}</small>` : ''}<small>${why(v)}${ok(v) && v.stock_qty != null && v.stock_qty <= 5 ? `: only ${v.stock_qty} left` : ''}</small></span></label>`).join('');
   const body = `<div class="wrap section"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/shop">Shop</a>${p.category_name ? ` / <a href="/shop?category=${esc(p.category_slug)}">${esc(p.category_name)}</a>` : ''} / <span>${esc(p.name)}</span></nav>
-<div class="pdp"><div class="gallery"><div class="main-img">${main ? `<img id="main-img" src="${esc(main.url)}" alt="${esc(main.alt || p.name)}" width="800" height="800">` : '<div class="noimg">No image</div>'}${p.is_development ? '<span class="ribbon">Demo product</span>' : ''}</div>
+<div class="pdp"><div class="gallery"><div class="main-img">${main ? `<img id="main-img" src="${esc(main.url)}" alt="${esc(main.alt || p.name)}" width="800" height="800">` : '<div class="noimg">No image</div>'}</div>
 ${p.images.length > 1 ? `<ul class="thumbs">${p.images.map((i) => `<li><button type="button" class="thumb" data-src="${esc(i.url)}" data-alt="${esc(i.alt || p.name)}"><img src="${esc(i.url)}" alt="Show image: ${esc(i.alt || p.name)}" width="80" height="80" loading="lazy"></button></li>`).join('')}</ul>` : ''}</div>
 <div class="info">${p.category_name ? `<p class="kicker">${esc(p.category_name)}</p>` : ''}<h1>${esc(p.name)}</h1>${p.summary ? `<p class="lead-sm">${esc(p.summary)}</p>` : ''}
 <p class="price big" id="pdp-price">${prices.length > 1 && Math.min(...prices) !== Math.max(...prices) ? `From ${price(Math.min(...prices))}` : price(prices[0] ?? 0)}</p>
-${p.is_development ? '<p class="note-dev">Demo product for presentation and testing. Not for sale; details are illustrative.</p>' : ''}
 ${purchasable.length ? `<form method="post" action="/cart/add" class="buy">${csrfField(ctx)}<input type="hidden" name="back" value="/product/${esc(p.slug)}">
 <fieldset class="opts"><legend>${p.variants.length > 1 ? 'Choose an option' : 'Option'}</legend>${opts}</fieldset>
 <div class="qty-row"><label for="qty">Quantity</label><div class="stepper"><button type="button" class="step" data-step="-1" aria-label="Decrease quantity">&minus;</button><input id="qty" name="quantity" type="number" min="1" max="20" value="1" inputmode="numeric" required><button type="button" class="step" data-step="1" aria-label="Increase quantity">+</button></div></div>
@@ -135,7 +134,7 @@ ${purchasable.length ? `<form method="post" action="/cart/add" class="buy">${csr
 <div class="ship-box"><h2>${I.truck} Delivery</h2>${zones.length ? `<ul>${zones.map((z) => `<li>${zoneLine(z)}</li>`).join('')}</ul>` : '<p>Delivery charges are shown at checkout.</p>'}<p class="small"><strong>Estimated delivery:</strong> ${x.days || 10} calendar days after order confirmation${x.ifToday ? ` (if confirmed today: ${esc(x.ifToday)})` : ''}.</p><p class="small muted">Your order is confirmed when your payment is verified. Your delivery charge and final total are shown before you pay. See <a href="/shipping">shipping</a> and <a href="/returns">returns</a>.</p></div>
 <div class="desc"><h2>Product details</h2>${esc(p.description).split(/\n{2,}/).map((x) => `<p>${x.replace(/\n/g, '<br>')}</p>`).join('')}</div></div></div>
 ${rel.length ? `<section class="section related"><div class="sec-head"><h2>You may also like</h2></div><div class="grid">${rel.map((r) => card(r, ctx)).join('')}</div></section>` : ''}</div>`;
-  const ld = !p.is_development && purchasable.length ? JSON.stringify({ '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: p.description.slice(0, 500), image: p.images.map((i) => absUrl(i.url)), offers: { '@type': 'Offer', priceCurrency: p.currency, price: (Math.min(...purchasable.map((v) => v.price_minor)) / 100).toFixed(2), availability: 'https://schema.org/InStock', url: `${cfg.siteUrl}/product/${p.slug}` } }) : '';
+  const ld = !p.is_development && purchasable.length ? JSON.stringify({ '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: p.description.slice(0, 500), image: p.images.map((i) => absUrl(i.url)), offers: { '@type': 'Offer', priceCurrency: p.currency, price: (Math.min(...purchasable.map((v) => v.price_minor)) / 100).toFixed(2), url: `${cfg.siteUrl}/product/${p.slug}` } }) : '';
   return layout(ctx, { title: p.name, desc: (p.summary || p.description).replace(/\s+/g, ' ').slice(0, 155), body, image: main?.url, jsonld: ld, noindex: !!p.is_development });
 }
 
@@ -144,7 +143,7 @@ function cartPage(ctx, ls, t, zones = []) {
   const fees = zones.map((z) => z.fee_minor);
   const body = `<section class="page-head"><div class="wrap"><h1>Your cart</h1></div></section><div class="wrap section">${ls.length ? `
 <div class="cart-layout"><ul class="lines">${ls.map((l) => `<li class="line"><a href="/product/${esc(l.slug)}" tabindex="-1" aria-hidden="true">${l.image ? `<img src="${esc(l.image)}" alt="" width="96" height="96">` : ''}</a>
-<div class="line-main"><a href="/product/${esc(l.slug)}"><strong>${esc(l.name)}</strong></a> ${l.is_development ? '<span class="tag tag-dev">Demo</span>' : ''}<br><span class="muted">${esc(l.variant_label)}${optText(l.options_json) ? ` &middot; ${esc(optText(l.options_json))}` : ''}</span>
+<div class="line-main"><a href="/product/${esc(l.slug)}"><strong>${esc(l.name)}</strong></a><br><span class="muted">${esc(l.variant_label)}${optText(l.options_json) ? ` &middot; ${esc(optText(l.options_json))}` : ''}</span>
 <div class="small">${price(l.price_minor)} each</div>${l.problem ? `<p class="alert" role="alert">${esc(l.problem)}</p>` : ''}
 <div class="line-actions"><form method="post" action="/cart/update" class="qty-form">${csrfField(ctx)}<input type="hidden" name="variant_id" value="${l.variant_id}"><label class="sr" for="q${l.variant_id}">Quantity for ${esc(l.name)}</label><input id="q${l.variant_id}" name="quantity" type="number" min="1" max="20" value="${l.quantity}" inputmode="numeric"><button class="btn btn-small btn-outline" type="submit">Update</button></form>
 <form method="post" action="/cart/remove">${csrfField(ctx)}<input type="hidden" name="variant_id" value="${l.variant_id}"><button class="link-btn" type="submit">Remove<span class="sr"> ${esc(l.name)}</span></button></form></div></div>
@@ -165,7 +164,7 @@ const METHOD = {
 function checkoutPage(ctx, ls, zones, v = {}, e = {}, key, methods = ['paystack'], paystackOn = false, info = {}) {
   const sub = ls.reduce((s, l) => s + l.line_total, 0);
   const zsel = Number(v.zone_id) || zones[0]?.id;
-  const msel = v.payment_method && methods.includes(v.payment_method) ? v.payment_method : methods.includes('paystack') && paystackOn ? 'paystack' : methods[methods.length - 1];
+  const msel = v.payment_method && methods.includes(v.payment_method) ? v.payment_method : 'paystack';
   const z0 = zones.find((z) => z.id === zsel) || zones[0];
   const body = `<section class="page-head"><div class="wrap"><ol class="progress" aria-label="Checkout steps"><li class="done">Cart</li><li aria-current="step">Details</li><li>Review &amp; pay</li></ol><h1>Checkout</h1></div></section>
 <div class="wrap section">${Object.keys(e).length ? '<p class="alert" role="alert">Please correct the highlighted fields.</p>' : ''}
@@ -200,7 +199,7 @@ function orderPage(ctx, o, its, token, x = {}) {
 <p class="status-box" role="status">${esc(ctx.statusText)}</p>
 ${o.needs_attention && o.status !== 'cancelled' && its.some((i) => i.item_status === 'unavailable') ? '<p class="note-dev"><strong>We need your decision on part of this order.</strong> We will contact you by phone or email. Nothing will be substituted or changed without your approval.</p>' : ''}
 ${o.refund_due_minor > 0 ? `<p class="note-dev">A refund of <strong>${money.format(o.refund_due_minor, o.currency)}</strong> is being processed to your original payment method.</p>` : ''}
-${o.is_demo ? '<p class="note-dev">Demonstration order: it contains demo products and/or preliminary delivery charges. It is kept separate from real orders and will not be fulfilled.</p>' : ''}
+${demo ? '<p class="note-dev">Test order placed with the demonstration checkout: no payment was taken and it will not be delivered.</p>' : ''}
 ${estBox}
 <dl class="kv"><dt>Order status</dt><dd>${esc(ctx.labels.order)}</dd><dt>Payment</dt><dd>${esc(ctx.labels.payment)}</dd><dt>Delivery progress</dt><dd>${esc(ctx.labels.fulfil)}</dd><dt>Order date</dt><dd>${esc(dd.formatDateTime(o.created_at))}</dd>
 ${o.tracking_number ? `<dt>Tracking</dt><dd>${esc(o.tracking_number)}${/^https:\/\//.test(o.tracking_url || '') ? ` (<a href="${esc(o.tracking_url)}" rel="noopener noreferrer">track</a>)` : ''}</dd>` : ''}</dl>

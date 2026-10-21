@@ -110,8 +110,8 @@ route('POST', '/cart/remove', (ctx) => { if (!needCsrf(ctx)) return; cart.remove
 // What the checkout page says about timing: payment flow + the 10-day estimate if confirmed today.
 function checkoutInfo() { const d = settings.deliveryDays(); return { timing: settings.paymentTiming(), days: d, ifToday: dd.formatDate(dd.estimate(new Date(), d)) }; }
 function zones() { return q.all('SELECT * FROM delivery_zones WHERE active=1 ORDER BY id'); }
-// Payment methods offered at checkout. "demo" exists only in DEMO_MODE and never takes money.
-function methods() { const m = []; if (paystack.isConfigured() || !cfg.demoMode) m.push('paystack'); if (cfg.demoMode) m.push('demo'); return m; }
+// Payment methods offered at checkout. Paystack is always the customer-facing method; "demo" never takes money.
+function methods() { return cfg.demoCheckout ? ['paystack', 'demo'] : ['paystack']; } // demo option only when DEMO_CHECKOUT=true (testing)
 route('GET', '/checkout', (ctx) => {
   const ls = ctx.cartToken ? cart.lines(ctx.cartToken) : [];
   if (!ls.length) return redirect(ctx, '/cart', { type: 'error', text: 'Your cart is empty.' });
@@ -256,7 +256,7 @@ function createServer() { db.open(); return http.createServer(handle); }
 module.exports = { createServer };
 if (require.main === module) {
   if (cfg.isProd && paystack.mode() === 'test') console.warn('WARNING: production mode but Paystack TEST key in use.');
-  if (cfg.isProd && cfg.demoMode) console.warn('NOTICE: DEMO_MODE is ON in production. Demo products and demonstration orders are enabled. Turn it off before real trading.');
+  if (cfg.isProd && cfg.demoMode) console.warn('NOTICE: DEMO_MODE is ON in production: built-in sample products and unconfirmed delivery fees are allowed.');
   require('./src/bootstrap').bootstrap();
-  createServer().listen(cfg.port, () => console.log(`Nexoraith store running at ${cfg.siteUrl} (${cfg.isProd ? 'production' : 'development'})`));
+  createServer().listen(cfg.port, () => { console.log(`Nexoraith store running at ${cfg.siteUrl} (${cfg.isProd ? 'production' : 'development'})`); require('./src/bootstrap').autoImport(); });
 }

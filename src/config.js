@@ -23,6 +23,11 @@ module.exports = {
   currency: e.STORE_CURRENCY || 'NGN',
   locale: e.STORE_LOCALE || 'en-NG',
   demoMode,
+  // Show the "Demonstration checkout (no payment)" option to customers. OFF unless you set DEMO_CHECKOUT=true (for testing only).
+  demoCheckout: bool(e.DEMO_CHECKOUT, false),
+  // On first start with an empty catalogue, import the DummyJSON catalogue automatically (needs internet).
+  autoImportCatalogue: bool(e.AUTO_IMPORT_DUMMYJSON, true),
+  importRate: Number(e.IMPORT_NGN_PER_USD) > 0 ? Number(e.IMPORT_NGN_PER_USD) : 1500,
   allowDevProducts: bool(e.ALLOW_DEVELOPMENT_PRODUCTS, demoMode),
   allowUnconfirmedDelivery: bool(e.ALLOW_UNCONFIRMED_DELIVERY, demoMode),
   // Uploaded product images. Keep inside the same persistent disk as the database when hosting.

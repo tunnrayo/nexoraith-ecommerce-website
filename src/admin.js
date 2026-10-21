@@ -95,7 +95,7 @@ function register(route, h) {
       ['New inquiries', n("SELECT COUNT(*) n FROM inquiries WHERE status='new'"), '/admin/inquiries', ''],
     ];
     const late = q.all(`SELECT reference, customer_name, estimated_delivery_date FROM orders WHERE status='confirmed' AND fulfillment_status<>'delivered' AND estimated_delivery_date <= ? ORDER BY estimated_delivery_date LIMIT 20`, dd.addDays(dd.localDate(new Date()), 2));
-    const status = `<h2>Setup status</h2><ul><li>Payment timing: <strong>${settings.paymentTiming() === 'review_first' ? 'Review first (you check availability, then request payment)' : 'Pay at checkout'}</strong>; delivery estimate ${settings.deliveryDays()} calendar days after confirmation. <a href="/admin/settings">Change</a></li><li>Paystack: ${paystack.isConfigured() ? `configured (${paystack.mode()} mode); live behaviour not yet verified by this software` : '<strong>NOT configured</strong> (no payments can be taken)'}</li><li>Email notifications: ${notify.isConfigured() ? 'configured (Resend)' : '<strong>NOT configured</strong>: customers are not emailed; messages still appear on their order page'}</li><li>Demo mode ${cfg.demoMode ? '<strong>ON</strong> (demo products and demonstration checkout; demo orders never count as paid)' : 'off'}</li>${cfg.supplierIntegration ? `<li>CJdropshipping tools: ${cj.isConfigured() ? 'API key present (untested)' : 'no API key'}</li>` : ''}</ul>`;
+    const status = `<h2>Setup status</h2><ul><li>Payment timing: <strong>${settings.paymentTiming() === 'review_first' ? 'Review first (you check availability, then request payment)' : 'Pay at checkout'}</strong>; delivery estimate ${settings.deliveryDays()} calendar days after confirmation. <a href="/admin/settings">Change</a></li><li>Paystack: ${paystack.isConfigured() ? `configured (${paystack.mode()} mode); live behaviour not yet verified by this software` : '<strong>NOT configured</strong> (no payments can be taken)'}</li><li>Email notifications: ${notify.isConfigured() ? 'configured (Resend)' : '<strong>NOT configured</strong>: customers are not emailed; messages still appear on their order page'}</li><li>Catalogue: ${q.get("SELECT COUNT(*) n FROM products WHERE status='published' AND is_development=0").n} active products (${q.get("SELECT COUNT(*) n FROM products WHERE source='dummyjson'").n} imported from DummyJSON). <a href="/admin/settings#import">Import</a></li><li>Delivery zones: ${q.get('SELECT COUNT(*) n FROM delivery_zones WHERE active=1 AND confirmed=0').n ? `<strong>${q.get('SELECT COUNT(*) n FROM delivery_zones WHERE active=1 AND confirmed=0').n} not confirmed</strong>${cfg.allowUnconfirmedDelivery ? ' (allowed for now)' : ': checkout refuses them until you tick Confirmed'} <a href="/admin/delivery">Review</a>` : 'all confirmed'}</li><li>Demonstration checkout for testing: ${cfg.demoCheckout ? '<strong>ON</strong> (customers see a no-payment test option; set DEMO_CHECKOUT=false)' : 'off'}</li>${cfg.supplierIntegration ? `<li>CJdropshipping tools: ${cj.isConfigured() ? 'API key present (untested)' : 'no API key'}</li>` : ''}</ul>`;
     h.send(ctx, 200, page(ctx, s, '', 'Dashboard', `<dl class="stats">${stats.map(([k, v, href, c]) => `<div><dt><a href="${href}">${k}</a></dt><dd>${v ? `<span class="${c ? 'badge ' + c : ''}">${v}</span>` : 0}</dd></div>`).join('')}</dl>
 ${late.length ? `<h2>Estimated delivery due within 2 days</h2>${dt(late, [['Order', (o) => `<a href="/admin/orders/${esc(o.reference)}">${esc(o.reference)}</a>`], ['Customer', (o) => esc(o.customer_name)], ['Estimated delivery', (o) => esc(dd.formatDate(o.estimated_delivery_date))]])}<p class="small muted">If you will miss a date, open the order and revise the estimate with a reason: the customer sees it.</p>` : ''}${status}`));
   }));
@@ -208,7 +208,7 @@ ${o.admin_notes.trim() ? `<h2>System notes</h2><pre class="notes">${esc(o.admin_
     if (f.category) { w.push('c.slug=?'); a.push(f.category); }
     if (['draft', 'published', 'archived'].includes(f.status)) { w.push('p.status=?'); a.push(f.status); }
     if (PAVAIL[f.availability]) { w.push('p.availability=?'); a.push(f.availability); }
-    if (f.kind === 'demo') w.push('p.is_development=1'); else if (f.kind === 'real') w.push('p.is_development=0');
+    if (f.kind === 'demo') w.push('p.is_development=1'); else if (f.kind === 'real') w.push('p.is_development=0'); else if (f.kind === 'imported') w.push("p.source='dummyjson'");
     const where = w.length ? 'WHERE ' + w.join(' AND ') : '';
     const total = q.get(`SELECT COUNT(*) n FROM products p LEFT JOIN categories c ON c.id=p.category_id ${where}`, ...a).n; const per = 50; const pages = Math.max(1, Math.ceil(total / per)); const pg = Math.min(f.page, pages);
     const rows = q.all(`SELECT p.*, c.name cat, (SELECT url FROM product_images i WHERE i.product_id=p.id ORDER BY sort_order,id LIMIT 1) img, (SELECT COUNT(*) FROM variants v WHERE v.product_id=p.id) nv, (SELECT MIN(price_minor) FROM variants v WHERE v.product_id=p.id) minp FROM products p LEFT JOIN categories c ON c.id=p.category_id ${where} ORDER BY p.id DESC LIMIT ${per} OFFSET ${(pg - 1) * per}`, ...a);
@@ -217,13 +217,13 @@ ${o.admin_notes.trim() ? `<h2>System notes</h2><pre class="notes">${esc(o.admin_
     const filt = `<form class="filters" method="get" action="/admin/products"><div><label for="q">Search</label><input id="q" name="q" value="${esc(f.q)}" placeholder="Name or SKU"></div><div><label for="category">Category</label><select id="category" name="category"><option value="">Any</option>${cats.map((c) => `<option value="${esc(c.slug)}"${f.category === c.slug ? ' selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>
 <div><label for="status">Visibility</label><select id="status" name="status"><option value="">Any</option><option value="published"${f.status === 'published' ? ' selected' : ''}>Active (visible)</option><option value="draft"${f.status === 'draft' ? ' selected' : ''}>Inactive (hidden)</option><option value="archived"${f.status === 'archived' ? ' selected' : ''}>Archived</option></select></div>
 <div><label for="availability">Availability</label><select id="availability" name="availability"><option value="">Any</option>${Object.entries(PAVAIL).map(([k, v]) => `<option value="${k}"${f.availability === k ? ' selected' : ''}>${v}</option>`).join('')}</select></div>
-<div><label for="kind">Type</label><select id="kind" name="kind"><option value="">Any</option><option value="real"${f.kind === 'real' ? ' selected' : ''}>My products</option><option value="demo"${f.kind === 'demo' ? ' selected' : ''}>Demo products</option></select></div><div class="filters-actions"><button class="btn" type="submit">Filter</button> <a class="btn btn-outline" href="/admin/products">Clear</a></div></form>`;
+<div><label for="kind">Type</label><select id="kind" name="kind"><option value="">Any</option><option value="real"${f.kind === 'real' ? ' selected' : ''}>Catalogue products</option><option value="demo"${f.kind === 'demo' ? ' selected' : ''}>Built-in samples</option><option value="imported"${f.kind === 'imported' ? ' selected' : ''}>Imported from DummyJSON</option></select></div><div class="filters-actions"><button class="btn" type="submit">Filter</button> <a class="btn btn-outline" href="/admin/products">Clear</a></div></form>`;
     const quick = (p) => `<form method="post" action="/admin/products/${p.id}/quick" class="inline">${csrf(s)}<input type="hidden" name="back" value="${esc(qs({}))}"><select name="availability" aria-label="Availability of ${esc(p.name)}">${Object.entries(PAVAIL).map(([k, v]) => `<option value="${k}"${p.availability === k ? ' selected' : ''}>${v}</option>`).join('')}</select> <select name="status" aria-label="Visibility of ${esc(p.name)}"><option value="published"${p.status === 'published' ? ' selected' : ''}>Active</option><option value="draft"${p.status === 'draft' ? ' selected' : ''}>Inactive</option><option value="archived"${p.status === 'archived' ? ' selected' : ''}>Archived</option></select> <button class="btn btn-small btn-outline" type="submit">Save</button></form>`;
-    h.send(ctx, 200, page(ctx, s, 'products', 'Products', `<p><a class="btn" href="/admin/products/new">+ Add product</a> <a class="btn btn-outline" href="/admin/settings#import">Import demo products</a></p>${filt}<p class="muted">${total} product(s)</p>` + dt(rows, [
+    h.send(ctx, 200, page(ctx, s, 'products', 'Products', `<p><a class="btn" href="/admin/products/new">+ Add product</a> <a class="btn btn-outline" href="/admin/settings#import">Import catalogue</a></p>${filt}<p class="muted">${total} product(s)</p>` + dt(rows, [
       ['', (p) => p.img ? `<img src="${esc(p.img)}" alt="" width="48" height="48" class="thumb48">` : ''],
-      ['Name', (p) => `<a href="/admin/products/${p.id}">${esc(p.name)}</a>${p.is_development ? ' <span class="badge b-warn">demo</span>' : ''}`], ['Category', (p) => esc(p.cat || '')], ['Price', (p) => p.minp == null ? '' : money.format(p.minp, p.currency) + (p.nv > 1 ? ` <span class="small muted">(${p.nv} options)</span>` : '')],
+      ['Name', (p) => `<a href="/admin/products/${p.id}">${esc(p.name)}</a>${p.is_development ? ' <span class="badge b-warn">built-in sample</span>' : ''}${p.source === 'dummyjson' ? ` <span class="badge b-info">imported${p.admin_edited_at ? ', edited' : ''}</span>` : ''}`], ['Category', (p) => esc(p.cat || '')], ['Price', (p) => p.minp == null ? '' : money.format(p.minp, p.currency) + (p.nv > 1 ? ` <span class="small muted">(${p.nv} options)</span>` : '')],
       ['Availability / visibility', quick], ['Updated', (p) => esc(dd.formatDateTime(p.updated_at))],
-    ]) + (pages > 1 ? `<nav class="pager">${pg > 1 ? `<a class="btn btn-outline" href="${esc(qs({ page: pg - 1 }))}">Previous</a>` : ''}<span>Page ${pg} of ${pages}</span>${pg < pages ? `<a class="btn btn-outline" href="${esc(qs({ page: pg + 1 }))}">Next</a>` : ''}</nav>` : '') + '<p class="small muted">Bulk import: <code>npm run import</code> (your own JSON file) or <code>npm run import:dummyjson</code> (demo data). See PRODUCT_CATALOG_GUIDE.md.</p>'));
+    ]) + (pages > 1 ? `<nav class="pager">${pg > 1 ? `<a class="btn btn-outline" href="${esc(qs({ page: pg - 1 }))}">Previous</a>` : ''}<span>Page ${pg} of ${pages}</span>${pg < pages ? `<a class="btn btn-outline" href="${esc(qs({ page: pg + 1 }))}">Next</a>` : ''}</nav>` : '') + '<p class="small muted">Bulk import: <code>npm run import</code> (your own JSON file) or <code>npm run import:dummyjson</code> (DummyJSON catalogue). See PRODUCT_CATALOG_GUIDE.md.</p>'));
   }));
   route('POST', '/admin/products/:id/quick', guard((ctx) => {
     const id = Number(ctx.params.id); const b = ctx.body; ctx.back = /^\/admin\/products(\?|$)/.test(b.back || '') ? b.back : '/admin/products';
@@ -242,7 +242,7 @@ ${o.admin_notes.trim() ? `<h2>System notes</h2><pre class="notes">${esc(o.admin_
 <div class="field"><label for="category_id">Category</label><select id="category_id" name="category_id"><option value="">None</option>${cats.map((c) => `<option value="${c.id}"${c.id === p.category_id ? ' selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>
 <div class="field"><label for="status">Visibility</label><select id="status" name="status">${[['published', 'Active (visible in the shop)'], ['draft', 'Inactive (hidden)'], ['archived', 'Archived']].map(([x, t]) => `<option value="${x}"${x === p.status ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
 <div class="field"><label for="pavail">Availability</label><select id="pavail" name="availability">${Object.entries(PAVAIL).map(([k, v]) => `<option value="${k}"${p.availability === k ? ' selected' : ''}>${v}</option>`).join('')}</select><p class="small muted">Your own setting. "Temporarily unavailable" stays visible but cannot be ordered; "Discontinued" is hidden from the shop.</p></div>
-${p.source === 'dummyjson' ? '<p class="note-dev">Imported from DummyJSON demo data. Price is a sample; check and replace the name, photos, description and price with what you can really source.</p>' : ''}
+${p.source === 'dummyjson' ? `<p class="note-dev"><strong>Imported from DummyJSON</strong> (${esc(p.source_ref)}). Price converted: ${esc(p.source_price_text || 'see import')}. This is not a verified Nigerian market price: adjust it if needed. ${p.admin_edited_at ? `You edited this product on ${esc(dd.formatDateTime(p.admin_edited_at))}, so re-imports will not change it.` : 'Re-imports may refresh it until you save a change here.'}</p>` : ''}
 <p class="small muted">Created ${esc(dd.formatDateTime(p.created_at))} &middot; updated ${esc(dd.formatDateTime(p.updated_at))}</p>
 <h2>Options (variants)</h2><p class="small muted">Each option is one exact item a customer can choose (for example "Black, size 42"). Customers order exactly these.</p>${vs.map((v) => `<fieldset class="vfs"><legend>${esc(v.sku)}: ${esc(v.label)}</legend>
 <div class="field"><label for="p${v.id}">Retail price (${esc(p.currency)})</label><input id="p${v.id}" name="price_${v.id}" value="${money.toMajorString(v.price_minor)}" inputmode="decimal" required></div>
@@ -281,7 +281,7 @@ ${cfg.supplierIntegration ? `<p class="small muted"><strong>CJ mapping</strong> 
     if (b.status === 'published' && !vs.length) throw new UserError('Add at least one variant before publishing.');
     if (!PAVAIL[b.availability]) throw new UserError('Invalid availability.');
     tx(() => {
-      q.run("UPDATE products SET name=?, summary=?, description=?, category_id=?, status=?, availability=?, is_development=?, updated_at=datetime('now') WHERE id=?", name, String(b.summary || '').trim().slice(0, 160), String(b.description || '').slice(0, 4000), b.category_id ? Number(b.category_id) : null, b.status, b.availability, b.is_development ? 1 : 0, id);
+      q.run("UPDATE products SET name=?, summary=?, description=?, category_id=?, status=?, availability=?, is_development=?, admin_edited_at=datetime('now'), updated_at=datetime('now') WHERE id=?", name, String(b.summary || '').trim().slice(0, 160), String(b.description || '').slice(0, 4000), b.category_id ? Number(b.category_id) : null, b.status, b.availability, b.is_development ? 1 : 0, id);
       for (const d of del) q.run('DELETE FROM variants WHERE id=? AND product_id=?', d, id);
       for (const u of upd) {
         q.run("UPDATE variants SET label=?, options_json=?, price_minor=?, availability=?, stock_qty=?, updated_at=datetime('now') WHERE id=?", u.label, JSON.stringify(u.opts), u.pr, u.av, u.st, u.id);
@@ -311,6 +311,8 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
     return { sku, label, pr, av, st: st === '' ? null : Number(st), opts: readOptions(b, '') };
   }
   const insertVariant = (pid, v) => q.run("INSERT INTO variants(product_id,sku,label,options_json,price_minor,availability,stock_qty,sort_order) VALUES(?,?,?,?,?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM variants WHERE product_id=?))", pid, v.sku, v.label, JSON.stringify(v.opts || {}), v.pr, v.av, v.st, pid);
+  // Remember that the owner changed this product, so a later catalogue re-import never overwrites it.
+  const edited = (id) => q.run("UPDATE products SET admin_edited_at=datetime('now'), updated_at=datetime('now') WHERE id=?", id);
   function readOptions(b, suffix) { const o = {}; for (const k of OPTION_KEYS) { const x = String(b[`opt_${k}${suffix}`] ?? '').trim().slice(0, 60); if (x) o[k] = x; } return o; }
 
   route('GET', '/admin/products/new', guard((ctx, s) => {
@@ -322,7 +324,7 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
 <div class="field"><label for="description">Description</label><textarea id="description" name="description" rows="5" maxlength="4000"></textarea></div>
 <div class="field"><label for="category_id">Category</label><select id="category_id" name="category_id"><option value="">None</option>${cats.map((c) => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
 <div class="field"><label for="status">Visibility</label><select id="status" name="status"><option value="draft">Inactive (hidden) for now</option><option value="published">Active (visible in the shop)</option></select></div>
-<label><input type="checkbox" name="is_development" value="1"${cfg.demoMode ? ' checked' : ''}> Demo / sample product</label>
+<label><input type="checkbox" name="is_development" value="1"> Test product only (hidden from customers when demo mode is off)</label>
 <h2>First option (variant)</h2><div class="admin-grid">${variantFields()}</div><button class="btn" type="submit">Create product</button></form>`));
   }));
   route('POST', '/admin/products/new', guard((ctx) => {
@@ -342,7 +344,7 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
   route('POST', '/admin/products/:id/variants', guard((ctx) => {
     const id = Number(ctx.params.id); ctx.back = `/admin/products/${id}`;
     if (!q.get('SELECT 1 x FROM products WHERE id=?', id)) return h.send(ctx, 404, h.notFound(ctx));
-    insertVariant(id, readVariant(ctx.body));
+    insertVariant(id, readVariant(ctx.body)); edited(id);
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Variant added.' });
   }));
   route('POST', '/admin/products/:id/images', guard((ctx) => {
@@ -355,7 +357,7 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
     fs.mkdirSync(cfg.uploadDir, { recursive: true });
     const name = `p${id}-${rand(9).replace(/[^A-Za-z0-9]/g, 'x')}.${ext}`;
     fs.writeFileSync(path.join(cfg.uploadDir, name), f.data);
-    q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM product_images WHERE product_id=?))', id, `/uploads/${name}`, String(ctx.body.alt || '').trim().slice(0, 150), id);
+    q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM product_images WHERE product_id=?))', id, `/uploads/${name}`, String(ctx.body.alt || '').trim().slice(0, 150), id); edited(id);
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Image uploaded.' });
   }));
   route('POST', '/admin/products/:id/image-url', guard((ctx) => {
@@ -364,19 +366,19 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
     let u; try { u = new URL(String(ctx.body.url || '').trim()); } catch { throw new UserError('Enter a full web address starting with https://'); }
     if (u.protocol !== 'https:' || !cfg.imageHosts.includes(u.origin)) throw new UserError(`Images by link must come from an allowed host (${cfg.imageHosts.join(', ') || 'none configured'}). Otherwise upload the photo instead.`);
     q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM product_images WHERE product_id=?))', id, u.href, String(ctx.body.alt || '').trim().slice(0, 150), id);
-    q.run("UPDATE products SET updated_at=datetime('now') WHERE id=?", id);
+    edited(id);
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Image link added.' });
   }));
   route('POST', '/admin/products/:id/images/:img/delete', guard((ctx) => {
     const id = Number(ctx.params.id); ctx.back = `/admin/products/${id}`;
     const im = q.get('SELECT * FROM product_images WHERE id=? AND product_id=?', Number(ctx.params.img), id); if (!im) throw new UserError('Image not found.');
-    q.run('DELETE FROM product_images WHERE id=?', im.id);
+    q.run('DELETE FROM product_images WHERE id=?', im.id); edited(id);
     if (im.url.startsWith('/uploads/') && !q.get('SELECT 1 x FROM product_images WHERE url=?', im.url)) { try { fs.unlinkSync(path.join(cfg.uploadDir, path.basename(im.url))); } catch { /* already gone */ } }
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Image removed.' });
   }));
   route('POST', '/admin/products/:id/images/:img/main', guard((ctx) => {
     const id = Number(ctx.params.id); ctx.back = `/admin/products/${id}`;
-    tx(() => { q.run('UPDATE product_images SET sort_order=sort_order+1 WHERE product_id=?', id); q.run('UPDATE product_images SET sort_order=0 WHERE id=? AND product_id=?', Number(ctx.params.img), id); });
+    tx(() => { q.run('UPDATE product_images SET sort_order=sort_order+1 WHERE product_id=?', id); q.run('UPDATE product_images SET sort_order=0 WHERE id=? AND product_id=?', Number(ctx.params.img), id); }); edited(id);
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Main image changed.' });
   }));
 
@@ -453,11 +455,11 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
 <div class="field"><label for="days">Estimated delivery: calendar days after confirmation</label><input id="days" name="delivery_days" inputmode="numeric" value="${settings.deliveryDays()}" maxlength="2"><p class="small muted">An order is confirmed when its payment is verified. Each order keeps the date calculated at its confirmation (changing this only affects new confirmations). Timezone: ${esc(cfg.timezone)}.</p></div>
 <div class="field"><label for="oe">Email me about new orders and payments (optional)</label><input id="oe" name="owner_email" type="email" value="${esc(settings.ownerEmail())}" placeholder="${esc(cfg.company.email)}"><p class="small muted">${notify.isConfigured() ? 'Email service is configured.' : 'Emails are not sent until RESEND_API_KEY and EMAIL_FROM are set (see README).'}</p></div>
 <p class="small muted">Changes apply to new orders only; existing orders keep their own payment timing.</p><button class="btn" type="submit">Save settings</button></form>
-<div class="card-a" id="import"><h2>Demonstration products (DummyJSON)</h2><p>Imports up to 200 sample products (names, descriptions, categories and image links) from <a href="https://dummyjson.com/docs/products" rel="noopener noreferrer">DummyJSON</a>. They are marked <strong>demo</strong>. DummyJSON is <strong>not a supplier</strong>: its prices are converted to sample Naira prices with the rate you choose, and its stock, ratings, reviews and shipping claims are <strong>not</strong> imported. Review every product before launch.</p>
-<p class="small muted">Already imported: ${dj}. Re-importing skips products already imported (your edits are kept) unless you tick "update".</p>
-<form method="post" action="/admin/settings/import-dummyjson" class="inline-form">${csrf(s)}<div class="field"><label for="lim">How many</label><input id="lim" name="limit" value="200" inputmode="numeric" maxlength="3"></div><div class="field"><label for="rate">Sample conversion (NGN per 1.00 of the demo price)</label><input id="rate" name="rate" value="1500" inputmode="decimal" maxlength="6"></div>
-<label class="small"><input type="checkbox" name="update" value="1"> Update products already imported (overwrites your edits)</label><label class="small"><input type="checkbox" name="download" value="1"> Save copies of the images on this server</label><button class="btn" type="submit">Import demo products</button></form></div>
-<div class="card-a"><h2>Before launch</h2><p>${demoCount} demo product(s) are not archived.</p><form method="post" action="/admin/settings/archive-demo" class="inline-form">${csrf(s)}<label class="small"><input type="checkbox" name="confirm" value="yes" required> Archive (hide) ALL demo products. Past orders are kept.</label><button class="btn btn-outline" type="submit">Archive demo products</button></form></div>`));
+<div class="card-a" id="import"><h2>Catalogue import (DummyJSON)</h2><p>Imports up to 200 products (names, descriptions, categories, prices and image links) from <a href="https://dummyjson.com/docs/products" rel="noopener noreferrer">DummyJSON</a> into your own database, where they appear as your normal catalogue. Prices are converted at the rate below (default NGN 1,500 per US dollar) and saved in Naira. DummyJSON is <strong>not a supplier</strong> and these are <strong>not verified Nigerian market prices</strong>: you still check each order's items in the market before requesting payment. Ratings, reviews, stock figures and shipping or warranty claims are not imported.</p>
+<p class="small muted">Imported so far: ${dj}. Re-importing adds missing products only. "Refresh" also updates imported products you have <strong>not</strong> edited; products you edited are never overwritten.</p>
+<form method="post" action="/admin/settings/import-dummyjson" class="inline-form">${csrf(s)}<div class="field"><label for="lim">How many</label><input id="lim" name="limit" value="200" inputmode="numeric" maxlength="3"></div><div class="field"><label for="rate">NGN per 1 US dollar</label><input id="rate" name="rate" value="${cfg.importRate}" inputmode="decimal" maxlength="6"></div>
+<label class="small"><input type="checkbox" name="update" value="1"> Refresh imported products I have not edited</label><label class="small"><input type="checkbox" name="download" value="1"> Save copies of the images on this server</label><button class="btn" type="submit">Import catalogue</button></form></div>
+<div class="card-a"><h2>Built-in sample products</h2><p>${demoCount} built-in sample illustration(s) are not archived. They are hidden automatically after a catalogue import.</p><form method="post" action="/admin/settings/archive-demo" class="inline-form">${csrf(s)}<label class="small"><input type="checkbox" name="confirm" value="yes" required> Archive (hide) all built-in samples. Past orders are kept.</label><button class="btn btn-outline" type="submit">Archive samples</button></form></div>`));
   }));
   route('POST', '/admin/settings', guard((ctx) => {
     ctx.back = '/admin/settings'; const b = ctx.body;
@@ -471,9 +473,9 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
     ctx.back = '/admin/settings#import';
     if (!rateLimit(`dj:${ctx.ip}`, 5, 10 * 60 * 1000)) throw new UserError('Please wait a few minutes before importing again.');
     const { importDummyJson } = require('./importers/dummyjson');
-    let r; try { r = await importDummyJson({ limit: ctx.body.limit, rate: ctx.body.rate, update: !!ctx.body.update, downloadImages: !!ctx.body.download }); }
+    let r; try { r = await importDummyJson({ limit: ctx.body.limit, rate: Number(ctx.body.rate) > 0 ? Number(ctx.body.rate) : undefined, update: !!ctx.body.update, downloadImages: !!ctx.body.download }); }
     catch (e) { throw new UserError(e.message); }
-    h.redirect(ctx, ctx.back, { type: r.failed.length ? 'error' : 'ok', text: `DummyJSON: fetched ${r.fetched}; created ${r.created}, updated ${r.updated}, skipped ${r.skipped}, failed ${r.failed.length}${r.failed.length ? ` (first: ${r.failed[0].item}: ${r.failed[0].errors.join(', ')})` : ''}.` });
+    h.redirect(ctx, ctx.back, { type: r.failed.length ? 'error' : 'ok', text: `DummyJSON: fetched ${r.fetched}; created ${r.created}, updated ${r.updated}, skipped ${r.skipped}, kept your edits ${r.keptEdits}, failed ${r.failed.length}; built-in samples hidden ${r.samplesArchived}${r.failed.length ? ` (first: ${r.failed[0].item}: ${r.failed[0].errors.join(', ')})` : ''}.` });
   }));
   route('POST', '/admin/settings/archive-demo', guard((ctx) => {
     ctx.back = '/admin/settings'; if (ctx.body.confirm !== 'yes') throw new UserError('Tick the box to confirm.');

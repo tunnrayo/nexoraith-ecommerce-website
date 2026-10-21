@@ -1,8 +1,9 @@
 # Product Catalogue Guide
-**Demo data** in `data/dev-catalog.json` is for presentation/testing only (12 products, SKUs start `DEV-`, flagged `is_development`, images labelled DEMO IMAGE). It is shown only when `DEMO_MODE` is on and is never sellable as real stock.
+**Built-in samples** in `data/dev-catalog.json` (12 illustrations, SKUs `DEV-`) are for offline testing only (`npm run seed -- --samples`); they are hidden automatically once the DummyJSON catalogue is imported.
 
-## Demo products from DummyJSON
-`npm run import:dummyjson` (or Admin > Settings > Import demo products) loads up to 200 sample products. Options: `--limit=200`, `--rate=1500` (NGN per 1.00 of DummyJSON's sample price; an arbitrary demonstration conversion, **not** a market price), `--update` (overwrite products already imported, including your edits), `--download-images` (save copies on your server instead of linking to cdn.dummyjson.com), `--draft` (import hidden). They are demo products: review, replace or archive them before launch (Admin > Settings > Archive demo products).
+## Your catalogue comes from DummyJSON
+`npm run seed`, `npm run import:dummyjson`, Admin > Settings > **Import catalogue**, or the automatic first-start import load up to 200 products into your database as normal catalogue products. Price = DummyJSON price (USD) x NGN 1,500 exactly (change with `--rate=` / the admin field / `IMPORT_NGN_PER_USD`). The source price is shown to you on each product's admin page. These are not verified Nigerian market prices: edit any price, name, description or photo in Admin; edited products are never overwritten by re-imports. `--update` (or "Refresh imported products I have not edited") refreshes only products you have not edited. Re-imports never change availability or visibility, and never touch orders or payments. Products that DummyJSON renames are matched by their DummyJSON id, so no duplicates are created.
+Ratings, reviews, stock numbers and shipping/warranty/return text from DummyJSON are never imported or shown.
 
 ## Easiest way: Admin
 Admin > Products > **+ Add product** (name, short description, description, category, first option and price), then upload photos on the product page and add more options. Leave status `draft` until checked, then `published`.

@@ -122,6 +122,16 @@ CREATE INDEX idx_events_order ON order_events(order_id, id);
 -- Outgoing notifications (email). status records whether it was actually sent.
 CREATE TABLE notifications(id INTEGER PRIMARY KEY, order_id INTEGER REFERENCES orders(id) ON DELETE SET NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')),
   channel TEXT NOT NULL DEFAULT 'email', recipient TEXT NOT NULL, subject TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN('sent','skipped','failed')), detail TEXT NOT NULL DEFAULT '');
+`, `
+-- v4 (2026-10-21): imported DummyJSON products become the regular catalogue. Track owner edits so re-imports never overwrite them.
+ALTER TABLE products ADD COLUMN admin_edited_at TEXT;
+ALTER TABLE products ADD COLUMN source_ref TEXT NOT NULL DEFAULT '';
+ALTER TABLE products ADD COLUMN source_price_text TEXT NOT NULL DEFAULT '';
+UPDATE products SET is_development=0,
+  description=replace(description, char(10)||char(10)||'DEMONSTRATION PRODUCT imported from DummyJSON sample data. Not verified for sale; price is a sample.', '')
+  WHERE source='dummyjson';
+UPDATE product_images SET alt=substr(alt, 1, instr(alt, ' (demo image ')-1)
+  WHERE instr(alt, ' (demo image ')>0 AND product_id IN (SELECT id FROM products WHERE source='dummyjson');
 `];
 
 let db;

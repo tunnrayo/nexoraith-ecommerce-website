@@ -12,8 +12,8 @@ Needed from the owner: Paystack account + business verification, test secret key
 ## Email (Resend)
 **Status: implemented; tested only against a local stand-in server.** Per https://resend.com/docs/api-reference/emails/send-email : `POST https://api.resend.com/emails`, `Authorization: Bearer re_...`, JSON `from`, `to`, `subject`, `html`, `text`. Without `RESEND_API_KEY` + `EMAIL_FROM` nothing is sent and each message is logged as "skipped"; failures are logged and never block orders. Needs a verified sending domain in Resend.
 
-## DummyJSON (demo catalogue only)
-**Status: importer implemented; tested against a local imitation of the documented format** (https://dummyjson.com/docs/products: `products`, `total`, `skip`, `limit`; `limit`/`skip` paging). The build environment cannot reach dummyjson.com, so the real fetch has not been run here. Imported: title, description, brand, category, sample price (converted with a stated rate), image URLs from allowed hosts. Not imported: ratings, reviews, stock, availabilityStatus, shipping/warranty/return text. Products are stored in our database and marked demo; customers never call DummyJSON.
+## DummyJSON (source of the store catalogue)
+**Status: importer implemented; tested against a local imitation of the documented format** (https://dummyjson.com/docs/products: `products`, `total`, `skip`, `limit`; paging with `limit`/`skip`). The build environment cannot reach dummyjson.com or cdn.dummyjson.com, so the real fetch and real images have not been seen here. Imported: title, description, brand, category, price (USD x NGN 1,500, exact), image URLs from allowed hosts. Not imported: ratings, reviews, stock, availabilityStatus, shipping/warranty/return text. Products live in our database as the regular catalogue; customers never call DummyJSON; images are hot-linked from cdn.dummyjson.com unless "save copies" is chosen. DummyJSON is not a supplier: availability of each ordered item is checked by the owner in the market (review-first workflow).
 
 ## Hosting (Railway)
 Prepared only (`railway.json`, README section 8). Not deployed; no Railway resources created.

@@ -1,4 +1,10 @@
 # Changelog
+## 0.4.0 - 2026-10-21
+- DummyJSON products become the regular storefront catalogue: exact NGN 1,500/USD prices, no demo flag, auto-import on first start, seed imports.
+- Removed all customer-facing demo presentation (banner, ribbons, notices, demo tags); demonstration checkout only with DEMO_CHECKOUT=true.
+- Re-import matches by DummyJSON id/SKU, never overwrites admin-edited products (admin_edited_at), never changes availability; built-in samples hidden after import.
+- Catalogue orders no longer flagged demo because of preliminary delivery fees. JSON-LD without stock claims.
+- Migration v4 (existing imports converted, demo text removed). Tests: 39.
 ## 0.3.0 - 2026-10-21
 - Business model changed to self-sourcing: review-first (default) or pay-first payment timing; request-payment step; confirmation = payment verified.
 - 10-day delivery estimate stored at confirmation (Africa/Lagos), revisable with reason; shown to customer and admin.

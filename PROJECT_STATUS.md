@@ -1,8 +1,14 @@
-# Project Status (updated 2026-10-21, v0.3.0)
+# Project Status (updated 2026-10-21, v0.4.0)
 
 **Business model (owner instruction, 2026-10-21):** customers order exact items; the owner sources them personally in the market and arranges delivery. No dropshipping, no automatic supplier fulfilment. DummyJSON is only a temporary source of demo product data.
 
-## Completed AND tested (35 automated tests + real-browser run, local, demo data)
+## v0.4 (owner instruction 2026-10-21): imported DummyJSON products are the regular catalogue
+- Imported products are normal catalogue items (not flagged demo), priced exactly at NGN 1,500 per USD (e.g. 9.99 USD = NGN 14,985.00), saved in the database with the source price recorded for the admin. First start with an empty catalogue imports automatically; `npm run seed` imports; Admin > Settings > Import catalogue.
+- All customer-facing demo wording removed (banner, ribbons, notices, "demo" tags, demonstration checkout option). Demonstration checkout only with `DEMO_CHECKOUT=true` (testing). Built-in sample illustrations are hidden automatically once the catalogue is imported.
+- Re-imports: match by DummyJSON id, then SKU, then web address; never overwrite products edited in Admin; never change availability or visibility; orders and payments untouched. JSON-LD no longer claims "InStock".
+- Catalogue orders are real orders (no longer flagged demo because a delivery fee is preliminary).
+
+## Completed AND tested (39 automated tests + real-browser runs, local)
 - Storefront (unchanged design: navy + champagne gold, teal for actions): home, shop (search, category chips/filter, sort, 24 per page), product pages (gallery, exact options with Colour/Size/Model values, quantity, store-owned availability), cart, checkout (contact, delivery zone + fee, address, country, instructions, payment method, payment-timing explanation, 10-day estimate preview), order page, track order, contact, info pages.
 - **Exact order records**: each line stores product name, option label, option values, SKU, unit price, quantity, line total and image reference; order stores customer contact, address, instructions, totals, currency, dates, payment status. Shown to the customer and in Admin.
 - **Workflow**: review-first (default) or pay-first (Admin > Settings); request payment only after every item is marked available; payment marked confirmed only after Paystack verification (webhook signature + amount/currency check, idempotent); confirmation = payment verified; failed/abandoned payments never confirm.
@@ -16,7 +22,7 @@
 
 ## Built but UNVERIFIED (needs credentials or the real internet)
 - Paystack initialize/verify against the real service; real webhook delivery; Mastercard acceptance depends on the merchant account.
-- Live DummyJSON fetch (the build environment blocks the site; tested with a local imitation of its documented format).
+- Live DummyJSON fetch and its product images (the build environment blocks dummyjson.com and cdn.dummyjson.com; tested with a local imitation of the documented format, so images showed the placeholder here).
 - Resend email delivery to real inboxes.
 - Railway deployment (prepared; not deployed by request).
 
@@ -31,4 +37,4 @@
 - Real products/photos/prices; confirmed delivery fees; approved policy text; logo source files; company address/phone decision.
 
 ## Assumptions (documented, changeable)
-Currency NGN; review-first default; 10 calendar days; Africa/Lagos; preliminary delivery Lagos NGN 2,500 / other Nigeria NGN 4,500; DummyJSON sample price conversion NGN 1,500 per 1.00 (arbitrary, not a market rate).
+Currency NGN; review-first default; 10 calendar days; Africa/Lagos; preliminary delivery Lagos NGN 2,500 / other Nigeria NGN 4,500 (must be ticked Confirmed for production checkout); catalogue prices = DummyJSON USD x NGN 1,500 (owner's chosen conversion; not verified local market prices).

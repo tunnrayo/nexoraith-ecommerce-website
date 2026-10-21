@@ -1,8 +1,8 @@
 # Nexoraith Absolute Ventures Ltd - Online Store
 
-An online store where customers choose **exactly** what they want, and the owner personally sources those exact items in the market and arranges delivery. Includes the storefront, cart, checkout, order management dashboard, Paystack card payments (Mastercard, Visa, Verve where enabled on your Paystack account), a 10-day delivery estimate, customer messages and optional email.
+An online store where customers choose **exactly** what they want from the catalogue (imported from DummyJSON, priced in Naira at NGN 1,500 per US dollar), and the owner personally sources those exact items in the market and arranges delivery. Includes the storefront, cart, checkout, order management dashboard, Paystack card payments (Mastercard, Visa, Verve where enabled on your Paystack account), a 10-day delivery estimate, customer messages and optional email.
 
-**Honest status:** built and automatically tested on a computer with demo data. Paystack and email have **not** been connected to real accounts (no keys yet). The website has **not** been deployed. Read `PROJECT_STATUS.md` before launching.
+**Honest status:** built and automatically tested on a computer. Paystack and email have **not** been connected to real accounts (no keys yet). The website has **not** been deployed. Read `PROJECT_STATUS.md` before launching.
 
 Company: Nexoraith Absolute Ventures Ltd, RC 9921594, NEXORAITHABSOLUTEVENTURES@GMAIL.COM
 
@@ -27,13 +27,13 @@ Statuses are kept separate: **Order** (Pending review, Awaiting payment, Order c
 2. Check Node: `node -v` should show `v22.x` or higher.
 3. Go to the project folder: `cd path/to/nexoraith-ecommerce-website` (tip: type `cd ` then drag the folder into the window).
 4. Copy the settings template. Mac/Linux: `cp .env.example .env` Windows: `copy .env.example .env`
-5. Create the database and load the demo products and delivery zones:
+5. Create the database, the delivery zones and the catalogue (needs internet for the catalogue):
    ```
    npm run migrate
    npm run seed
    ```
-   Expected: `Database is up to date at schema version 3` and `Demo catalogue: created 12 ...`.
-6. (Optional, needs internet) Import about 194 demo products from DummyJSON: `npm run import:dummyjson`. Expected: `Fetched 194. Created 194 ...`. You can also do this later from **Admin > Settings > Import demo products**.
+   Expected: `Database is up to date at schema version 4`, then `Catalogue from DummyJSON: fetched 194; created 194 ...`. If you are offline, run `npm run seed` again later or use **Admin > Settings > Import catalogue**. (Offline testing only: `npm run seed -- --samples` adds 12 built-in sample illustrations, hidden again once the catalogue is imported.)
+6. If you imported products with an older version of this store, open **Admin > Settings**, tick "Refresh imported products I have not edited" and click **Import catalogue** once, so every price uses the exact NGN 1,500 conversion.
 7. Create your admin login (12+ character password):
    - Mac/Linux: `ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='your-long-password' npm run create-admin`
    - Windows PowerShell: `$env:ADMIN_EMAIL="you@example.com"; $env:ADMIN_PASSWORD="your-long-password"; npm run create-admin`
@@ -50,11 +50,11 @@ Statuses are kept separate: **Order** (Pending review, Awaiting payment, Order c
 - Product images show "Image not available" -> the image link is broken or blocked; upload a photo in Admin > Products.
 - Admin login says "Incorrect" -> rerun step 7 (it resets that admin's password).
 
-## 3. Try the whole workflow (demo mode)
-Demo mode is on automatically on your computer. As a customer: pick a product and option -> Add to cart -> Checkout -> choose **Demonstration checkout** -> Place order. As the owner (in another browser window): Admin > Orders > open the order -> mark items **Available in market** -> **Request payment**. Back as the customer: refresh the order page -> **Complete demonstration payment** -> you see the confirmation and the estimated delivery date. As the owner: move fulfilment to Sourcing, mark items Secured, then Out for delivery and Delivered. Demo orders never count as paid and are labelled DEMO.
+## 3. Try the whole workflow
+As a customer: pick a product and option -> Add to cart -> Checkout -> Place order (no payment yet). As the owner (in another browser window): Admin > Orders > open the order -> mark items **Available in market** -> **Request payment**. The customer's order page now shows the Pay button (once Paystack keys are set; until then it says online payment is not switched on). To rehearse the payment step without Paystack, set `DEMO_CHECKOUT=true` on your computer: customers then also see a clearly labelled "Demonstration checkout (no payment)"; such orders are labelled DEMO in Admin and never count as paid. Leave it `false` on the live site.
 
 ## 4. Run the automated tests
-`npm test` (expect `# pass 35`, `# fail 0`). Details in `TESTING.md`.
+`npm test` (expect `# pass 39`, `# fail 0`). Details in `TESTING.md`.
 
 ## 5. Turn on payments (Paystack, Mastercard)
 1. Create a Paystack account at https://paystack.com and complete **business verification** (typically your CAC registration (RC 9921594), director ID and a business bank account; Paystack shows the exact list in your dashboard). Card payments, including Mastercard, are part of Paystack's "card" channel once your account is activated.
@@ -79,14 +79,15 @@ Without email, customers still see every update on their private order page. To 
 `railway.json` (start `npm start`, health check `/health`) and `.node-version` (Node 22) are included. On first start the server creates its tables, loads the 12 demo products if `DEMO_MODE=true` and the store is empty, and creates the first admin from `ADMIN_EMAIL`/`ADMIN_PASSWORD` if none exists. No terminal is needed on Railway.
 1. Railway: New Project > Deploy from GitHub repo > `tunnrayo/nexoraith-ecommerce-website`. (Railway does not need a separate database service: the database is a file.)
 2. Add a **Volume** to the service, mount path `/data`. Without it, every redeploy wipes orders.
-3. Variables: `NODE_ENV=production`, `DATABASE_PATH=/data/nexoraith.db`, `UPLOAD_DIR=/data/uploads`, `SITE_URL=https://<your Railway or custom domain>` (no trailing slash), `DEMO_MODE=true` for a presentation (set `false` before real trading), `ADMIN_EMAIL` + `ADMIN_PASSWORD` (delete the password after the first start), `PAYMENT_TIMING=review_first`, `BUSINESS_TIMEZONE=Africa/Lagos`, later `PAYSTACK_SECRET_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `OWNER_NOTIFY_EMAIL`, `COMPANY_PHONE`/`COMPANY_ADDRESS` once confirmed.
+3. Variables: `NODE_ENV=production`, `DATABASE_PATH=/data/nexoraith.db`, `UPLOAD_DIR=/data/uploads`, `SITE_URL=https://<your Railway or custom domain>` (no trailing slash), `ADMIN_EMAIL` + `ADMIN_PASSWORD` (delete the password after the first start), `PAYMENT_TIMING=review_first`, `BUSINESS_TIMEZONE=Africa/Lagos`, later `PAYSTACK_SECRET_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `OWNER_NOTIFY_EMAIL`, `COMPANY_PHONE`/`COMPANY_ADDRESS` once confirmed.
 4. Settings > Networking > Generate Domain (or add your domain; HTTPS is automatic). Make `SITE_URL` match. Set the Paystack webhook to `https://<domain>/webhooks/paystack`.
 5. Check the deploy logs for `Nexoraith store running at ...` and open `/health` (`{"ok":true}`).
-6. Then in Admin > Settings click **Import demo products** if you want the DummyJSON catalogue online.
-7. Keep **one** instance (SQLite). Back up `/data` (database + uploads) regularly. No CORS setup is needed (the site and its server are the same address).
+6. The catalogue is imported from DummyJSON automatically on the first start (check the log for `[setup] Empty catalogue: imported ...`). If it failed, use Admin > Settings > **Import catalogue**.
+7. In **Admin > Delivery**, tick **Confirmed** on the Lagos and other-Nigeria zones once you are happy with the fees. In production, checkout refuses unconfirmed zones (or set `ALLOW_UNCONFIRMED_DELIVERY=true` to accept them while they are marked preliminary).
+8. Keep **one** instance (SQLite). Back up `/data` (database + uploads) regularly. No CORS setup is needed (the site and its server are the same address).
 
 ## 9. Production-readiness checklist
-- [ ] Real products with your own photos, names, options and prices; all demo products archived (Admin > Settings); `DEMO_MODE=false`; `IMAGE_HOSTS=` emptied once no demo image links remain
+- [ ] Catalogue reviewed: every product you list is one you can really source; prices adjusted where the NGN 1,500/USD conversion is not right for your market (imported prices are not verified local prices); products you cannot source hidden or discontinued; `DEMO_CHECKOUT=false`
 - [ ] Delivery zones and fees confirmed and ticked "Confirmed" in Admin > Delivery
 - [ ] Shipping, returns/refunds, privacy, terms and FAQ text approved (DRAFTS in `src/views.js`, `PAGES`)
 - [ ] Company address/phone decision made (none supplied)

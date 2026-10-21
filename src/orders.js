@@ -71,10 +71,11 @@ function createOrder(cartToken, f, checkoutKey) {
     const t = cart.totals(ls, zone.fee_minor, 0);
     if (t.total <= 0) throw new UserError('The order total must be greater than zero.');
     const method = f.payment_method === 'demo' ? 'demo' : 'paystack';
-    if (method === 'demo' && !cfg.demoMode) throw new UserError('Demonstration orders are switched off on this store.');
+    if (method === 'demo' && !cfg.demoCheckout) throw new UserError('Please choose a payment method.');
     const hasDev = ls.some((l) => l.is_development);
-    // A demo order is any order placed with demo products, unconfirmed delivery, or the demo payment method. It can never become "paid".
-    const isDemo = hasDev || method === 'demo' || (!zone.confirmed && cfg.demoMode) ? 1 : 0;
+    // A demo (test) order = built-in sample products or the demonstration checkout. It can never become "paid".
+    // Orders for the regular catalogue are real orders, even while delivery fees are still marked preliminary.
+    const isDemo = hasDev || method === 'demo' ? 1 : 0;
     const timing = settings.paymentTiming();
     const status = timing === 'review_first' ? 'pending_review' : 'awaiting_payment';
     const reference = newReference();
@@ -191,7 +192,7 @@ function handleWebhook(evt) {
 // Demonstration payment step: confirms a DEMO order so the full workflow (incl. delivery estimate) can be shown.
 // It NEVER sets payment_status to paid and never reduces stock.
 function confirmDemo(order) {
-  if (!cfg.demoMode) throw new UserError('Demonstration orders are switched off on this store.');
+  if (!cfg.demoCheckout && !cfg.demoMode) throw new UserError('Demonstration orders are switched off on this store.');
   if (!order.is_demo || order.payment_method !== 'demo') throw new UserError('Only demonstration orders can be confirmed this way.');
   if (order.status === 'cancelled') throw new UserError('This order has been cancelled.');
   if (order.status === 'pending_review') throw new UserError('This demonstration order is still pending review. The store owner must confirm availability first.');

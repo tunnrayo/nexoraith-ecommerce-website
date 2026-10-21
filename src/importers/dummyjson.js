@@ -1,7 +1,8 @@
 'use strict';
-// DEMONSTRATION catalogue import from DummyJSON (https://dummyjson.com/docs/products).
-// DummyJSON is NOT a supplier. Imported products are marked as demo data (is_development=1, source='dummyjson').
-// What is imported: title, description, brand, category, a SAMPLE price, image URLs.
+// Catalogue import from DummyJSON (https://dummyjson.com/docs/products). These products are the store's starting catalogue.
+// DummyJSON is NOT a supplier and its prices are NOT Nigerian market prices: the owner checks real availability per order
+// (review-first workflow) and can edit every product. Imported rows carry source='dummyjson' (shown to the admin only).
+// What is imported: title, description, brand, category, price converted at the configured rate (default NGN 1,500 per USD), image URLs.
 // What is deliberately NOT imported: ratings, reviews, stock numbers, availabilityStatus, shipping/warranty/return text
 // (they would be invented claims for this store). Availability is owned by the store and edited in Admin.
 // The catalogue lives in our own database afterwards: customers never trigger calls to DummyJSON.
@@ -59,26 +60,32 @@ function map(p, rate) {
   const category = slugify(p?.category); if (!category) errors.push('missing category');
   const imgs = [...(Array.isArray(p?.images) ? p.images : []), p?.thumbnail].filter((u, i, a) => typeof u === 'string' && imageOk(u) && a.indexOf(u) === i).slice(0, 6);
   if (errors.length) return { errors };
-  const naira = Math.max(Math.round((usd * rate) / 50) * 50, 50); // SAMPLE price: arbitrary conversion, rounded to NGN 50
+  const priceMinor = Math.round(usd * rate * 100); // exact conversion to kobo, e.g. 9.99 USD x 1,500 = NGN 14,985.00
   const desc = String(p.description || '').trim();
   const summary = (desc.split(/(?<=\.)\s/)[0] || desc).slice(0, 160);
   return {
     slug: `dj-${id}-${slugify(title)}`.slice(0, 80), sku: `DJ-${id}`, name: title.slice(0, 150), category, categoryName: catName(category), summary,
-    description: `${desc}${p.brand ? `\n\nBrand: ${String(p.brand).slice(0, 80)}` : ''}\n\nDEMONSTRATION PRODUCT imported from DummyJSON sample data. Not verified for sale; price is a sample.`,
-    price_minor: naira * 100, images: imgs, alt: title.slice(0, 140),
+    description: `${desc}${p.brand ? `\n\nBrand: ${String(p.brand).slice(0, 80)}` : ''}`,
+    price_minor: priceMinor, images: imgs, alt: title.slice(0, 140),
+    source_ref: `dummyjson:${id}`, source_price_text: `${usd.toFixed(2)} USD x ${rate} = NGN ${(priceMinor / 100).toFixed(2)}`,
   };
 }
-// options: { limit=200, rate=1500 (NGN per 1 USD sample price, arbitrary), update=false, downloadImages=false, publish=true }
-async function importDummyJson({ limit = 200, rate = 1500, update = false, downloadImages = false, publish = true, base } = {}) {
-  limit = Math.min(Math.max(parseInt(limit, 10) || 200, 1), 500); rate = Number(rate) > 0 ? Number(rate) : 1500;
-  const report = { fetched: 0, created: 0, updated: 0, skipped: 0, failed: [], imagesWithoutUrl: 0, imageErrors: 0 };
+// options: { limit=200, rate=cfg.importRate (NGN per 1 USD), update=false (refresh unedited imports), downloadImages=false, publish=true, archiveSamples=true }
+async function importDummyJson({ limit = 200, rate = cfg.importRate, update = false, downloadImages = false, publish = true, archiveSamples = true, base } = {}) {
+  limit = Math.min(Math.max(parseInt(limit, 10) || 200, 1), 500); rate = Number(rate) > 0 ? Number(rate) : cfg.importRate;
+  const report = { fetched: 0, created: 0, updated: 0, skipped: 0, keptEdits: 0, failed: [], imagesWithoutUrl: 0, imageErrors: 0, samplesArchived: 0 };
   const list = await fetchProducts(limit, base); // throws before any change if the API is unavailable
   report.fetched = list.length;
   for (const raw of list) {
     const m = map(raw, rate);
     if (m.errors) { report.failed.push({ item: `DummyJSON id ${raw?.id ?? '?'}`, errors: m.errors }); continue; }
-    const existing = q.get('SELECT id FROM products WHERE slug=?', m.slug);
-    if (existing && !update) { report.skipped++; continue; } // keeps any edits you made in Admin
+    // Match an earlier import by its DummyJSON id first (stable even if the title changes), then by SKU, then by web address.
+    const existing = q.get("SELECT id, admin_edited_at, source_ref FROM products WHERE source='dummyjson' AND source_ref=?", m.source_ref)
+      || q.get("SELECT p.id, p.admin_edited_at, p.source_ref FROM variants v JOIN products p ON p.id=v.product_id WHERE v.sku=? AND p.source='dummyjson'", m.sku)
+      || q.get('SELECT id, admin_edited_at, source_ref FROM products WHERE slug=?', m.slug);
+    if (existing && !existing.source_ref) q.run('UPDATE products SET source_ref=? WHERE id=?', m.source_ref, existing.id);
+    if (existing && existing.admin_edited_at) { report.keptEdits++; continue; } // never overwrite a product the owner edited
+    if (existing && !update) { report.skipped++; continue; }
     let urls = m.images;
     if (downloadImages && urls.length) {
       const local = [];
@@ -93,20 +100,24 @@ async function importDummyJson({ limit = 200, rate = 1500, update = false, downl
         let pid;
         if (existing) {
           pid = existing.id;
-          q.run("UPDATE products SET name=?, summary=?, description=?, category_id=?, is_development=1, source='dummyjson', updated_at=datetime('now') WHERE id=?", m.name, m.summary, m.description, cat, pid);
+          q.run("UPDATE products SET name=?, summary=?, description=?, category_id=?, is_development=0, source='dummyjson', source_ref=?, source_price_text=?, updated_at=datetime('now') WHERE id=?", m.name, m.summary, m.description, cat, m.source_ref, m.source_price_text, pid);
           report.updated++;
         } else {
-          pid = Number(q.run("INSERT INTO products(slug,name,summary,description,category_id,currency,status,is_development,availability,source) VALUES(?,?,?,?,?,?,?,1,'available','dummyjson')", m.slug, m.name, m.summary, m.description, cat, cfg.currency, publish ? 'published' : 'draft').lastInsertRowid);
+          pid = Number(q.run("INSERT INTO products(slug,name,summary,description,category_id,currency,status,is_development,availability,source,source_ref,source_price_text) VALUES(?,?,?,?,?,?,?,0,'available','dummyjson',?,?)", m.slug, m.name, m.summary, m.description, cat, cfg.currency, publish ? 'published' : 'draft', m.source_ref, m.source_price_text).lastInsertRowid);
           report.created++;
         }
         q.run('DELETE FROM product_images WHERE product_id=?', pid);
-        urls.forEach((u, i) => q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,?)', pid, u, `${m.alt} (demo image ${i + 1})`, i));
+        urls.forEach((u, i) => q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,?)', pid, u, i ? `${m.alt}, view ${i + 1}` : m.alt, i));
         const v = q.get('SELECT id, product_id FROM variants WHERE sku=?', m.sku);
         if (v && v.product_id !== pid) throw new Error(`SKU ${m.sku} already belongs to another product`);
         if (v) q.run("UPDATE variants SET price_minor=?, updated_at=datetime('now') WHERE id=?", m.price_minor, v.id);
         else q.run("INSERT INTO variants(product_id,sku,label,options_json,price_minor,availability,stock_qty,sort_order) VALUES(?,?,'Standard','{}',?,'available',NULL,0)", pid, m.sku, m.price_minor);
       });
     } catch (err) { report.failed.push({ item: m.slug, errors: [err.message] }); }
+  }
+  // Once the imported catalogue exists, hide the old built-in sample illustrations (they stay in the database; orders keep their history).
+  if (archiveSamples && q.get("SELECT 1 x FROM products WHERE source='dummyjson' AND status='published' LIMIT 1")) {
+    report.samplesArchived = q.run("UPDATE products SET status='archived', updated_at=datetime('now') WHERE is_development=1 AND source='' AND slug LIKE 'demo-%' AND status<>'archived'").changes;
   }
   return report;
 }
