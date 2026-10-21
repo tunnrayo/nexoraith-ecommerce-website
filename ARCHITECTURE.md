@@ -31,3 +31,11 @@
 - **Uploads** are stored in `UPLOAD_DIR` (default `data/uploads`, outside `public/`) and served from `/uploads/` (png/jpg/webp only). Type is decided from the file's first bytes, not the name.
 - **Routing**: exact paths win over `:param` paths (e.g. `/admin/products/new` before `/admin/products/:id`).
 - **Hosting**: `railway.json` (start `npm start`, health `/health`); one instance + persistent volume for `/data`.
+
+## v0.3 (self-sourcing workflow)
+- `src/orders.js` holds every workflow rule: create (review_first -> `pending_review`, pay_first -> `awaiting_payment`), `requestPayment` (all items available/secured), `applyPaymentResult` (the single confirmation rule: payment verified -> `confirmed`, `confirmed_at`, `estimated_delivery_date`), `setItemStatus`, `removeItemWithApproval`, `setFulfilment` (forward only; secured items required; blocked while flagged), `cancelOrder`, `markRefunded`, `reviseEstimate`, `messageCustomer`. Admin routes only call these functions.
+- `order_events` = history; `customer_visible=1` rows form the customer's timeline. `notifications` = email log.
+- `src/delivery-date.js`: local date in `BUSINESS_TIMEZONE` via `Intl`, then pure calendar arithmetic (UTC date math), stored as `YYYY-MM-DD`.
+- `src/settings.js`: owner-editable settings in the `settings` table override `.env` defaults.
+- Product availability: product-level `availability` (available / temporarily_unavailable / discontinued) + per-option availability; both must allow ordering.
+- Images: local `/img`, `/uploads`, or https links from `IMAGE_HOSTS` (CSP `img-src`); `app.js` swaps broken images for `/img/placeholder.svg`.

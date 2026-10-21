@@ -1,45 +1,34 @@
-# Project Status (updated 2026-10-21, v0.2.0)
+# Project Status (updated 2026-10-21, v0.3.0)
 
-## Completed AND tested (automated tests + real-browser run, local, demo data)
-- Brand design system: deep navy + champagne gold primary; teal only for buttons, links, focus/interactive states, small graphics. Self-hosted Plus Jakarta Sans + Inter.
-- Home landing page: hero with gold emblem, category tiles, featured products, brand promise (Trust, Quality, Convenience, Customer focus), how it works, contact call to action.
-- Shop: search, category chips + filter, sort, pagination, category headings/descriptions, product cards (category, short description, price, availability, quick add-to-cart for single-option items).
-- Product pages: gallery, option cards with price/availability/low-stock, quantity stepper, delivery fees box, related products.
-- Cart, checkout (contact, delivery zone with fees, address, payment method; live total preview), review page, order page, confirmation page.
-- **Demonstration checkout** (DEMO_MODE): completes the journey without payment; demo orders never become paid, never reduce stock, cannot be fulfilled, are labelled DEMO and filterable in Admin.
-- **Track order** page (reference + email, rate limited, timing-safe comparison).
-- Preliminary delivery zones: Lagos NGN 2,500; Other Nigerian locations NGN 4,500 (unconfirmed, editable).
-- Server-side cart; live prices from DB; unavailable/unverified/out-of-stock refused; max quantity 20.
-- Checkout: validation, server-side totals, order-time price snapshot, duplicate-submission protection, guest order access via secret link.
-- Separate order status / payment status / fulfilment status.
-- Payment logic: webhook HMAC-SHA512 verification, amount+currency match, idempotency, stock reduced once, return page never trusts redirect.
-- Admin: login (scrypt, rate limit, sessions, CSRF); dashboard separating real vs demo orders; orders (filter real/demo) and guarded status changes; **add products**; edit products incl. short description and demo flag; **add/delete variants**; **image upload** (JPG/PNG/WebP checked by file signature, 5 MB max) with main-image choice and removal; **categories** (add/edit/reorder/delete-when-empty); delivery zones (edit + **add**); inquiries; supplier sync page.
-- First-start bootstrap for hosting: automatic migrations, demo catalogue when empty in DEMO_MODE, first admin from env vars.
-- Security: CSP and headers, HTML escaping, parameterised SQL, rate limits, supplier data never in public HTML, demo products blocked when demo mode is off; brand style-guide image removed from the public folder.
-- Responsive: checked at 1366px and 390px (no horizontal scrolling, mobile menu works).
+**Business model (owner instruction, 2026-10-21):** customers order exact items; the owner sources them personally in the market and arranges delivery. No dropshipping, no automatic supplier fulfilment. DummyJSON is only a temporary source of demo product data.
 
-## Built but UNVERIFIED (no credentials/network in build environment)
-- Paystack initialize + verify HTTP calls (written to official docs; never run against Paystack)
-- Paystack webhook delivery from the real service (signature logic tested with locally signed payloads)
-- CJdropshipping adapter: endpoint names from official index; parameter names and response fields NOT verified
-- Railway deployment config (`railway.json`, `.node-version`): written, **not deployed** (owner will connect Railway)
-- Windows/Mac execution, Node versions other than 22.22
+## Completed AND tested (35 automated tests + real-browser run, local, demo data)
+- Storefront (unchanged design: navy + champagne gold, teal for actions): home, shop (search, category chips/filter, sort, 24 per page), product pages (gallery, exact options with Colour/Size/Model values, quantity, store-owned availability), cart, checkout (contact, delivery zone + fee, address, country, instructions, payment method, payment-timing explanation, 10-day estimate preview), order page, track order, contact, info pages.
+- **Exact order records**: each line stores product name, option label, option values, SKU, unit price, quantity, line total and image reference; order stores customer contact, address, instructions, totals, currency, dates, payment status. Shown to the customer and in Admin.
+- **Workflow**: review-first (default) or pay-first (Admin > Settings); request payment only after every item is marked available; payment marked confirmed only after Paystack verification (webhook signature + amount/currency check, idempotent); confirmation = payment verified; failed/abandoned payments never confirm.
+- **10-day estimate**: confirmation timestamp + estimated date stored at confirmation in Africa/Lagos time; configurable days; month/year/leap-year/timezone tested; revisable only with a reason shown to the customer (original kept).
+- **No substitutions**: per-item sourcing status (not yet checked / available / secured / unavailable / removed); unavailable flags the order and tells the customer; removal only with recorded approval; totals recalculated; refunds recorded; progress blocked while flagged; "products secured" and later stages require every item secured.
+- **Cancellation and refunds**: paid orders need "customer informed" confirmation; refund due = money actually held (no double refunds); refund completion recorded with the Paystack reference.
+- **Customer communication**: timeline of customer-visible updates on the order page; owner messages; Call / WhatsApp / Email links; private order link; optional email via Resend (tested against a local stand-in server); every email attempt logged as sent/skipped/failed.
+- **Admin**: dashboard (attention, pending review, awaiting payment, to source, pipeline, refunds, deliveries due), order search and filters (status, payment, fulfilment, demo/real, dates, attention, refund), detailed order page, product search/filters with quick availability/visibility, product editor (options, private market cost, uploads, image links), categories, delivery zones, settings, DummyJSON import, archive all demo products.
+- **DummyJSON demo import** (CLI + Admin button): stores products in our database (customers never call DummyJSON); image links from allowed hosts only; sample NGN prices from a stated conversion; ratings, reviews, stock, shipping/warranty/return claims NOT imported; re-runs keep owner edits; API failures change nothing; invalid records reported.
+- Image fallback placeholder for broken images. Database migration v3 (tested on a v0.2 database). Security: CSP (images limited to self + allowed hosts), CSRF, sessions, rate limits, server-side totals, private order links.
+
+## Built but UNVERIFIED (needs credentials or the real internet)
+- Paystack initialize/verify against the real service; real webhook delivery; Mastercard acceptance depends on the merchant account.
+- Live DummyJSON fetch (the build environment blocks the site; tested with a local imitation of its documented format).
+- Resend email delivery to real inboxes.
+- Railway deployment (prepared; not deployed by request).
 
 ## Incomplete / not implemented
-- Customer accounts (guest checkout + track order by design)
-- Email sending (order confirmations, contact replies): needs an email service decision
-- Automatic CJ product import UI, scheduled stock/price/tracking sync
-- Refunds via Paystack API (cancel/refund is manual; admin is warned)
-- Discount codes (field exists in order totals, no promotion engine)
-- International shipping and multi-currency (architecture allows zones per country; nothing configured)
-- Newsletter (intentionally not built)
+- Customer accounts (guest checkout + private link + track order by design).
+- SMS notifications; automatic Paystack refunds via API (refunds are done in the Paystack dashboard and recorded here).
+- Partial-quantity changes on a line (a line is either kept or removed with approval).
+- Discount codes; international delivery; multi-currency.
 
-## Blocked on business decisions / inputs
-- Launch categories, real products and photos, margins, confirmed delivery fees/estimates, returns policy, supplier agreement (none secured yet: CJdropshipping / BigBuy / Alibaba under consideration)
-- Paystack account activation/keys; CJ API key
-- Original logo files (current logo is a crop of the supplied style-guide image: low resolution)
-- Company address/phone: the style-guide image shows an Abuja address and a phone number in sample mock-ups, but the project brief says none was supplied, so NONE are shown. Confirm, then set COMPANY_ADDRESS / COMPANY_PHONE.
-- Tagline "Shop Smarter. Live Better." used because the style guide marks it recommended; final brand sign-off pending.
+## Blocked on the owner
+- Paystack account verification + keys; email domain + Resend key (optional).
+- Real products/photos/prices; confirmed delivery fees; approved policy text; logo source files; company address/phone decision.
 
-## Assumptions made (documented, not final policy)
-Currency NGN; guest checkout; SQLite; demo prices invented and labelled; delivery fees as supplied by owner (preliminary); teal buttons darkened to #0B7F7C for text contrast (brand teal #0EA5A1 kept for graphics/focus).
+## Assumptions (documented, changeable)
+Currency NGN; review-first default; 10 calendar days; Africa/Lagos; preliminary delivery Lagos NGN 2,500 / other Nigeria NGN 4,500; DummyJSON sample price conversion NGN 1,500 per 1.00 (arbitrary, not a market rate).

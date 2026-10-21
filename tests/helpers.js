@@ -9,6 +9,9 @@ function setup(env = {}) {
   process.env.ALLOW_DEVELOPMENT_PRODUCTS = env.ALLOW_DEVELOPMENT_PRODUCTS ?? 'true';
   process.env.ALLOW_UNCONFIRMED_DELIVERY = env.ALLOW_UNCONFIRMED_DELIVERY ?? 'true';
   process.env.SITE_URL = 'http://localhost:3999';
+  process.env.PAYMENT_TIMING = env.PAYMENT_TIMING ?? 'pay_first';
+  for (const k of ['RESEND_API_KEY', 'EMAIL_FROM', 'OWNER_NOTIFY_EMAIL']) process.env[k] = env[k] ?? '';
+  if (env.RESEND_API_URL) process.env.RESEND_API_URL = env.RESEND_API_URL;
   const db = require('../src/db'); db.open();
   const { importCatalog } = require('../scripts/import-catalog');
   importCatalog(JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dev-catalog.json'), 'utf8')));

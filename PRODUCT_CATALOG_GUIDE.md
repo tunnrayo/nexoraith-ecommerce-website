@@ -1,6 +1,9 @@
 # Product Catalogue Guide
 **Demo data** in `data/dev-catalog.json` is for presentation/testing only (12 products, SKUs start `DEV-`, flagged `is_development`, images labelled DEMO IMAGE). It is shown only when `DEMO_MODE` is on and is never sellable as real stock.
 
+## Demo products from DummyJSON
+`npm run import:dummyjson` (or Admin > Settings > Import demo products) loads up to 200 sample products. Options: `--limit=200`, `--rate=1500` (NGN per 1.00 of DummyJSON's sample price; an arbitrary demonstration conversion, **not** a market price), `--update` (overwrite products already imported, including your edits), `--download-images` (save copies on your server instead of linking to cdn.dummyjson.com), `--draft` (import hidden). They are demo products: review, replace or archive them before launch (Admin > Settings > Archive demo products).
+
 ## Easiest way: Admin
 Admin > Products > **+ Add product** (name, short description, description, category, first option and price), then upload photos on the product page and add more options. Leave status `draft` until checked, then `published`.
 
@@ -26,3 +29,8 @@ Admin > Products > **+ Add product** (name, short description, description, cate
 4. In Admin > Products set availability to `available` (only after you have verified it with the supplier), then status `published`.
 Rules: price like `15000` or `15000.50` (in the store currency); availability `available|unavailable|unverified` (only `available` can be bought); status `draft|published|archived`; `stock` is a whole number or omit it/`null` when not reliably known. Supplier fields are private. Never put supplier prices in `description`.
 Remove demo products: set them to `archived` in Admin, or simply set `DEMO_MODE=false`, which hides and blocks them. Do not run `seed` on the live store.
+
+## Options customers choose
+Each option (variant) is one exact item: give it a clear name (e.g. "Black, size 42") and fill Colour / Size / Model where relevant. Customers see these values and they are saved on the order, so you buy exactly that.
+## Availability
+Product: Available to order / Temporarily unavailable (visible, cannot be ordered) / Discontinued (hidden). Option: Available / Unavailable / Not yet checked. Stock quantity is optional; leave it blank unless you really track stock.

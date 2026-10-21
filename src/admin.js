@@ -9,6 +9,9 @@ const money = require('./money');
 const orders = require('./orders');
 const cj = require('./suppliers/cj');
 const paystack = require('./payments/paystack');
+const settings = require('./settings');
+const notify = require('./notify');
+const dd = require('./delivery-date');
 const fs = require('fs');
 const path = require('path');
 const { imageType } = require('./multipart');
@@ -16,14 +19,12 @@ const slugify = (t) => String(t || '').toLowerCase().normalize('NFKD').replace(/
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const SKU = /^[A-Za-z0-9._-]{2,40}$/;
 const AVAIL = ['available', 'unavailable', 'unverified'];
+const VAVAIL = { available: 'Available to order', unavailable: 'Unavailable', unverified: 'Not yet checked (cannot be ordered)' };
+const OPTION_KEYS = ['Colour', 'Size', 'Model'];
 
 const SESSION_HOURS = 8;
-const LABEL = {
-  status: { pending_payment: 'Pending payment', confirmed: 'Confirmed', cancelled: 'Cancelled' },
-  payment: { unpaid: 'Not paid', pending: 'Payment pending', paid: 'Paid', failed: 'Payment failed', abandoned: 'Payment abandoned', refunded: 'Refunded' },
-  fulfil: { not_started: 'Not started', awaiting_supplier: 'Awaiting supplier processing', supplier_submitted: 'Supplier order submitted', processing: 'Processing', shipped: 'Shipped', delivered: 'Delivered', cancelled: 'Cancelled' },
-};
-const NEXT = { awaiting_supplier: ['supplier_submitted', 'processing', 'cancelled'], supplier_submitted: ['processing', 'shipped', 'cancelled'], processing: ['shipped', 'cancelled'], shipped: ['delivered'] };
+const LABEL = orders.LABEL;
+const PAVAIL = { available: 'Available to order', temporarily_unavailable: 'Temporarily unavailable', discontinued: 'Discontinued' };
 
 function currentSession(ctx) {
   const t = ctx.cookies.nx_admin;
@@ -33,7 +34,7 @@ function currentSession(ctx) {
   if (new Date(s.expires_at.replace(' ', 'T') + 'Z') < new Date()) { q.run('DELETE FROM admin_sessions WHERE token_hash=?', s.token_hash); return null; }
   return s;
 }
-const nav = (active) => `<nav class="admin-nav" aria-label="Admin">${[['', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['categories', 'Categories'], ['delivery', 'Delivery'], ['inquiries', 'Inquiries'], ['supplier', 'Supplier sync']].map(([h, t]) => `<a href="/admin${h ? '/' + h : ''}"${active === h ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
+const nav = (active) => `<nav class="admin-nav" aria-label="Admin">${[['', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['categories', 'Categories'], ['delivery', 'Delivery'], ['inquiries', 'Inquiries'], ['settings', 'Settings'], ...(cfg.supplierIntegration ? [['supplier', 'Supplier sync']] : [])].map(([h, t]) => `<a href="/admin${h ? '/' + h : ''}"${active === h ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
 <form method="post" action="/admin/logout" class="inline">__CSRF__<button class="link-btn" type="submit">Log out</button></form></nav>`;
 function page(ctx, s, active, title, inner) {
   const body = `<div class="wrap section"><h1>${esc(title)}</h1>${nav(active).replace('__CSRF__', `<input type="hidden" name="_csrf" value="${esc(s.csrf)}">`)}${inner}</div>`;
@@ -81,60 +82,118 @@ function register(route, h) {
 
   route('GET', '/admin', guard((ctx, s) => {
     const n = (sql) => q.get(sql).n;
-    const stats = [['Real orders awaiting payment', n("SELECT COUNT(*) n FROM orders WHERE is_demo=0 AND payment_status IN('unpaid','pending') AND status<>'cancelled'")], ['Paid orders awaiting processing', n("SELECT COUNT(*) n FROM orders WHERE is_demo=0 AND fulfillment_status='awaiting_supplier'")], ['Demonstration orders', n('SELECT COUNT(*) n FROM orders WHERE is_demo=1')], ['Demo products published', n("SELECT COUNT(*) n FROM products WHERE is_development=1 AND status='published'")], ['Orders needing review', n("SELECT COUNT(*) n FROM orders WHERE admin_notes LIKE '%REVIEW:%'")], ['New inquiries', n("SELECT COUNT(*) n FROM inquiries WHERE status='new'")], ['Supplier sync errors', n("SELECT COUNT(*) n FROM supplier_mappings WHERE sync_status='error'")]];
-    const status = `<h2>Integration status</h2><ul><li>Paystack: ${paystack.isConfigured() ? `configured (${paystack.mode()} mode), webhook and live results not yet verified by this software` : 'NOT configured (no payments can be taken)'}</li><li>CJdropshipping API: ${cj.isConfigured() ? 'API key present (untested)' : 'NOT configured'}; order submission ${cfg.cj.allowOrderSubmission ? 'ENABLED' : 'disabled'}</li><li>Demo mode ${cfg.demoMode ? '<strong>ON</strong> (demonstration checkout offered; demo orders never count as paid)' : 'off'}</li><li>Sample products ${cfg.allowDevProducts ? 'ALLOWED (development)' : 'blocked'}; unconfirmed delivery ${cfg.allowUnconfirmedDelivery ? 'ALLOWED (development)' : 'blocked'}</li></ul>`;
-    h.send(ctx, 200, page(ctx, s, '', 'Dashboard', `<dl class="stats">${stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>${status}`));
+    const real = 'is_demo=0';
+    const stats = [
+      ['Needs your attention', n(`SELECT COUNT(*) n FROM orders WHERE needs_attention=1 AND status<>'cancelled'`), '/admin/orders?attention=1', 'b-err'],
+      ['Pending review (check availability)', n(`SELECT COUNT(*) n FROM orders WHERE status='pending_review'`), '/admin/orders?status=pending_review', 'b-warn'],
+      ['Awaiting payment', n(`SELECT COUNT(*) n FROM orders WHERE status='awaiting_payment'`), '/admin/orders?status=awaiting_payment', ''],
+      ['Confirmed: to source', n(`SELECT COUNT(*) n FROM orders WHERE status='confirmed' AND fulfillment_status IN('not_started','sourcing')`), '/admin/orders?stage=to_source', 'b-info'],
+      ['In delivery pipeline', n(`SELECT COUNT(*) n FROM orders WHERE status='confirmed' AND fulfillment_status IN('products_secured','preparing','ready_for_dispatch','out_for_delivery')`), '/admin/orders?stage=pipeline', ''],
+      ['Refunds to process', n(`SELECT COUNT(*) n FROM orders WHERE payment_status='refund_pending' OR refund_due_minor>0`), '/admin/orders?refund=1', 'b-warn'],
+      ['Real orders (all time)', n(`SELECT COUNT(*) n FROM orders WHERE ${real}`), '/admin/orders?kind=real', ''],
+      ['Demonstration orders', n('SELECT COUNT(*) n FROM orders WHERE is_demo=1'), '/admin/orders?kind=demo', ''],
+      ['New inquiries', n("SELECT COUNT(*) n FROM inquiries WHERE status='new'"), '/admin/inquiries', ''],
+    ];
+    const late = q.all(`SELECT reference, customer_name, estimated_delivery_date FROM orders WHERE status='confirmed' AND fulfillment_status<>'delivered' AND estimated_delivery_date <= ? ORDER BY estimated_delivery_date LIMIT 20`, dd.addDays(dd.localDate(new Date()), 2));
+    const status = `<h2>Setup status</h2><ul><li>Payment timing: <strong>${settings.paymentTiming() === 'review_first' ? 'Review first (you check availability, then request payment)' : 'Pay at checkout'}</strong>; delivery estimate ${settings.deliveryDays()} calendar days after confirmation. <a href="/admin/settings">Change</a></li><li>Paystack: ${paystack.isConfigured() ? `configured (${paystack.mode()} mode); live behaviour not yet verified by this software` : '<strong>NOT configured</strong> (no payments can be taken)'}</li><li>Email notifications: ${notify.isConfigured() ? 'configured (Resend)' : '<strong>NOT configured</strong>: customers are not emailed; messages still appear on their order page'}</li><li>Demo mode ${cfg.demoMode ? '<strong>ON</strong> (demo products and demonstration checkout; demo orders never count as paid)' : 'off'}</li>${cfg.supplierIntegration ? `<li>CJdropshipping tools: ${cj.isConfigured() ? 'API key present (untested)' : 'no API key'}</li>` : ''}</ul>`;
+    h.send(ctx, 200, page(ctx, s, '', 'Dashboard', `<dl class="stats">${stats.map(([k, v, href, c]) => `<div><dt><a href="${href}">${k}</a></dt><dd>${v ? `<span class="${c ? 'badge ' + c : ''}">${v}</span>` : 0}</dd></div>`).join('')}</dl>
+${late.length ? `<h2>Estimated delivery due within 2 days</h2>${dt(late, [['Order', (o) => `<a href="/admin/orders/${esc(o.reference)}">${esc(o.reference)}</a>`], ['Customer', (o) => esc(o.customer_name)], ['Estimated delivery', (o) => esc(dd.formatDate(o.estimated_delivery_date))]])}<p class="small muted">If you will miss a date, open the order and revise the estimate with a reason: the customer sees it.</p>` : ''}${status}`));
   }));
 
+  const badgeFor = (o) => [
+    o.needs_attention && o.status !== 'cancelled' ? '<span class="badge b-err">Needs attention</span>' : '',
+    o.is_demo ? '<span class="badge b-warn">DEMO</span>' : '',
+  ].join(' ');
   route('GET', '/admin/orders', guard((ctx, s) => {
-    const search = String(ctx.url.searchParams.get('q') || '').trim().slice(0, 80); const st = ctx.url.searchParams.get('payment') || ''; const kind = ctx.url.searchParams.get('kind') || '';
+    const sp = ctx.url.searchParams; const L = orders.LABEL;
+    const f = { q: String(sp.get('q') || '').trim().slice(0, 80), status: sp.get('status') || '', payment: sp.get('payment') || '', fulfil: sp.get('fulfil') || '', kind: sp.get('kind') || '', attention: sp.get('attention') || '', refund: sp.get('refund') || '', stage: sp.get('stage') || '', from: sp.get('from') || '', to: sp.get('to') || '' };
     const w = []; const a = [];
-    if (search) { w.push("(reference LIKE ? OR customer_email LIKE ? OR customer_name LIKE ?)"); a.push(`%${search}%`, `%${search}%`, `%${search}%`); }
-    if (LABEL.payment[st]) { w.push('payment_status=?'); a.push(st); }
-    if (kind === 'real') w.push('is_demo=0'); else if (kind === 'demo') w.push('is_demo=1');
-    const rows = q.all(`SELECT * FROM orders ${w.length ? 'WHERE ' + w.join(' AND ') : ''} ORDER BY id DESC LIMIT 100`, ...a);
-    const f = `<form class="filters" method="get" action="/admin/orders"><div><label for="q">Search</label><input id="q" name="q" value="${esc(search)}" placeholder="Reference, email or name"></div><div><label for="payment">Payment</label><select id="payment" name="payment"><option value="">Any</option>${Object.entries(LABEL.payment).map(([k, v]) => `<option value="${k}"${st === k ? ' selected' : ''}>${v}</option>`).join('')}</select></div><div><label for="kind">Type</label><select id="kind" name="kind"><option value="">All</option><option value="real"${kind === 'real' ? ' selected' : ''}>Real orders</option><option value="demo"${kind === 'demo' ? ' selected' : ''}>Demonstration orders</option></select></div><div class="filters-actions"><button class="btn" type="submit">Filter</button></div></form>`;
-    h.send(ctx, 200, page(ctx, s, 'orders', 'Orders', f + dt(rows, [['Reference', (o) => `<a href="/admin/orders/${esc(o.reference)}">${esc(o.reference)}</a>${o.admin_notes.includes('REVIEW:') ? ' <span class="tag tag-dev">review</span>' : ''}${o.is_demo ? ' <span class="tag tag-dev">DEMO</span>' : ''}`], ['Date', (o) => when(o.created_at)], ['Customer', (o) => esc(o.customer_name)], ['Total', (o) => money.format(o.total_minor, o.currency)], ['Payment', (o) => o.payment_method === 'demo' ? 'Demo (no payment)' + (o.demo_confirmed_at ? ', completed' : '') : LABEL.payment[o.payment_status]], ['Fulfilment', (o) => LABEL.fulfil[o.fulfillment_status]]])));
+    if (f.q) { w.push("(reference LIKE ? OR customer_email LIKE ? OR customer_name LIKE ? OR customer_phone LIKE ?)"); a.push(...Array(4).fill(`%${f.q}%`)); }
+    if (L.status[f.status]) { w.push('status=?'); a.push(f.status); }
+    if (L.payment[f.payment]) { w.push('payment_status=?'); a.push(f.payment); }
+    if (L.fulfil[f.fulfil]) { w.push('fulfillment_status=?'); a.push(f.fulfil); }
+    if (f.kind === 'real') w.push('is_demo=0'); else if (f.kind === 'demo') w.push('is_demo=1');
+    if (f.attention) w.push("needs_attention=1 AND status<>'cancelled'");
+    if (f.refund) w.push("(payment_status='refund_pending' OR refund_due_minor>0)");
+    if (f.stage === 'to_source') w.push("status='confirmed' AND fulfillment_status IN('not_started','sourcing')");
+    if (f.stage === 'pipeline') w.push("status='confirmed' AND fulfillment_status IN('products_secured','preparing','ready_for_dispatch','out_for_delivery')");
+    if (dd.isYmd(f.from)) { w.push('date(created_at) >= ?'); a.push(f.from); }
+    if (dd.isYmd(f.to)) { w.push('date(created_at) <= ?'); a.push(f.to); }
+    const rows = q.all(`SELECT * FROM orders ${w.length ? 'WHERE ' + w.join(' AND ') : ''} ORDER BY needs_attention DESC, id DESC LIMIT 200`, ...a);
+    const sel = (name, label, map) => `<div><label for="${name}">${label}</label><select id="${name}" name="${name}"><option value="">Any</option>${Object.entries(map).map(([k, v]) => `<option value="${k}"${f[name] === k ? ' selected' : ''}>${v}</option>`).join('')}</select></div>`;
+    const form = `<form class="filters" method="get" action="/admin/orders"><div><label for="q">Search</label><input id="q" name="q" value="${esc(f.q)}" placeholder="Reference, name, email or phone"></div>${sel('status', 'Order status', L.status)}${sel('payment', 'Payment', L.payment)}${sel('fulfil', 'Fulfilment', L.fulfil)}${sel('kind', 'Type', { real: 'Real orders', demo: 'Demonstration orders' })}
+<div><label for="from">From</label><input id="from" name="from" type="date" value="${esc(f.from)}"></div><div><label for="to">To</label><input id="to" name="to" type="date" value="${esc(f.to)}"></div>
+<div><label><input type="checkbox" name="attention" value="1"${f.attention ? ' checked' : ''}> Needs attention</label><br><label><input type="checkbox" name="refund" value="1"${f.refund ? ' checked' : ''}> Refund to process</label></div>
+<div class="filters-actions"><button class="btn" type="submit">Filter</button> <a class="btn btn-outline" href="/admin/orders">Clear</a></div></form>`;
+    h.send(ctx, 200, page(ctx, s, 'orders', 'Orders', form + `<p class="muted">${rows.length} order(s)${rows.length === 200 ? ' (showing the latest 200)' : ''}</p>` + dt(rows, [
+      ['Reference', (o) => `<a href="/admin/orders/${esc(o.reference)}"><strong>${esc(o.reference)}</strong></a><br>${badgeFor(o)}`],
+      ['Ordered', (o) => esc(dd.formatDateTime(o.created_at))],
+      ['Customer', (o) => `${esc(o.customer_name)}<br><span class="small muted">${esc(o.customer_phone)}</span>`],
+      ['Total', (o) => money.format(o.total_minor, o.currency)],
+      ['Order', (o) => esc(L.status[o.status])], ['Payment', (o) => o.payment_method === 'demo' ? 'Demo (no payment)' : esc(L.payment[o.payment_status])], ['Fulfilment', (o) => esc(L.fulfil[o.fulfillment_status])],
+      ['Est. delivery', (o) => o.estimated_delivery_date ? esc(dd.formatDate(o.estimated_delivery_date)) : '<span class="muted">after confirmation</span>'],
+    ])));
   }));
+
+  const waLink = (phone) => { let d = String(phone).replace(/\D/g, ''); if (d.startsWith('0') && d.length === 11) d = '234' + d.slice(1); return d.length >= 10 ? `https://wa.me/${d}` : ''; };
   route('GET', '/admin/orders/:ref', guard((ctx, s) => {
     const o = orders.byReference(ctx.params.ref); if (!o) return h.send(ctx, 404, h.notFound(ctx));
-    const its = orders.items(o.id); const pays = q.all('SELECT * FROM payments WHERE order_id=? ORDER BY id', o.id); const so = q.get('SELECT * FROM supplier_orders WHERE order_id=?', o.id);
-    const next = o.payment_status === 'paid' ? (NEXT[o.fulfillment_status] || []) : [];
-    const canCancel = o.status !== 'cancelled' && !['shipped', 'delivered'].includes(o.fulfillment_status);
-    const prep = cj.buildOrderPayload(o, its);
-    const inner = `<p><a href="/admin/orders">&larr; All orders</a></p><dl class="kv"><dt>Reference</dt><dd>${esc(o.reference)}</dd><dt>Created</dt><dd>${when(o.created_at)} UTC</dd><dt>Status</dt><dd>${LABEL.status[o.status]}</dd><dt>Payment</dt><dd>${LABEL.payment[o.payment_status]}</dd><dt>Fulfilment</dt><dd>${LABEL.fulfil[o.fulfillment_status]}</dd>
-<dt>Customer</dt><dd>${esc(o.customer_name)}, ${esc(o.customer_email)}, ${esc(o.customer_phone)}</dd><dt>Ship to</dt><dd>${esc(o.ship_address)}, ${esc(o.ship_city)}, ${esc(o.ship_state)}, ${esc(o.ship_country)} ${esc(o.ship_postal)}</dd>${o.delivery_notes ? `<dt>Notes</dt><dd>${esc(o.delivery_notes)}</dd>` : ''}<dt>Tracking</dt><dd>${esc(o.tracking_number || 'none')}</dd></dl>
-${o.is_demo ? `<p class="alert"><strong>DEMONSTRATION ORDER</strong> (payment method: ${esc(o.payment_method)}${o.demo_confirmed_at ? `, demo completed ${when(o.demo_confirmed_at)}` : ''}). No money was taken. Do not fulfil.</p>` : ''}${o.has_development_items ? '<p class="alert">Contains SAMPLE/DEMO products: do not fulfil.</p>' : ''}${o.admin_notes.trim() ? `<h2>Internal notes</h2><pre class="notes">${esc(o.admin_notes.trim())}</pre>` : ''}
-<h2>Items (price snapshot)</h2>${dt(its, [['Item', (i) => `${esc(i.product_name)} (${esc(i.variant_label)}) ${esc(i.sku)}`], ['Unit', (i) => money.format(i.unit_price_minor, o.currency)], ['Qty', (i) => i.quantity], ['Line', (i) => money.format(i.line_total_minor, o.currency)]])}
-<p>Subtotal ${money.format(o.subtotal_minor, o.currency)} + delivery ${money.format(o.delivery_fee_minor, o.currency)} (${esc(o.delivery_zone_name)}${o.delivery_confirmed ? '' : ', NOT confirmed'}) = <strong>${money.format(o.total_minor, o.currency)}</strong></p>
-<h2>Payment attempts</h2>${dt(pays, [['Reference', (p) => esc(p.reference.slice(0, 22) + '...')], ['Status', (p) => esc(p.status)], ['Amount', (p) => money.format(p.amount_minor, p.currency)], ['Updated', (p) => when(p.updated_at)], ['Detail', (p) => esc(p.gateway_response || '')]])}
-<h2>Fulfilment</h2>${next.length || canCancel ? `<form method="post" action="/admin/orders/${esc(o.reference)}/fulfilment" class="form">${csrf(s)}<div class="field"><label for="to">Move to</label><select id="to" name="to">${next.map((n) => `<option value="${n}">${LABEL.fulfil[n]}</option>`).join('')}${canCancel ? '<option value="cancelled">Cancel order (refund handled manually)</option>' : ''}</select></div><div class="field"><label for="tn">Tracking number (required for Shipped)</label><input id="tn" name="tracking_number" maxlength="80"></div><div class="field"><label for="tu">Tracking link (https only, optional)</label><input id="tu" name="tracking_url" maxlength="300"></div><div class="field"><label for="note">Note (optional, internal)</label><input id="note" name="note" maxlength="200"></div><button class="btn" type="submit">Update status</button></form>` : '<p class="muted">No further manual status changes available.</p>'}
-<h2>CJdropshipping order</h2>${so ? `<p>Supplier order: ${esc(so.status)} ${so.supplier_order_id ? '(CJ id ' + esc(so.supplier_order_id) + ')' : ''} ${so.last_error ? '<br>Last error: ' + esc(so.last_error) : ''}</p>` : '<p class="muted">No supplier order has been created.</p>'}
-${prep.unmapped.length ? `<p class="alert">Not mapped to CJ yet: ${esc(prep.unmapped.join(', '))}</p>` : '<details><summary>Review payload that would be sent</summary><pre class="notes">' + esc(JSON.stringify(prep.payload, null, 2)) + '</pre></details>'}
-${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unmapped.length ? `<form method="post" action="/admin/orders/${esc(o.reference)}/supplier" class="form">${csrf(s)}<label><input type="checkbox" name="confirm" value="yes" required> I authorise sending this order to CJdropshipping (this may commit company funds).</label><button class="btn btn-outline" type="submit">Submit to CJ</button></form>` : '<p class="small muted">Submission is available only when CJ_ALLOW_ORDER_SUBMISSION=true, the order is paid, items are mapped, and no supplier order exists.</p>'}`;
+    const L = orders.LABEL; const its = orders.items(o.id); const pays = q.all('SELECT * FROM payments WHERE order_id=? ORDER BY id', o.id);
+    const evs = orders.events(o.id); const notes = q.all('SELECT * FROM notifications WHERE order_id=? ORDER BY id DESC LIMIT 30', o.id);
+    const R = esc(o.reference); const act = (p) => `/admin/orders/${R}/${p}`; const open = o.status !== 'cancelled';
+    const optText = (j) => { try { return Object.entries(JSON.parse(j || '{}')).map(([k, v]) => `${esc(k)}: ${esc(v)}`).join(', '); } catch { return ''; } };
+    const link = orders.orderLink(o);
+    const subj = encodeURIComponent(`Your Nexoraith order ${o.reference}`);
+    const nextStages = o.status === 'confirmed' ? orders.STAGES.slice(orders.STAGES.indexOf(o.fulfillment_status) + 1) : [];
+    const paidHeld = ['paid', 'refund_pending'].includes(o.payment_status) ? o.total_minor + o.refund_due_minor : 0;
+    const sourcing = `<div class="card-a"><h2>Sourcing checklist: exact items ordered</h2><p class="small muted">Buy exactly what is listed. If an item cannot be found exactly as ordered, mark it <strong>Unavailable</strong>: the order is flagged and the customer is told you will contact them. Never substitute without the customer's approval.</p>
+${its.map((i) => `<div class="src-item">${i.image_url ? `<img src="${esc(i.image_url)}" alt="">` : '<span class="noimg-s"></span>'}<div><strong>${esc(i.product_name)}</strong> <span class="badge ${({ secured: 'b-ok', available: 'b-info', unavailable: 'b-err', removed: '' })[i.item_status] || 'b-warn'}">${esc(L.item[i.item_status])}</span><br>
+<span class="small">Option: <strong>${esc(i.variant_label)}</strong>${optText(i.options_json) ? ` (${optText(i.options_json)})` : ''} &middot; SKU ${esc(i.sku)} &middot; Qty <strong>${i.quantity}</strong> &middot; ${money.format(i.unit_price_minor, o.currency)} each = ${money.format(i.line_total_minor, o.currency)}</span>${i.item_note ? `<br><span class="small muted">Note: ${esc(i.item_note)}</span>` : ''}
+${open && i.item_status !== 'removed' ? `<form method="post" action="${act(`items/${i.id}`)}">${csrf(s)}<label class="sr" for="is${i.id}">Item status</label><select id="is${i.id}" name="item_status">${['pending', 'available', 'secured', 'unavailable'].map((x) => `<option value="${x}"${x === i.item_status ? ' selected' : ''}>${L.item[x]}</option>`).join('')}</select><input name="note" maxlength="300" placeholder="Note (optional)" aria-label="Note"><button class="btn btn-small" type="submit">Save</button></form>
+${i.item_status === 'unavailable' ? `<form method="post" action="${act(`items/${i.id}/remove`)}">${csrf(s)}<input name="approval" maxlength="300" required placeholder="How the customer approved removal (e.g. WhatsApp 21 Oct)" aria-label="Customer approval"><button class="btn btn-small btn-outline" type="submit">Remove item (customer approved)</button></form>` : ''}` : ''}</div></div>`).join('')}</div>`;
+    const actions = `<div class="card-a"><h2>Next step</h2>
+${!open ? `<p>Order cancelled${o.cancel_reason ? `: ${esc(o.cancel_reason)}` : ''}.</p>` : ''}
+${o.status === 'pending_review' ? `<p>Check the market for every item above and mark each one <strong>Available in market</strong>. Then ask the customer to pay.</p><form method="post" action="${act('request-payment')}">${csrf(s)}<button class="btn" type="submit">Availability confirmed: request payment</button></form><p class="small muted">The customer's order page shows a Pay button and (if email is configured) they are emailed the link.</p>` : ''}
+${o.status === 'awaiting_payment' ? `<p>Waiting for the customer to pay${o.payment_method === 'demo' ? ' (demonstration payment)' : ''}. Payment is marked confirmed <strong>only</strong> after Paystack verifies it.</p>` : ''}
+${o.status === 'confirmed' && nextStages.length ? `<form method="post" action="${act('fulfilment')}" class="form">${csrf(s)}<div class="field"><label for="to">Move fulfilment to</label><select id="to" name="to">${nextStages.map((x) => `<option value="${x}">${L.fulfil[x]}</option>`).join('')}</select></div><div class="field"><label for="fn">Message to customer (optional, shown on their order page)</label><input id="fn" name="note" maxlength="300"></div><label class="small"><input type="checkbox" name="email" value="1" checked> Email the customer this update</label><button class="btn" type="submit">Update progress</button></form>` : ''}
+${o.payment_status === 'refund_pending' || o.refund_due_minor > 0 ? `<div class="attn"><strong>Refund due: ${money.format(o.refund_due_minor, o.currency)}.</strong> Refund it in your Paystack dashboard (Transactions > the payment > Refund), then record it here.<form method="post" action="${act('refunded')}" class="inline-form">${csrf(s)}<div class="field"><label for="rr">Paystack refund reference</label><input id="rr" name="refund_ref" maxlength="120" required></div><button class="btn btn-small" type="submit">Mark refund completed</button></form></div>` : ''}
+${open && o.fulfillment_status !== 'delivered' ? `<details><summary>Cancel this order</summary><form method="post" action="${act('cancel')}" class="form">${csrf(s)}<div class="field"><label for="cr">Reason (shown to the customer)</label><input id="cr" name="reason" maxlength="300" required></div>${paidHeld ? `<label><input type="checkbox" name="informed" value="1"> The customer has been told and agrees. A refund of ${money.format(paidHeld, o.currency)} will be recorded as due.</label>` : ''}<button class="btn btn-small btn-outline" type="submit">Cancel order</button></form></details>` : ''}</div>`;
+    const estimate = `<div class="card-a"><h2>Delivery estimate</h2>${o.estimated_delivery_date ? `<p><strong>${esc(dd.formatDate(o.estimated_delivery_date))}</strong>${o.original_estimated_delivery_date !== o.estimated_delivery_date ? `<br><span class="small muted">Originally ${esc(dd.formatDate(o.original_estimated_delivery_date))}</span>` : ''}<br><span class="small muted">Confirmed ${esc(dd.formatDateTime(o.confirmed_at))} + ${settings.deliveryDays()} calendar days</span></p>
+${open && o.status === 'confirmed' ? `<details><summary>Revise the estimate</summary><form method="post" action="${act('estimate')}" class="form">${csrf(s)}<div class="field"><label for="ed">New estimated date</label><input id="ed" name="date" type="date" required value="${esc(o.estimated_delivery_date)}"></div><div class="field"><label for="er">Reason (shown to the customer)</label><input id="er" name="reason" maxlength="300" required></div><label class="small"><input type="checkbox" name="email" value="1" checked> Email the customer</label><button class="btn btn-small" type="submit">Save new estimate</button></form></details>` : ''}` : `<p class="muted">Set automatically when the order is confirmed (payment verified): ${settings.deliveryDays()} calendar days later.</p>`}</div>`;
+    const contact = `<div class="card-a"><h2>Customer</h2><p><strong>${esc(o.customer_name)}</strong><br><a href="tel:${esc(o.customer_phone.replace(/[^\d+]/g, ''))}">${esc(o.customer_phone)}</a><br><a href="mailto:${esc(o.customer_email)}">${esc(o.customer_email)}</a></p>
+<p><strong>Deliver to:</strong><br>${esc(o.ship_address)}<br>${esc(o.ship_city)}, ${esc(o.ship_state)}, ${esc(o.ship_country)} ${esc(o.ship_postal)}${o.delivery_notes ? `<br><em>Instructions: ${esc(o.delivery_notes)}</em>` : ''}</p>
+<div class="contact-links"><a class="btn btn-small btn-outline" href="tel:${esc(o.customer_phone.replace(/[^\d+]/g, ''))}">Call</a>${waLink(o.customer_phone) ? `<a class="btn btn-small btn-outline" href="${esc(waLink(o.customer_phone))}?text=${encodeURIComponent(`Hello ${o.customer_name}, this is Nexoraith about your order ${o.reference}.`)}" rel="noopener noreferrer" target="_blank">WhatsApp</a>` : ''}<a class="btn btn-small btn-outline" href="mailto:${esc(o.customer_email)}?subject=${subj}&amp;body=${encodeURIComponent(`Hello ${o.customer_name},\n\nYour order page: ${link}\n\n`)}">Email</a></div>
+<form method="post" action="${act('message')}" class="form mt">${csrf(s)}<div class="field"><label for="msg">Post a message on the customer's order page${notify.isConfigured() ? ' (also emailed)' : ''}</label><textarea id="msg" name="message" rows="3" maxlength="2000" required placeholder="e.g. The blue size 42 is out of stock in the market. Would you like the black one, or a refund for this item?"></textarea></div><button class="btn btn-small" type="submit">Send to customer</button></form>
+<p class="small muted">Customer's private order link (share only with this customer):<br><input value="${esc(link)}" readonly aria-label="Customer order link" class="w100"></p></div>`;
+    const summary = `<div class="card-a"><h2>Summary</h2><dl class="kv"><dt>Ordered</dt><dd>${esc(dd.formatDateTime(o.created_at))}</dd><dt>Order status</dt><dd>${esc(L.status[o.status])}</dd><dt>Payment</dt><dd>${o.payment_method === 'demo' ? 'Demonstration (no payment)' : esc(L.payment[o.payment_status])}</dd><dt>Fulfilment</dt><dd>${esc(L.fulfil[o.fulfillment_status])}</dd><dt>Payment timing</dt><dd>${o.payment_timing === 'review_first' ? 'Review first' : 'Pay at checkout'}${o.payment_requested_at ? ` (requested ${esc(dd.formatDateTime(o.payment_requested_at))})` : ''}</dd><dt>Confirmed</dt><dd>${o.confirmed_at ? esc(dd.formatDateTime(o.confirmed_at)) : 'Not yet'}</dd>
+<dt>Subtotal</dt><dd>${money.format(o.subtotal_minor, o.currency)}</dd><dt>Delivery</dt><dd>${money.format(o.delivery_fee_minor, o.currency)} (${esc(o.delivery_zone_name)}${o.delivery_confirmed ? '' : ', preliminary fee'})</dd><dt>Total</dt><dd><strong>${money.format(o.total_minor, o.currency)}</strong></dd><dt>Paid (verified)</dt><dd>${money.format(orders.amountPaid(o.id), o.currency)}</dd>${o.refund_due_minor ? `<dt>Refund due</dt><dd>${money.format(o.refund_due_minor, o.currency)}</dd>` : ''}</dl></div>`;
+    const attn = o.needs_attention && open ? `<div class="attn"><strong>Needs attention:</strong> ${esc(o.attention_reason)}<form method="post" action="${act('attention')}" class="inline-form">${csrf(s)}<input type="hidden" name="on" value="0"><button class="btn btn-small btn-outline" type="submit">Mark resolved</button></form></div>`
+      : open ? `<details><summary>Flag this order for attention</summary><form method="post" action="${act('attention')}" class="inline-form">${csrf(s)}<input type="hidden" name="on" value="1"><div class="field"><label for="ar">What needs attention?</label><input id="ar" name="reason" maxlength="300" required></div><button class="btn btn-small" type="submit">Flag</button></form></details>` : '';
+    const history = `<div class="card-a"><h2>History</h2><ol class="timeline">${evs.slice().reverse().map((e) => `<li><time>${esc(dd.formatDateTime(e.created_at))} &middot; ${esc(e.actor)}${e.customer_visible ? ' &middot; <span class="badge b-info">customer sees</span>' : ''}</time><p>${esc(e.body)}</p></li>`).join('')}</ol>
+${notes.length ? `<h2>Emails</h2>${dt(notes, [['When', (n) => esc(dd.formatDateTime(n.created_at))], ['To', (n) => esc(n.recipient)], ['Subject', (n) => esc(n.subject)], ['Result', (n) => `<span class="badge ${n.status === 'sent' ? 'b-ok' : n.status === 'failed' ? 'b-err' : ''}">${esc(n.status)}</span> <span class="small muted">${esc(n.detail)}</span>`]])}` : ''}
+<h2>Payment attempts</h2>${dt(pays, [['Reference', (p) => esc(p.reference.slice(0, 22) + '...')], ['Status', (p) => esc(p.status)], ['Amount', (p) => money.format(p.amount_minor, p.currency)], ['Updated', (p) => esc(dd.formatDateTime(p.updated_at))], ['Detail', (p) => esc(p.gateway_response || '')]])}
+${o.admin_notes.trim() ? `<h2>System notes</h2><pre class="notes">${esc(o.admin_notes.trim())}</pre>` : ''}</div>`;
+    const inner = `<p><a href="/admin/orders">&larr; All orders</a> &middot; ${badgeFor(o)}</p>${o.is_demo ? '<p class="alert"><strong>DEMONSTRATION ORDER.</strong> No money was taken. Do not source or deliver.</p>' : ''}${attn}
+<div class="admin-cols"><div>${actions}${sourcing}${history}</div><div>${summary}${estimate}${contact}</div></div>`;
     h.send(ctx, 200, page(ctx, s, 'orders', `Order ${o.reference}`, inner));
   }));
-  route('POST', '/admin/orders/:ref/fulfilment', guard((ctx, s) => {
-    ctx.back = `/admin/orders/${ctx.params.ref}`;
+  // Every owner action: load order, set the return page, run the workflow function (which enforces the rules).
+  const orderAction = (p, fn) => route('POST', `/admin/orders/:ref/${p}`, guard(async (ctx, s) => {
     const o = orders.byReference(ctx.params.ref); if (!o) return h.send(ctx, 404, h.notFound(ctx));
-    const to = String(ctx.body.to || ''); const tn = String(ctx.body.tracking_number || '').trim().slice(0, 80); let tu = String(ctx.body.tracking_url || '').trim().slice(0, 300);
-    if (tu && !/^https:\/\//.test(tu)) throw new UserError('Tracking link must start with https://');
-    const note = String(ctx.body.note || '').trim().slice(0, 200);
-    tx(() => {
-      const cur = q.get('SELECT * FROM orders WHERE id=?', o.id);
-      if (to === 'cancelled') {
-        if (cur.status === 'cancelled' || ['shipped', 'delivered'].includes(cur.fulfillment_status)) throw new UserError('This order can no longer be cancelled.');
-        const paidNote = cur.payment_status === 'paid' ? ' PAID order cancelled: refund must be handled manually in Paystack.' : '';
-        q.run("UPDATE orders SET status='cancelled', fulfillment_status='cancelled', admin_notes=admin_notes||?, updated_at=datetime('now') WHERE id=?", `\n[${new Date().toISOString()}] Cancelled by ${s.email}.${paidNote} ${note}`, o.id);
-        return;
-      }
-      if (cur.payment_status !== 'paid' || !(NEXT[cur.fulfillment_status] || []).includes(to)) throw new UserError('That status change is not allowed for this order right now.');
-      if (to === 'shipped' && !tn) throw new UserError('Enter a tracking number before marking an order as shipped.');
-      q.run("UPDATE orders SET fulfillment_status=?, tracking_number=COALESCE(NULLIF(?,''),tracking_number), tracking_url=COALESCE(NULLIF(?,''),tracking_url), admin_notes=admin_notes||?, updated_at=datetime('now') WHERE id=?", to, tn, tu, `\n[${new Date().toISOString()}] ${s.email}: ${cur.fulfillment_status} -> ${to}. ${note}`, o.id);
-    });
-    h.redirect(ctx, ctx.back, { type: 'ok', text: 'Order updated.' });
+    ctx.back = `/admin/orders/${o.reference}`;
+    const text = await fn(o, ctx.body, s.email, ctx.params);
+    h.redirect(ctx, ctx.back, { type: 'ok', text: text || 'Saved.' });
   }));
-  route('POST', '/admin/orders/:ref/supplier', guard(async (ctx) => {
+  orderAction('request-payment', async (o, b, who) => { await orders.requestPayment(o, who); return 'Payment requested. The customer can now pay from their order page.'; });
+  orderAction('items/:item', (o, b, who, p) => { orders.setItemStatus(o, p.item, b.item_status, b.note, who); return 'Item updated.'; });
+  orderAction('items/:item/remove', (o, b, who, p) => { orders.removeItemWithApproval(o, p.item, b.approval, who); return 'Item removed with the customer\'s approval. Totals were recalculated.'; });
+  orderAction('fulfilment', async (o, b, who) => { const n = orders.setFulfilment(o, b.to, b.note, who); if (b.email) await orders.notifyLatest(n, `Order update: ${orders.LABEL.fulfil[n.fulfillment_status]}`); return 'Progress updated.'; });
+  orderAction('estimate', async (o, b, who) => { const n = orders.reviseEstimate(o, b.date, b.reason, who); if (b.email) await orders.notifyLatest(n, 'Updated delivery estimate'); return 'Estimate updated. The customer can see the new date and reason.'; });
+  orderAction('cancel', async (o, b, who) => { const n = orders.cancelOrder(o, b.reason, !!b.informed, who); await orders.notifyLatest(n, 'Your order has been cancelled'); return n.refund_due_minor ? 'Order cancelled. Refund recorded as due: process it in Paystack.' : 'Order cancelled.'; });
+  orderAction('refunded', async (o, b, who) => { const n = orders.markRefunded(o, b.refund_ref, who); await orders.notifyLatest(n, 'Your refund has been processed'); return 'Refund recorded.'; });
+  orderAction('attention', (o, b, who) => { orders.setAttention(o, b.on === '1', b.reason, who); return b.on === '1' ? 'Order flagged.' : 'Attention cleared.'; });
+  orderAction('message', async (o, b, who) => { const r = await orders.messageCustomer(o, b.message, who); return `Message posted on the customer's order page.${r.status === 'sent' ? ' Email sent.' : r.status === 'skipped' ? ' (Email not configured, so it was not emailed.)' : ' Email failed: see the Emails list.'}`; });
+  if (cfg.supplierIntegration) route('POST', '/admin/orders/:ref/supplier', guard(async (ctx) => {
     ctx.back = `/admin/orders/${ctx.params.ref}`;
     const o = orders.byReference(ctx.params.ref); if (!o) return h.send(ctx, 404, h.notFound(ctx));
     if (ctx.body.confirm !== 'yes') throw new UserError('Please tick the authorisation box.');
@@ -143,8 +202,34 @@ ${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unm
   }));
 
   route('GET', '/admin/products', guard((ctx, s) => {
-    const rows = q.all(`SELECT p.*, c.name cat, (SELECT COUNT(*) FROM variants v WHERE v.product_id=p.id) nv, (SELECT MIN(price_minor) FROM variants v WHERE v.product_id=p.id) minp FROM products p LEFT JOIN categories c ON c.id=p.category_id ORDER BY p.id DESC`);
-    h.send(ctx, 200, page(ctx, s, 'products', 'Products', '<p><a class="btn" href="/admin/products/new">+ Add product</a></p>' + dt(rows, [['Name', (p) => `<a href="/admin/products/${p.id}">${esc(p.name)}</a>${p.is_development ? ' <span class="tag tag-dev">sample</span>' : ''}`], ['Category', (p) => esc(p.cat || '')], ['Status', (p) => esc(p.status)], ['Variants', (p) => p.nv], ['From', (p) => p.minp == null ? '' : money.format(p.minp, p.currency)]]) + '<p class="small muted">Demo products are marked "sample". Add or update products in bulk with <code>npm run import</code> (see PRODUCT_CATALOG_GUIDE.md).</p>'));
+    const sp = ctx.url.searchParams; const f = { q: String(sp.get('q') || '').trim().slice(0, 80), category: sp.get('category') || '', status: sp.get('status') || '', availability: sp.get('availability') || '', kind: sp.get('kind') || '', page: Math.max(parseInt(sp.get('page'), 10) || 1, 1) };
+    const w = []; const a = [];
+    if (f.q) { w.push("(p.name LIKE ? OR p.slug LIKE ? OR EXISTS(SELECT 1 FROM variants v WHERE v.product_id=p.id AND v.sku LIKE ?))"); a.push(`%${f.q}%`, `%${f.q}%`, `%${f.q}%`); }
+    if (f.category) { w.push('c.slug=?'); a.push(f.category); }
+    if (['draft', 'published', 'archived'].includes(f.status)) { w.push('p.status=?'); a.push(f.status); }
+    if (PAVAIL[f.availability]) { w.push('p.availability=?'); a.push(f.availability); }
+    if (f.kind === 'demo') w.push('p.is_development=1'); else if (f.kind === 'real') w.push('p.is_development=0');
+    const where = w.length ? 'WHERE ' + w.join(' AND ') : '';
+    const total = q.get(`SELECT COUNT(*) n FROM products p LEFT JOIN categories c ON c.id=p.category_id ${where}`, ...a).n; const per = 50; const pages = Math.max(1, Math.ceil(total / per)); const pg = Math.min(f.page, pages);
+    const rows = q.all(`SELECT p.*, c.name cat, (SELECT url FROM product_images i WHERE i.product_id=p.id ORDER BY sort_order,id LIMIT 1) img, (SELECT COUNT(*) FROM variants v WHERE v.product_id=p.id) nv, (SELECT MIN(price_minor) FROM variants v WHERE v.product_id=p.id) minp FROM products p LEFT JOIN categories c ON c.id=p.category_id ${where} ORDER BY p.id DESC LIMIT ${per} OFFSET ${(pg - 1) * per}`, ...a);
+    const cats = q.all('SELECT slug, name FROM categories ORDER BY sort_order, name');
+    const qs = (o) => '/admin/products?' + new URLSearchParams(Object.entries({ ...f, ...o }).filter(([, v]) => v !== '' && v != null)).toString();
+    const filt = `<form class="filters" method="get" action="/admin/products"><div><label for="q">Search</label><input id="q" name="q" value="${esc(f.q)}" placeholder="Name or SKU"></div><div><label for="category">Category</label><select id="category" name="category"><option value="">Any</option>${cats.map((c) => `<option value="${esc(c.slug)}"${f.category === c.slug ? ' selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>
+<div><label for="status">Visibility</label><select id="status" name="status"><option value="">Any</option><option value="published"${f.status === 'published' ? ' selected' : ''}>Active (visible)</option><option value="draft"${f.status === 'draft' ? ' selected' : ''}>Inactive (hidden)</option><option value="archived"${f.status === 'archived' ? ' selected' : ''}>Archived</option></select></div>
+<div><label for="availability">Availability</label><select id="availability" name="availability"><option value="">Any</option>${Object.entries(PAVAIL).map(([k, v]) => `<option value="${k}"${f.availability === k ? ' selected' : ''}>${v}</option>`).join('')}</select></div>
+<div><label for="kind">Type</label><select id="kind" name="kind"><option value="">Any</option><option value="real"${f.kind === 'real' ? ' selected' : ''}>My products</option><option value="demo"${f.kind === 'demo' ? ' selected' : ''}>Demo products</option></select></div><div class="filters-actions"><button class="btn" type="submit">Filter</button> <a class="btn btn-outline" href="/admin/products">Clear</a></div></form>`;
+    const quick = (p) => `<form method="post" action="/admin/products/${p.id}/quick" class="inline">${csrf(s)}<input type="hidden" name="back" value="${esc(qs({}))}"><select name="availability" aria-label="Availability of ${esc(p.name)}">${Object.entries(PAVAIL).map(([k, v]) => `<option value="${k}"${p.availability === k ? ' selected' : ''}>${v}</option>`).join('')}</select> <select name="status" aria-label="Visibility of ${esc(p.name)}"><option value="published"${p.status === 'published' ? ' selected' : ''}>Active</option><option value="draft"${p.status === 'draft' ? ' selected' : ''}>Inactive</option><option value="archived"${p.status === 'archived' ? ' selected' : ''}>Archived</option></select> <button class="btn btn-small btn-outline" type="submit">Save</button></form>`;
+    h.send(ctx, 200, page(ctx, s, 'products', 'Products', `<p><a class="btn" href="/admin/products/new">+ Add product</a> <a class="btn btn-outline" href="/admin/settings#import">Import demo products</a></p>${filt}<p class="muted">${total} product(s)</p>` + dt(rows, [
+      ['', (p) => p.img ? `<img src="${esc(p.img)}" alt="" width="48" height="48" class="thumb48">` : ''],
+      ['Name', (p) => `<a href="/admin/products/${p.id}">${esc(p.name)}</a>${p.is_development ? ' <span class="badge b-warn">demo</span>' : ''}`], ['Category', (p) => esc(p.cat || '')], ['Price', (p) => p.minp == null ? '' : money.format(p.minp, p.currency) + (p.nv > 1 ? ` <span class="small muted">(${p.nv} options)</span>` : '')],
+      ['Availability / visibility', quick], ['Updated', (p) => esc(dd.formatDateTime(p.updated_at))],
+    ]) + (pages > 1 ? `<nav class="pager">${pg > 1 ? `<a class="btn btn-outline" href="${esc(qs({ page: pg - 1 }))}">Previous</a>` : ''}<span>Page ${pg} of ${pages}</span>${pg < pages ? `<a class="btn btn-outline" href="${esc(qs({ page: pg + 1 }))}">Next</a>` : ''}</nav>` : '') + '<p class="small muted">Bulk import: <code>npm run import</code> (your own JSON file) or <code>npm run import:dummyjson</code> (demo data). See PRODUCT_CATALOG_GUIDE.md.</p>'));
+  }));
+  route('POST', '/admin/products/:id/quick', guard((ctx) => {
+    const id = Number(ctx.params.id); const b = ctx.body; ctx.back = /^\/admin\/products(\?|$)/.test(b.back || '') ? b.back : '/admin/products';
+    if (!PAVAIL[b.availability] || !['draft', 'published', 'archived'].includes(b.status)) throw new UserError('Invalid choice.');
+    if (!q.run("UPDATE products SET availability=?, status=?, updated_at=datetime('now') WHERE id=?", b.availability, b.status, id).changes) throw new UserError('Product not found.');
+    h.redirect(ctx, ctx.back, { type: 'ok', text: 'Product updated.' });
   }));
   route('GET', '/admin/products/:id', guard((ctx, s) => {
     const p = q.get('SELECT * FROM products WHERE id=?', Number(ctx.params.id)); if (!p) return h.send(ctx, 404, h.notFound(ctx));
@@ -155,20 +240,24 @@ ${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unm
 <div class="field"><label for="description">Description</label><textarea id="description" name="description" rows="5" maxlength="4000">${esc(p.description)}</textarea></div>
 <label><input type="checkbox" name="is_development" value="1"${p.is_development ? ' checked' : ''}> Demo / sample product (cannot be sold when demo mode is off)</label>
 <div class="field"><label for="category_id">Category</label><select id="category_id" name="category_id"><option value="">None</option>${cats.map((c) => `<option value="${c.id}"${c.id === p.category_id ? ' selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>
-<div class="field"><label for="status">Publication status</label><select id="status" name="status">${['draft', 'published', 'archived'].map((x) => `<option${x === p.status ? ' selected' : ''}>${x}</option>`).join('')}</select></div>
-<h2>Variants</h2>${vs.map((v) => `<fieldset class="vfs"><legend>${esc(v.sku)}: ${esc(v.label)}</legend>
+<div class="field"><label for="status">Visibility</label><select id="status" name="status">${[['published', 'Active (visible in the shop)'], ['draft', 'Inactive (hidden)'], ['archived', 'Archived']].map(([x, t]) => `<option value="${x}"${x === p.status ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
+<div class="field"><label for="pavail">Availability</label><select id="pavail" name="availability">${Object.entries(PAVAIL).map(([k, v]) => `<option value="${k}"${p.availability === k ? ' selected' : ''}>${v}</option>`).join('')}</select><p class="small muted">Your own setting. "Temporarily unavailable" stays visible but cannot be ordered; "Discontinued" is hidden from the shop.</p></div>
+${p.source === 'dummyjson' ? '<p class="note-dev">Imported from DummyJSON demo data. Price is a sample; check and replace the name, photos, description and price with what you can really source.</p>' : ''}
+<p class="small muted">Created ${esc(dd.formatDateTime(p.created_at))} &middot; updated ${esc(dd.formatDateTime(p.updated_at))}</p>
+<h2>Options (variants)</h2><p class="small muted">Each option is one exact item a customer can choose (for example "Black, size 42"). Customers order exactly these.</p>${vs.map((v) => `<fieldset class="vfs"><legend>${esc(v.sku)}: ${esc(v.label)}</legend>
 <div class="field"><label for="p${v.id}">Retail price (${esc(p.currency)})</label><input id="p${v.id}" name="price_${v.id}" value="${money.toMajorString(v.price_minor)}" inputmode="decimal" required></div>
-<div class="field"><label for="a${v.id}">Availability</label><select id="a${v.id}" name="avail_${v.id}">${['available', 'unavailable', 'unverified'].map((x) => `<option${x === v.availability ? ' selected' : ''}>${x}</option>`).join('')}</select></div>
+<div class="field"><label for="ol${v.id}">Option name shown to customers</label><input id="ol${v.id}" name="label_${v.id}" value="${esc(v.label)}" maxlength="80" required></div>
+<div class="admin-grid">${OPTION_KEYS.map((k) => `<div class="field"><label for="o${k}${v.id}">${k} (optional)</label><input id="o${k}${v.id}" name="opt_${k}_${v.id}" value="${esc(JSON.parse(v.options_json || '{}')[k] || '')}" maxlength="60"></div>`).join('')}</div>
+<div class="field"><label for="a${v.id}">Availability of this option</label><select id="a${v.id}" name="avail_${v.id}">${AVAIL.map((x) => `<option value="${x}"${x === v.availability ? ' selected' : ''}>${VAVAIL[x]}</option>`).join('')}</select></div>
 <div class="field"><label for="s${v.id}">Stock quantity (blank = not tracked)</label><input id="s${v.id}" name="stock_${v.id}" value="${v.stock_qty ?? ''}" inputmode="numeric"></div>
-<p class="small muted"><strong>Private supplier mapping</strong> (never shown to customers). Sync: ${esc(v.sync_status || 'unmapped')}</p>
-<div class="field"><label for="sp${v.id}">CJ product ID</label><input id="sp${v.id}" name="spid_${v.id}" value="${esc(v.spid || '')}" maxlength="80"></div>
-<div class="field"><label for="sv${v.id}">CJ variant ID</label><input id="sv${v.id}" name="svid_${v.id}" value="${esc(v.svid || '')}" maxlength="80"></div>
-<div class="field"><label for="sc${v.id}">Supplier cost (${esc(v.cost_currency || 'currency of supplier')}), internal only</label><input id="sc${v.id}" name="cost_${v.id}" value="${v.cost_minor == null ? '' : money.toMajorString(v.cost_minor)}" inputmode="decimal"></div>
+${cfg.supplierIntegration ? `<p class="small muted"><strong>CJ mapping</strong> (private). Sync: ${esc(v.sync_status || 'unmapped')}</p><div class="field"><label for="sp${v.id}">CJ product ID</label><input id="sp${v.id}" name="spid_${v.id}" value="${esc(v.spid || '')}" maxlength="80"></div><div class="field"><label for="sv${v.id}">CJ variant ID</label><input id="sv${v.id}" name="svid_${v.id}" value="${esc(v.svid || '')}" maxlength="80"></div>` : `<input type="hidden" name="spid_${v.id}" value="${esc(v.spid || '')}"><input type="hidden" name="svid_${v.id}" value="${esc(v.svid || '')}">`}
+<div class="field"><label for="sc${v.id}">Your market cost (optional, private, never shown to customers)</label><input id="sc${v.id}" name="cost_${v.id}" value="${v.cost_minor == null ? '' : money.toMajorString(v.cost_minor)}" inputmode="decimal" placeholder="Leave blank if unknown"></div>
 <label class="small"><input type="checkbox" name="del_${v.id}" value="1"> Delete this variant when saving (past orders keep their snapshot)</label></fieldset>`).join('')}
 <button class="btn" type="submit">Save product</button></form>
 <h2>Add a variant</h2><form method="post" action="/admin/products/${p.id}/variants" class="form vfs">${csrf(s)}<div class="admin-grid">${variantFields()}</div><button class="btn btn-small" type="submit">Add variant</button></form>
 <h2>Images</h2>${imgs.length ? `<ul class="img-list">${imgs.map((i, n) => `<li><img src="${esc(i.url)}" alt="${esc(i.alt)}"><span>${n === 0 ? '<strong>Main image</strong><br>' : ''}${esc(i.alt || '(no description)')}</span><form method="post" action="/admin/products/${p.id}/images/${i.id}/delete">${csrf(s)}<button class="link-btn" type="submit">Remove</button></form>${n ? `<form method="post" action="/admin/products/${p.id}/images/${i.id}/main">${csrf(s)}<button class="link-btn" type="submit">Make main image</button></form>` : ''}</li>`).join('')}</ul>` : '<p class="muted">No images yet.</p>'}
-<form method="post" action="/admin/products/${p.id}/images" enctype="multipart/form-data" class="form vfs">${csrf(s)}<div class="field"><label for="img">Upload image (JPG, PNG or WebP, max 5 MB; square images look best)</label><input id="img" name="image" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label for="alt">Image description for screen readers</label><input id="alt" name="alt" maxlength="150" placeholder="e.g. Tan leather wallet, open"></div><button class="btn btn-small" type="submit">Upload</button></form>`;
+<form method="post" action="/admin/products/${p.id}/images" enctype="multipart/form-data" class="form vfs">${csrf(s)}<div class="field"><label for="img">Upload image (JPG, PNG or WebP, max 5 MB; square images look best)</label><input id="img" name="image" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label for="alt">Image description for screen readers</label><input id="alt" name="alt" maxlength="150" placeholder="e.g. Tan leather wallet, open"></div><button class="btn btn-small" type="submit">Upload</button></form>
+<form method="post" action="/admin/products/${p.id}/image-url" class="form vfs">${csrf(s)}<div class="field"><label for="iu">Or add an image by web address (https, allowed hosts: ${esc(cfg.imageHosts.join(', ') || 'none')})</label><input id="iu" name="url" type="url" maxlength="400" required placeholder="https://..."></div><div class="field"><label for="iua">Image description</label><input id="iua" name="alt" maxlength="150"></div><button class="btn btn-small btn-outline" type="submit">Add image link</button></form>`;
     h.send(ctx, 200, page(ctx, s, 'products', p.name, inner));
   }));
   route('POST', '/admin/products/:id', guard((ctx) => {
@@ -182,17 +271,20 @@ ${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unm
     for (const v of vs) {
       if (del.includes(v.id)) continue;
       const pr = money.parseToMinor(b[`price_${v.id}`]); if (pr == null) throw new UserError('Enter prices like 15000 or 15000.50.');
-      if (!['available', 'unavailable', 'unverified'].includes(b[`avail_${v.id}`])) throw new UserError('Invalid availability.');
+      if (!AVAIL.includes(b[`avail_${v.id}`])) throw new UserError('Invalid availability.');
+      const label = String(b[`label_${v.id}`] ?? '').trim().slice(0, 80); if (!label) throw new UserError('Every option needs a name.');
+      const opts = readOptions(b, `_${v.id}`);
       const st = String(b[`stock_${v.id}`] ?? '').trim(); if (st !== '' && !/^\d{1,6}$/.test(st)) throw new UserError('Stock must be a whole number or blank.');
       const cs = String(b[`cost_${v.id}`] ?? '').trim(); const cost = cs === '' ? null : money.parseToMinor(cs); if (cs !== '' && cost == null) throw new UserError('Supplier cost is not a valid amount.');
-      upd.push({ id: v.id, pr, av: b[`avail_${v.id}`], st: st === '' ? null : Number(st), cost, spid: String(b[`spid_${v.id}`] || '').trim().slice(0, 80), svid: String(b[`svid_${v.id}`] || '').trim().slice(0, 80) });
+      upd.push({ id: v.id, label, opts, pr, av: b[`avail_${v.id}`], st: st === '' ? null : Number(st), cost, spid: String(b[`spid_${v.id}`] || '').trim().slice(0, 80), svid: String(b[`svid_${v.id}`] || '').trim().slice(0, 80) });
     }
     if (b.status === 'published' && !vs.length) throw new UserError('Add at least one variant before publishing.');
+    if (!PAVAIL[b.availability]) throw new UserError('Invalid availability.');
     tx(() => {
-      q.run("UPDATE products SET name=?, summary=?, description=?, category_id=?, status=?, is_development=?, updated_at=datetime('now') WHERE id=?", name, String(b.summary || '').trim().slice(0, 160), String(b.description || '').slice(0, 4000), b.category_id ? Number(b.category_id) : null, b.status, b.is_development ? 1 : 0, id);
+      q.run("UPDATE products SET name=?, summary=?, description=?, category_id=?, status=?, availability=?, is_development=?, updated_at=datetime('now') WHERE id=?", name, String(b.summary || '').trim().slice(0, 160), String(b.description || '').slice(0, 4000), b.category_id ? Number(b.category_id) : null, b.status, b.availability, b.is_development ? 1 : 0, id);
       for (const d of del) q.run('DELETE FROM variants WHERE id=? AND product_id=?', d, id);
       for (const u of upd) {
-        q.run("UPDATE variants SET price_minor=?, availability=?, stock_qty=?, updated_at=datetime('now') WHERE id=?", u.pr, u.av, u.st, u.id);
+        q.run("UPDATE variants SET label=?, options_json=?, price_minor=?, availability=?, stock_qty=?, updated_at=datetime('now') WHERE id=?", u.label, JSON.stringify(u.opts), u.pr, u.av, u.st, u.id);
         q.run(`INSERT INTO supplier_mappings(variant_id,supplier_product_id,supplier_variant_id,cost_minor,sync_status) VALUES(?,?,?,?,?)
           ON CONFLICT(variant_id) DO UPDATE SET supplier_product_id=excluded.supplier_product_id, supplier_variant_id=excluded.supplier_variant_id, cost_minor=excluded.cost_minor,
           sync_status=CASE WHEN excluded.supplier_variant_id<>'' THEN CASE WHEN sync_status IN('synced','error') THEN sync_status ELSE 'mapped' END ELSE 'unmapped' END`, u.id, u.spid || null, u.svid || null, u.cost, u.svid ? 'mapped' : 'unmapped');
@@ -205,7 +297,8 @@ ${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unm
     return `<div class="field"><label for="nsku">SKU (your stock code, unique)</label><input id="nsku" name="sku" maxlength="40" required placeholder="e.g. NX-WAL-TAN"></div>
 <div class="field"><label for="nlabel">Option name shown to customers</label><input id="nlabel" name="label" maxlength="80" required placeholder="e.g. Tan, Large, 10,000 mAh"></div>
 <div class="field"><label for="nprice">Retail price (${esc(cfg.currency)})</label><input id="nprice" name="price" inputmode="decimal" required placeholder="e.g. 9500"></div>
-<div class="field"><label for="navail">Availability</label><select id="navail" name="availability">${AVAIL.map((x) => `<option>${x}</option>`).join('')}</select></div>
+${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)</label><input id="no${k}" name="opt_${k}" maxlength="60"></div>`).join('')}
+<div class="field"><label for="navail">Availability of this option</label><select id="navail" name="vavailability">${AVAIL.map((x) => `<option value="${x}">${VAVAIL[x]}</option>`).join('')}</select></div>
 <div class="field"><label for="nstock">Stock quantity (blank = not tracked)</label><input id="nstock" name="stock" inputmode="numeric"></div>`;
   }
   function readVariant(b) {
@@ -213,11 +306,12 @@ ${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unm
     if (q.get('SELECT 1 x FROM variants WHERE sku=?', sku)) throw new UserError(`SKU ${sku} is already used.`);
     const label = String(b.label || '').trim().slice(0, 80); if (!label) throw new UserError('Enter the option name shown to customers.');
     const pr = money.parseToMinor(b.price); if (pr == null) throw new UserError('Enter prices like 15000 or 15000.50.');
-    if (!AVAIL.includes(b.availability)) throw new UserError('Invalid availability.');
+    const av = b.vavailability ?? b.availability; if (!AVAIL.includes(av)) throw new UserError('Invalid availability.');
     const st = String(b.stock ?? '').trim(); if (st !== '' && !/^\d{1,6}$/.test(st)) throw new UserError('Stock must be a whole number or blank.');
-    return { sku, label, pr, av: b.availability, st: st === '' ? null : Number(st) };
+    return { sku, label, pr, av, st: st === '' ? null : Number(st), opts: readOptions(b, '') };
   }
-  const insertVariant = (pid, v) => q.run("INSERT INTO variants(product_id,sku,label,options_json,price_minor,availability,stock_qty,sort_order) VALUES(?,?,?,'{}',?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM variants WHERE product_id=?))", pid, v.sku, v.label, v.pr, v.av, v.st, pid);
+  const insertVariant = (pid, v) => q.run("INSERT INTO variants(product_id,sku,label,options_json,price_minor,availability,stock_qty,sort_order) VALUES(?,?,?,?,?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM variants WHERE product_id=?))", pid, v.sku, v.label, JSON.stringify(v.opts || {}), v.pr, v.av, v.st, pid);
+  function readOptions(b, suffix) { const o = {}; for (const k of OPTION_KEYS) { const x = String(b[`opt_${k}${suffix}`] ?? '').trim().slice(0, 60); if (x) o[k] = x; } return o; }
 
   route('GET', '/admin/products/new', guard((ctx, s) => {
     const cats = q.all('SELECT * FROM categories ORDER BY sort_order,name');
@@ -227,7 +321,7 @@ ${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unm
 <div class="field"><label for="summary">Short description (max 160 characters)</label><input id="summary" name="summary" maxlength="160"></div>
 <div class="field"><label for="description">Description</label><textarea id="description" name="description" rows="5" maxlength="4000"></textarea></div>
 <div class="field"><label for="category_id">Category</label><select id="category_id" name="category_id"><option value="">None</option>${cats.map((c) => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
-<div class="field"><label for="status">Publication status</label><select id="status" name="status"><option>draft</option><option>published</option></select></div>
+<div class="field"><label for="status">Visibility</label><select id="status" name="status"><option value="draft">Inactive (hidden) for now</option><option value="published">Active (visible in the shop)</option></select></div>
 <label><input type="checkbox" name="is_development" value="1"${cfg.demoMode ? ' checked' : ''}> Demo / sample product</label>
 <h2>First option (variant)</h2><div class="admin-grid">${variantFields()}</div><button class="btn" type="submit">Create product</button></form>`));
   }));
@@ -263,6 +357,15 @@ ${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unm
     fs.writeFileSync(path.join(cfg.uploadDir, name), f.data);
     q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM product_images WHERE product_id=?))', id, `/uploads/${name}`, String(ctx.body.alt || '').trim().slice(0, 150), id);
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Image uploaded.' });
+  }));
+  route('POST', '/admin/products/:id/image-url', guard((ctx) => {
+    const id = Number(ctx.params.id); ctx.back = `/admin/products/${id}`;
+    if (!q.get('SELECT 1 x FROM products WHERE id=?', id)) return h.send(ctx, 404, h.notFound(ctx));
+    let u; try { u = new URL(String(ctx.body.url || '').trim()); } catch { throw new UserError('Enter a full web address starting with https://'); }
+    if (u.protocol !== 'https:' || !cfg.imageHosts.includes(u.origin)) throw new UserError(`Images by link must come from an allowed host (${cfg.imageHosts.join(', ') || 'none configured'}). Otherwise upload the photo instead.`);
+    q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM product_images WHERE product_id=?))', id, u.href, String(ctx.body.alt || '').trim().slice(0, 150), id);
+    q.run("UPDATE products SET updated_at=datetime('now') WHERE id=?", id);
+    h.redirect(ctx, ctx.back, { type: 'ok', text: 'Image link added.' });
   }));
   route('POST', '/admin/products/:id/images/:img/delete', guard((ctx) => {
     const id = Number(ctx.params.id); ctx.back = `/admin/products/${id}`;
@@ -332,13 +435,50 @@ ${!so && o.payment_status === 'paid' && cfg.cj.allowOrderSubmission && !prep.unm
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Delivery zone saved.' });
   }));
 
-  route('GET', '/admin/supplier', guard((ctx, s) => {
+  if (cfg.supplierIntegration) route('GET', '/admin/supplier', guard((ctx, s) => {
     const rows = q.all(`SELECT m.*, v.sku, p.name FROM supplier_mappings m JOIN variants v ON v.id=m.variant_id JOIN products p ON p.id=v.product_id ORDER BY (m.sync_status='error') DESC, m.id DESC LIMIT 200`);
     h.send(ctx, 200, page(ctx, s, 'supplier', 'Supplier sync', `<p>CJdropshipping API: ${cj.isConfigured() ? 'key present, <strong>not yet tested against a live account</strong>' : '<strong>not configured</strong>'}.</p>` + dt(rows, [['Product', (r) => esc(r.name) + ' ' + esc(r.sku)], ['CJ variant', (r) => esc(r.supplier_variant_id || 'unmapped')], ['Status', (r) => esc(r.sync_status)], ['Last synced', (r) => when(r.last_synced_at)], ['Error', (r) => esc(r.last_error || '')], ['', (r) => r.supplier_variant_id && cj.isConfigured() ? `<form method="post" action="/admin/supplier/${r.variant_id}/sync" class="inline">${csrf(s)}<button class="btn btn-small btn-outline" type="submit">Check CJ</button></form>` : '']])));
   }));
-  route('POST', '/admin/supplier/:id/sync', guard(async (ctx) => {
+  if (cfg.supplierIntegration) route('POST', '/admin/supplier/:id/sync', guard(async (ctx) => {
     ctx.back = '/admin/supplier'; const r = await cj.syncVariant(Number(ctx.params.id));
     h.redirect(ctx, ctx.back, r.ok ? { type: 'ok', text: 'Supplier record checked.' } : { type: 'error', text: `Supplier check failed: ${r.error}` });
+  }));
+  route('GET', '/admin/settings', guard((ctx, s) => {
+    const demoCount = q.get('SELECT COUNT(*) n FROM products WHERE is_development=1 AND status<>\'archived\'').n;
+    const dj = q.get("SELECT COUNT(*) n FROM products WHERE source='dummyjson'").n;
+    h.send(ctx, 200, page(ctx, s, 'settings', 'Settings', `<form method="post" action="/admin/settings" class="form card-a">${csrf(s)}<h2>How orders work</h2>
+<fieldset class="opts"><legend>When should customers pay?</legend>
+<label class="opt"><input type="radio" name="payment_timing" value="review_first"${settings.paymentTiming() === 'review_first' ? ' checked' : ''}><span><strong>Review first (recommended for market sourcing)</strong><small>The customer places the order without paying. You check the exact items in the market, then click "request payment". Fewer refunds.</small></span></label>
+<label class="opt"><input type="radio" name="payment_timing" value="pay_first"${settings.paymentTiming() === 'pay_first' ? ' checked' : ''}><span><strong>Pay at checkout</strong><small>The customer pays immediately. If an exact item cannot be found, you contact them and refund what you cannot supply.</small></span></label></fieldset>
+<div class="field"><label for="days">Estimated delivery: calendar days after confirmation</label><input id="days" name="delivery_days" inputmode="numeric" value="${settings.deliveryDays()}" maxlength="2"><p class="small muted">An order is confirmed when its payment is verified. Each order keeps the date calculated at its confirmation (changing this only affects new confirmations). Timezone: ${esc(cfg.timezone)}.</p></div>
+<div class="field"><label for="oe">Email me about new orders and payments (optional)</label><input id="oe" name="owner_email" type="email" value="${esc(settings.ownerEmail())}" placeholder="${esc(cfg.company.email)}"><p class="small muted">${notify.isConfigured() ? 'Email service is configured.' : 'Emails are not sent until RESEND_API_KEY and EMAIL_FROM are set (see README).'}</p></div>
+<p class="small muted">Changes apply to new orders only; existing orders keep their own payment timing.</p><button class="btn" type="submit">Save settings</button></form>
+<div class="card-a" id="import"><h2>Demonstration products (DummyJSON)</h2><p>Imports up to 200 sample products (names, descriptions, categories and image links) from <a href="https://dummyjson.com/docs/products" rel="noopener noreferrer">DummyJSON</a>. They are marked <strong>demo</strong>. DummyJSON is <strong>not a supplier</strong>: its prices are converted to sample Naira prices with the rate you choose, and its stock, ratings, reviews and shipping claims are <strong>not</strong> imported. Review every product before launch.</p>
+<p class="small muted">Already imported: ${dj}. Re-importing skips products already imported (your edits are kept) unless you tick "update".</p>
+<form method="post" action="/admin/settings/import-dummyjson" class="inline-form">${csrf(s)}<div class="field"><label for="lim">How many</label><input id="lim" name="limit" value="200" inputmode="numeric" maxlength="3"></div><div class="field"><label for="rate">Sample conversion (NGN per 1.00 of the demo price)</label><input id="rate" name="rate" value="1500" inputmode="decimal" maxlength="6"></div>
+<label class="small"><input type="checkbox" name="update" value="1"> Update products already imported (overwrites your edits)</label><label class="small"><input type="checkbox" name="download" value="1"> Save copies of the images on this server</label><button class="btn" type="submit">Import demo products</button></form></div>
+<div class="card-a"><h2>Before launch</h2><p>${demoCount} demo product(s) are not archived.</p><form method="post" action="/admin/settings/archive-demo" class="inline-form">${csrf(s)}<label class="small"><input type="checkbox" name="confirm" value="yes" required> Archive (hide) ALL demo products. Past orders are kept.</label><button class="btn btn-outline" type="submit">Archive demo products</button></form></div>`));
+  }));
+  route('POST', '/admin/settings', guard((ctx) => {
+    ctx.back = '/admin/settings'; const b = ctx.body;
+    if (!['review_first', 'pay_first'].includes(b.payment_timing)) throw new UserError('Choose when customers pay.');
+    const d = String(b.delivery_days || '').trim(); if (!/^\d{1,2}$/.test(d) || +d < 1 || +d > 90) throw new UserError('Delivery days must be a whole number from 1 to 90.');
+    const oe = String(b.owner_email || '').trim().toLowerCase(); if (oe && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(oe)) throw new UserError('Enter a valid email address or leave it blank.');
+    settings.set('payment_timing', b.payment_timing); settings.set('delivery_days', d); settings.set('owner_email', oe);
+    h.redirect(ctx, ctx.back, { type: 'ok', text: 'Settings saved.' });
+  }));
+  route('POST', '/admin/settings/import-dummyjson', guard(async (ctx) => {
+    ctx.back = '/admin/settings#import';
+    if (!rateLimit(`dj:${ctx.ip}`, 5, 10 * 60 * 1000)) throw new UserError('Please wait a few minutes before importing again.');
+    const { importDummyJson } = require('./importers/dummyjson');
+    let r; try { r = await importDummyJson({ limit: ctx.body.limit, rate: ctx.body.rate, update: !!ctx.body.update, downloadImages: !!ctx.body.download }); }
+    catch (e) { throw new UserError(e.message); }
+    h.redirect(ctx, ctx.back, { type: r.failed.length ? 'error' : 'ok', text: `DummyJSON: fetched ${r.fetched}; created ${r.created}, updated ${r.updated}, skipped ${r.skipped}, failed ${r.failed.length}${r.failed.length ? ` (first: ${r.failed[0].item}: ${r.failed[0].errors.join(', ')})` : ''}.` });
+  }));
+  route('POST', '/admin/settings/archive-demo', guard((ctx) => {
+    ctx.back = '/admin/settings'; if (ctx.body.confirm !== 'yes') throw new UserError('Tick the box to confirm.');
+    const n = q.run("UPDATE products SET status='archived', updated_at=datetime('now') WHERE is_development=1 AND status<>'archived'").changes;
+    h.redirect(ctx, ctx.back, { type: 'ok', text: `${n} demo product(s) archived.` });
   }));
 }
 module.exports = { register, LABEL };

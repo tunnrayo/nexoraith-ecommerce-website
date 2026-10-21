@@ -32,6 +32,18 @@ module.exports = {
     email: 'NEXORAITHABSOLUTEVENTURES@GMAIL.COM', tagline: 'Shop Smarter. Live Better.',
     address: e.COMPANY_ADDRESS || '', phone: e.COMPANY_PHONE || '',
   },
+  // Self-sourcing workflow settings (see README "How orders work")
+  // review_first: you check the market before the customer pays (payment link sent after review). pay_first: customer pays at checkout.
+  paymentTiming: ['review_first', 'pay_first'].includes(e.PAYMENT_TIMING) ? e.PAYMENT_TIMING : 'review_first',
+  deliveryDays: Math.min(Math.max(parseInt(e.DELIVERY_ESTIMATE_DAYS, 10) || 10, 1), 90),
+  timezone: e.BUSINESS_TIMEZONE || 'Africa/Lagos',
+  // Extra hosts allowed for product images (space separated, https only). Default allows DummyJSON demo images.
+  imageHosts: (e.IMAGE_HOSTS ?? 'https://cdn.dummyjson.com').split(/\s+/).filter((h) => /^https:\/\/[a-z0-9.-]+$/i.test(h)),
+  dummyjsonUrl: e.DUMMYJSON_URL || 'https://dummyjson.com/products',
+  ownerEmail: e.OWNER_NOTIFY_EMAIL || '',
+  email: { apiKey: e.RESEND_API_KEY || '', from: e.EMAIL_FROM || '', base: e.RESEND_API_URL || 'https://api.resend.com' },
+  // Old dropshipping tools (CJdropshipping) are hidden unless SUPPLIER_INTEGRATION=cj
+  supplierIntegration: e.SUPPLIER_INTEGRATION === 'cj',
   paystack: { secret: e.PAYSTACK_SECRET_KEY || '', base: 'https://api.paystack.co' },
   cj: { apiKey: e.CJ_API_KEY || '', base: 'https://developers.cjdropshipping.com/api2.0/v1', allowOrderSubmission: bool(e.CJ_ALLOW_ORDER_SUBMISSION, false) },
 };

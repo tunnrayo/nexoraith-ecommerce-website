@@ -65,6 +65,63 @@ ALTER TABLE orders ADD COLUMN is_demo INTEGER NOT NULL DEFAULT 0 CHECK(is_demo I
 ALTER TABLE orders ADD COLUMN payment_method TEXT NOT NULL DEFAULT 'paystack' CHECK(payment_method IN('paystack','demo'));
 ALTER TABLE orders ADD COLUMN demo_confirmed_at TEXT;
 CREATE INDEX idx_orders_demo ON orders(is_demo);
+`, `-- fk-off
+-- v3 (2026-10-21): self-sourcing business model. Orders table rebuilt with new status sets (SQLite cannot alter CHECKs).
+CREATE TABLE orders_new(id INTEGER PRIMARY KEY, reference TEXT NOT NULL UNIQUE, checkout_key TEXT UNIQUE,
+  status TEXT NOT NULL DEFAULT 'pending_review' CHECK(status IN('pending_review','awaiting_payment','confirmed','cancelled')),
+  payment_status TEXT NOT NULL DEFAULT 'unpaid' CHECK(payment_status IN('unpaid','pending','paid','failed','abandoned','refund_pending','refunded')),
+  fulfillment_status TEXT NOT NULL DEFAULT 'not_started' CHECK(fulfillment_status IN('not_started','sourcing','products_secured','preparing','ready_for_dispatch','out_for_delivery','delivered','cancelled')),
+  customer_name TEXT NOT NULL, customer_email TEXT NOT NULL, customer_phone TEXT NOT NULL,
+  ship_address TEXT NOT NULL, ship_city TEXT NOT NULL, ship_state TEXT NOT NULL, ship_country TEXT NOT NULL, ship_postal TEXT NOT NULL DEFAULT '', delivery_notes TEXT NOT NULL DEFAULT '',
+  currency TEXT NOT NULL, subtotal_minor INTEGER NOT NULL, delivery_fee_minor INTEGER NOT NULL, discount_minor INTEGER NOT NULL DEFAULT 0, total_minor INTEGER NOT NULL,
+  delivery_zone_name TEXT NOT NULL DEFAULT '', delivery_confirmed INTEGER NOT NULL DEFAULT 0, has_development_items INTEGER NOT NULL DEFAULT 0,
+  tracking_number TEXT, tracking_url TEXT, admin_notes TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  is_demo INTEGER NOT NULL DEFAULT 0 CHECK(is_demo IN(0,1)),
+  payment_method TEXT NOT NULL DEFAULT 'paystack' CHECK(payment_method IN('paystack','demo')),
+  demo_confirmed_at TEXT,
+  payment_timing TEXT NOT NULL DEFAULT 'pay_first' CHECK(payment_timing IN('review_first','pay_first')),
+  payment_requested_at TEXT,
+  confirmed_at TEXT,
+  estimated_delivery_date TEXT CHECK(estimated_delivery_date IS NULL OR estimated_delivery_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+  original_estimated_delivery_date TEXT,
+  needs_attention INTEGER NOT NULL DEFAULT 0 CHECK(needs_attention IN(0,1)),
+  attention_reason TEXT NOT NULL DEFAULT '',
+  refund_due_minor INTEGER NOT NULL DEFAULT 0 CHECK(refund_due_minor >= 0),
+  cancel_reason TEXT NOT NULL DEFAULT '',
+  CHECK(total_minor = subtotal_minor + delivery_fee_minor - discount_minor));
+INSERT INTO orders_new(id,reference,checkout_key,status,payment_status,fulfillment_status,customer_name,customer_email,customer_phone,ship_address,ship_city,ship_state,ship_country,ship_postal,delivery_notes,
+  currency,subtotal_minor,delivery_fee_minor,discount_minor,total_minor,delivery_zone_name,delivery_confirmed,has_development_items,tracking_number,tracking_url,admin_notes,created_at,updated_at,
+  is_demo,payment_method,demo_confirmed_at,payment_timing,payment_requested_at,confirmed_at,estimated_delivery_date,original_estimated_delivery_date)
+SELECT o.id,o.reference,o.checkout_key,
+  CASE WHEN o.status='cancelled' THEN 'cancelled' WHEN o.demo_confirmed_at IS NOT NULL THEN 'confirmed' WHEN o.status='pending_payment' THEN 'awaiting_payment' ELSE o.status END,
+  o.payment_status,
+  CASE o.fulfillment_status WHEN 'awaiting_supplier' THEN 'not_started' WHEN 'supplier_submitted' THEN 'sourcing' WHEN 'processing' THEN 'preparing' WHEN 'shipped' THEN 'out_for_delivery' ELSE o.fulfillment_status END,
+  o.customer_name,o.customer_email,o.customer_phone,o.ship_address,o.ship_city,o.ship_state,o.ship_country,o.ship_postal,o.delivery_notes,
+  o.currency,o.subtotal_minor,o.delivery_fee_minor,o.discount_minor,o.total_minor,o.delivery_zone_name,o.delivery_confirmed,o.has_development_items,o.tracking_number,o.tracking_url,o.admin_notes,o.created_at,o.updated_at,
+  o.is_demo,o.payment_method,o.demo_confirmed_at,'pay_first',o.created_at,
+  c.t, date(datetime(c.t,'+1 hours'),'+10 days'), date(datetime(c.t,'+1 hours'),'+10 days')
+FROM orders o LEFT JOIN (SELECT o2.id oid, COALESCE((SELECT MIN(paid_at) FROM payments p WHERE p.order_id=o2.id AND p.status='success'), o2.demo_confirmed_at) t FROM orders o2) c ON c.oid=o.id;
+DROP TABLE orders;
+ALTER TABLE orders_new RENAME TO orders;
+CREATE INDEX idx_orders_email ON orders(customer_email);
+CREATE INDEX idx_orders_demo ON orders(is_demo);
+CREATE INDEX idx_orders_status ON orders(status, payment_status, fulfillment_status);
+-- Order lines: exact item snapshot + sourcing status per line
+ALTER TABLE order_items ADD COLUMN image_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE order_items ADD COLUMN options_json TEXT NOT NULL DEFAULT '{}';
+ALTER TABLE order_items ADD COLUMN item_status TEXT NOT NULL DEFAULT 'pending' CHECK(item_status IN('pending','available','secured','unavailable','removed'));
+ALTER TABLE order_items ADD COLUMN item_note TEXT NOT NULL DEFAULT '';
+-- Product-level availability (owned by the store, never by an external API)
+ALTER TABLE products ADD COLUMN availability TEXT NOT NULL DEFAULT 'available' CHECK(availability IN('available','temporarily_unavailable','discontinued'));
+ALTER TABLE products ADD COLUMN source TEXT NOT NULL DEFAULT '';
+-- Order history / customer communication log
+CREATE TABLE order_events(id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE, created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  actor TEXT NOT NULL DEFAULT 'system', kind TEXT NOT NULL, body TEXT NOT NULL DEFAULT '', customer_visible INTEGER NOT NULL DEFAULT 0 CHECK(customer_visible IN(0,1)));
+CREATE INDEX idx_events_order ON order_events(order_id, id);
+-- Outgoing notifications (email). status records whether it was actually sent.
+CREATE TABLE notifications(id INTEGER PRIMARY KEY, order_id INTEGER REFERENCES orders(id) ON DELETE SET NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  channel TEXT NOT NULL DEFAULT 'email', recipient TEXT NOT NULL, subject TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN('sent','skipped','failed')), detail TEXT NOT NULL DEFAULT '');
 `];
 
 let db;
@@ -80,9 +137,17 @@ function open(file = cfg.dbPath) {
 function migrate() {
   let v = db.prepare('PRAGMA user_version').get().user_version;
   while (v < MIGRATIONS.length) {
+    // Migrations that rebuild a table must run with foreign keys OFF (SQLite's documented procedure),
+    // otherwise dropping the old table would cascade-delete child rows. Integrity is checked before commit.
+    const fkOff = MIGRATIONS[v].startsWith('-- fk-off');
+    if (fkOff) db.exec('PRAGMA foreign_keys=OFF');
     db.exec('BEGIN');
-    try { db.exec(MIGRATIONS[v]); v += 1; db.exec(`PRAGMA user_version=${v}`); db.exec('COMMIT'); }
-    catch (err) { db.exec('ROLLBACK'); throw err; }
+    try {
+      db.exec(MIGRATIONS[v]);
+      if (fkOff && db.prepare('PRAGMA foreign_key_check').all().length) throw new Error(`migration ${v + 1}: foreign key check failed`);
+      v += 1; db.exec(`PRAGMA user_version=${v}`); db.exec('COMMIT');
+    } catch (err) { db.exec('ROLLBACK'); throw err; }
+    finally { if (fkOff) db.exec('PRAGMA foreign_keys=ON'); }
   }
   return v;
 }

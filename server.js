@@ -15,6 +15,8 @@ const admin = require('./src/admin');
 const paystack = require('./src/payments/paystack');
 const { q } = require('./src/db');
 const multipart = require('./src/multipart');
+const settings = require('./src/settings');
+const dd = require('./src/delivery-date');
 
 const PUBLIC = path.join(__dirname, 'public');
 const MIME = { '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.ico': 'image/x-icon', '.txt': 'text/plain; charset=utf-8', '.woff2': 'font/woff2' };
@@ -24,7 +26,7 @@ function route(method, pattern, handler) {
   routes.push({ method, re, names, handler });
 }
 const SECURITY_HEADERS = {
-  'Content-Security-Policy': "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; form-action 'self' https://*.paystack.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
+  'Content-Security-Policy': `default-src 'self'; img-src 'self' data: ${cfg.imageHosts.join(' ')}; style-src 'self'; script-src 'self'; form-action 'self' https://*.paystack.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'`,
   'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'DENY',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 };
@@ -70,7 +72,7 @@ function serveStatic(ctx) {
 }
 
 // ---------- public routes ----------
-route('GET', '/', (ctx) => send(ctx, 200, views.home(ctx, { cats: catalog.categories(), featured: catalog.featured(4) })));
+route('GET', '/', (ctx) => send(ctx, 200, views.home(ctx, { cats: catalog.categories(), featured: catalog.featured(8) })));
 route('GET', '/shop', (ctx) => {
   const sp = ctx.url.searchParams;
   const query = { search: (sp.get('q') || '').trim().slice(0, 80), category: sp.get('category') || '', sort: catalog.SORTS[sp.get('sort')] ? sp.get('sort') : 'newest', page: sp.get('page') || '1' };
@@ -82,7 +84,7 @@ route('GET', '/category/:slug', (ctx) => redirect(ctx, `/shop?category=${encodeU
 route('GET', '/product/:slug', (ctx) => {
   const p = catalog.getProduct(ctx.params.slug);
   if (!p) return send(ctx, 404, views.notFound(ctx));
-  send(ctx, 200, views.product(ctx, p, catalog.related(p), zones()));
+  send(ctx, 200, views.product(ctx, p, catalog.related(p), zones(), checkoutInfo()));
 });
 for (const slug of Object.keys(views.PAGES)) route('GET', `/${slug}`, (ctx) => send(ctx, 200, views.infoPage(ctx, slug, { zones: zones() })));
 
@@ -105,6 +107,8 @@ route('POST', '/cart/update', (ctx) => {
 });
 route('POST', '/cart/remove', (ctx) => { if (!needCsrf(ctx)) return; cart.remove(withCart(ctx), ctx.body.variant_id); redirect(ctx, '/cart', { type: 'ok', text: 'Item removed.' }); });
 
+// What the checkout page says about timing: payment flow + the 10-day estimate if confirmed today.
+function checkoutInfo() { const d = settings.deliveryDays(); return { timing: settings.paymentTiming(), days: d, ifToday: dd.formatDate(dd.estimate(new Date(), d)) }; }
 function zones() { return q.all('SELECT * FROM delivery_zones WHERE active=1 ORDER BY id'); }
 // Payment methods offered at checkout. "demo" exists only in DEMO_MODE and never takes money.
 function methods() { const m = []; if (paystack.isConfigured() || !cfg.demoMode) m.push('paystack'); if (cfg.demoMode) m.push('demo'); return m; }
@@ -114,25 +118,26 @@ route('GET', '/checkout', (ctx) => {
   if (ls.some((l) => l.problem)) return redirect(ctx, '/cart', { type: 'error', text: 'Some items need attention before checkout.' });
   const zs = zones();
   if (!zs.length) return send(ctx, 200, views.errorPage(ctx, 'Checkout is not available yet: no delivery destinations have been set up.'));
-  send(ctx, 200, views.checkoutPage(ctx, ls, zs, {}, {}, rand(18), methods(), paystack.isConfigured()));
+  send(ctx, 200, views.checkoutPage(ctx, ls, zs, {}, {}, rand(18), methods(), paystack.isConfigured(), checkoutInfo()));
 });
-route('POST', '/checkout', (ctx) => {
+route('POST', '/checkout', async (ctx) => {
   if (!needCsrf(ctx)) return;
   if (!rateLimit(`co:${ctx.ip}`, 15, 10 * 60 * 1000)) return send(ctx, 429, views.errorPage(ctx, 'Too many attempts. Please wait a few minutes and try again.'));
   const zs = zones(); const ms = methods(); const { v, e, ok } = validate.checkout(ctx.body, zs, ms);
   const key = /^[A-Za-z0-9_-]{16,64}$/.test(ctx.body.checkout_key || '') ? ctx.body.checkout_key : rand(18);
   const ls = ctx.cartToken ? cart.lines(ctx.cartToken) : [];
   if (!ls.length) return redirect(ctx, '/cart', { type: 'error', text: 'Your cart is empty.' });
-  if (!ok) return send(ctx, 422, views.checkoutPage(ctx, ls, zs, { ...v, zone_id: v.zone_id }, e, key, ms, paystack.isConfigured()));
+  if (!ok) return send(ctx, 422, views.checkoutPage(ctx, ls, zs, { ...v, zone_id: v.zone_id }, e, key, ms, paystack.isConfigured(), checkoutInfo()));
   try {
-    const { order } = orders.createOrder(ctx.cartToken, v, key);
-    redirect(ctx, `/order/${order.reference}?t=${orders.accessToken(order.reference)}`, { type: 'ok', text: order.payment_method === 'demo' ? 'Demonstration order saved. Review it below and complete the demonstration.' : 'Order saved. Please review the total below and pay to confirm it.' });
+    const { order, duplicate } = orders.createOrder(ctx.cartToken, v, key);
+    if (!duplicate) await orders.afterCreate(order);
+    const text = order.status === 'pending_review' ? 'Order received. We will check your exact items and send you a payment link. You have not been charged.' : order.payment_method === 'demo' ? 'Demonstration order saved. Review it below and complete the demonstration.' : 'Order saved. Please review the total below and pay to confirm it.';
+    redirect(ctx, `/order/${order.reference}?t=${orders.accessToken(order.reference)}`, { type: 'ok', text });
   } catch (err) {
     if (err instanceof UserError) return redirect(ctx, err.code === 'cart_problem' ? '/cart' : '/checkout', { type: 'error', text: err.message });
     throw err;
   }
 });
-const LABELS = { order: { pending_payment: 'Awaiting payment', confirmed: 'Confirmed', cancelled: 'Cancelled' }, payment: { unpaid: 'Not paid yet', pending: 'Waiting for confirmation', paid: 'Paid', failed: 'Failed', abandoned: 'Not completed', refunded: 'Refunded' }, fulfil: admin.LABEL.fulfil };
 function loadOrder(ctx) {
   const o = orders.byReference(ctx.params.ref);
   const t = ctx.url.searchParams.get('t') || ctx.body?.t;
@@ -141,9 +146,9 @@ function loadOrder(ctx) {
 route('GET', '/order/:ref', (ctx) => {
   const r = loadOrder(ctx); if (!r) return send(ctx, 404, views.notFound(ctx));
   ctx.statusText = orders.customerStatus(r.o);
-  ctx.labels = { order: LABELS.order[r.o.status], payment: LABELS.payment[r.o.payment_status], fulfil: r.o.payment_status === 'paid' ? LABELS.fulfil[r.o.fulfillment_status] : 'Not started' };
-  if (r.o.payment_method === 'demo') ctx.labels = { order: r.o.status === 'cancelled' ? 'Cancelled' : r.o.demo_confirmed_at ? 'Demonstration order received' : 'Demonstration order (not yet completed)', payment: 'Demonstration: no payment taken', fulfil: 'Not applicable (demonstration)' };
-  send(ctx, 200, views.orderPage(ctx, r.o, orders.items(r.o.id), r.t));
+  const L = orders.LABEL;
+  ctx.labels = { order: L.status[r.o.status], payment: r.o.payment_method === 'demo' ? 'Demonstration: no payment taken' : L.payment[r.o.payment_status], fulfil: L.fulfil[r.o.fulfillment_status] };
+  send(ctx, 200, views.orderPage(ctx, r.o, orders.items(r.o.id), r.t, { events: orders.events(r.o.id, true), canPay: orders.canPay(r.o) && paystack.isConfigured(), payConfigured: paystack.isConfigured(), days: settings.deliveryDays() }));
 });
 route('POST', '/order/:ref/pay', async (ctx) => {
   if (!needCsrf(ctx)) return;
@@ -178,6 +183,7 @@ route('GET', '/payment/callback', async (ctx) => {
   let flash = { type: 'ok', text: 'We are confirming your payment with the payment provider. This page updates once it is verified.' };
   try {
     const result = orders.applyPaymentResult(ref, await paystack.verify(ref));
+    await orders.afterPayment(result);
     if (result.ok) flash = { type: 'ok', text: 'Payment verified. Thank you!' };
     else if (result.reason === 'mismatch') flash = { type: 'error', text: 'We could not match your payment to this order. Please contact us with your order reference.' };
     else if (result.reason === 'failed' || result.reason === 'abandoned') flash = { type: 'error', text: 'The payment was not completed.' };
@@ -188,7 +194,7 @@ route('POST', '/webhooks/paystack', async (ctx) => {
   const raw = ctx.raw || Buffer.alloc(0);
   if (!paystack.verifySignature(raw, ctx.req.headers['x-paystack-signature'])) return send(ctx, 401, 'invalid signature', 'text/plain');
   let evt; try { evt = JSON.parse(raw.toString('utf8')); } catch { return send(ctx, 400, 'bad json', 'text/plain'); }
-  try { orders.handleWebhook(evt); } catch (err) { console.error('webhook error:', err.message); return send(ctx, 500, 'error', 'text/plain'); }
+  try { await orders.afterPayment(orders.handleWebhook(evt)); } catch (err) { console.error('webhook error:', err.message); return send(ctx, 500, 'error', 'text/plain'); }
   send(ctx, 200, 'ok', 'text/plain');
 });
 route('GET', '/contact', (ctx) => send(ctx, 200, views.contactPage(ctx)));

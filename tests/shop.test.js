@@ -66,7 +66,7 @@ test('order: server computes totals, snapshots items, ignores browser prices, bl
   const r = await cl.post('/checkout', body); assert.equal(r.status, 303); assert.match(r.location, /^\/order\/NX-[A-Z0-9]+\?t=/);
   const o = ctx.db.q.get('SELECT * FROM orders WHERE reference=?', refOf(r));
   assert.equal(o.subtotal_minor, 1850000); assert.equal(o.delivery_fee_minor, 150000); assert.equal(o.total_minor, 2000000);
-  assert.equal(o.status, 'pending_payment'); assert.equal(o.payment_status, 'unpaid'); assert.equal(o.fulfillment_status, 'not_started');
+  assert.equal(o.status, 'awaiting_payment'); assert.equal(o.payment_status, 'unpaid'); assert.equal(o.fulfillment_status, 'not_started');
   assert.equal(ctx.db.q.all('SELECT * FROM order_items WHERE order_id=?', o.id).length, 2);
   ctx.db.q.run("UPDATE variants SET price_minor=999999 WHERE sku='DEV-TOTE-L'");
   assert.equal(ctx.db.q.get('SELECT unit_price_minor u FROM order_items WHERE order_id=? AND sku=?', o.id, 'DEV-TOTE-L').u, 750000, 'snapshot keeps the order-time price');
@@ -79,7 +79,7 @@ test('order page needs the secret token; other customers cannot view it', async 
   const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-SLV'); const r = await placeOrder(cl);
   const [path] = r.location.split('?'); const anon = client(ctx.base);
   assert.equal((await anon.get(path)).status, 404); assert.equal((await anon.get(path + '?t=wrong')).status, 404);
-  const ok = await anon.get(r.location); assert.equal(ok.status, 200); assert.match(ok.text, /Total payable/);
+  const ok = await anon.get(r.location); assert.equal(ok.status, 200); assert.match(ok.text, /What you ordered/); assert.match(ok.text, /DEV-STAND-SLV/);
 });
 test('payment: webhook rejects bad signature; success needs matching amount; idempotent', async () => {
   const cl = client(ctx.base); await addToCart(cl, 'DEV-WAL-BRN', 1); const r = await placeOrder(cl);
@@ -93,7 +93,8 @@ test('payment: webhook rejects bad signature; success needs matching amount; ide
   ctx.db.q.run("UPDATE payments SET status='pending' WHERE reference=?", pref);
   const stockBefore = ctx.db.q.get("SELECT stock_qty s FROM variants WHERE sku='DEV-WAL-BRN'").s;
   assert.equal((await send(evt)).status, 200); row = ctx.db.q.get('SELECT * FROM orders WHERE id=?', o.id);
-  assert.equal(row.payment_status, 'paid'); assert.equal(row.status, 'confirmed'); assert.equal(row.fulfillment_status, 'awaiting_supplier');
+  assert.equal(row.payment_status, 'paid'); assert.equal(row.status, 'confirmed'); assert.equal(row.fulfillment_status, 'not_started');
+  assert.ok(row.confirmed_at); assert.match(row.estimated_delivery_date, /^\d{4}-\d{2}-\d{2}$/); assert.equal(row.estimated_delivery_date, row.original_estimated_delivery_date);
   assert.equal(ctx.db.q.get("SELECT stock_qty s FROM variants WHERE sku='DEV-WAL-BRN'").s, stockBefore - 1);
   assert.equal((await send(evt)).status, 200); assert.equal((await send(evt)).status, 200);
   assert.equal(ctx.db.q.get("SELECT stock_qty s FROM variants WHERE sku='DEV-WAL-BRN'").s, stockBefore - 1, 'replayed webhook must not process twice');
@@ -110,7 +111,8 @@ test('paying without a Paystack key keeps the order, takes no money, explains wh
   const config = require('../src/config'); const keep = config.paystack.secret; const keepDemo = config.demoMode; config.paystack.secret = ''; config.demoMode = false;
   try {
     const cl = client(ctx.base); await addToCart(cl, 'DEV-STAND-SLV'); const r = await placeOrder(cl); const page = await cl.get(r.location);
-    const pay = await cl.post(`/order/${refOf(r)}/pay`, { _csrf: csrf(page.text), t: r.location.split('t=')[1] });
+    assert.match(page.text, /not switched on/); assert.doesNotMatch(page.text, /\/pay"/);
+    const pay = await cl.post(`/order/${refOf(r)}/pay`, { _csrf: cl.jar.nx_csrf, t: r.location.split('t=')[1] });
     assert.equal(pay.status, 303); assert.match(pay.location, /^\/order\//);
     assert.match((await cl.get(pay.location)).text, /not switched on/);
   } finally { config.paystack.secret = keep; config.demoMode = keepDemo; }
@@ -125,7 +127,7 @@ test('contact form validates, stores, and ignores honeypot bots', async () => {
 test('admin: blocked when logged out; login works; wrong password fails; CSRF enforced', async () => {
   const sec = require('../src/security'); ctx.db.q.run('INSERT INTO admin_users(email,password_hash) VALUES(?,?)', 'boss@example.test', sec.hashPassword('a-long-test-password'));
   const anon = client(ctx.base);
-  for (const p of ['/admin', '/admin/orders', '/admin/products', '/admin/inquiries', '/admin/delivery', '/admin/supplier']) { const r = await anon.get(p); assert.equal(r.status, 303); assert.equal(r.location, '/admin/login'); }
+  for (const p of ['/admin', '/admin/orders', '/admin/products', '/admin/inquiries', '/admin/delivery', '/admin/settings', '/admin/categories']) { const r = await anon.get(p); assert.equal(r.status, 303); assert.equal(r.location, '/admin/login'); }
   assert.equal((await anon.post('/admin/products/1', { name: 'x' })).status, 303);
   const t = csrf((await anon.get('/admin/login')).text);
   assert.equal((await anon.post('/admin/login', { _csrf: t, email: 'boss@example.test', password: 'wrong' })).location, '/admin/login');
@@ -134,19 +136,23 @@ test('admin: blocked when logged out; login works; wrong password fails; CSRF en
   assert.equal((await anon.post('/admin/delivery/1', { name: 'x' })).status, 403);
   assert.match((await anon.get('/admin/orders')).text, /NX-/);
 });
-test('admin: shipped needs tracking; unpaid orders cannot be shipped; supplier submit is off by default', async () => {
+test('admin fulfilment: only after confirmation, forward only, all items secured first; supplier tools off by default', async () => {
   const adm = client(ctx.base); await adm.post('/admin/login', { _csrf: csrf((await adm.get('/admin/login')).text), email: 'boss@example.test', password: 'a-long-test-password' });
   const paid = ctx.db.q.get("SELECT * FROM orders WHERE payment_status='paid'"); const unpaid = ctx.db.q.get("SELECT * FROM orders WHERE payment_status='unpaid' LIMIT 1");
-  const t = csrf((await adm.get(`/admin/orders/${paid.reference}`)).text);
-  await adm.post(`/admin/orders/${paid.reference}/fulfilment`, { _csrf: t, to: 'processing' });
-  await adm.post(`/admin/orders/${paid.reference}/fulfilment`, { _csrf: t, to: 'shipped', tracking_number: '' });
-  assert.equal(ctx.db.q.get('SELECT fulfillment_status f FROM orders WHERE id=?', paid.id).f, 'processing');
-  await adm.post(`/admin/orders/${paid.reference}/fulfilment`, { _csrf: t, to: 'shipped', tracking_number: 'TRK123' });
-  assert.equal(ctx.db.q.get('SELECT fulfillment_status f FROM orders WHERE id=?', paid.id).f, 'shipped');
-  await adm.post(`/admin/orders/${unpaid.reference}/fulfilment`, { _csrf: t, to: 'shipped', tracking_number: 'X' });
-  assert.equal(ctx.db.q.get('SELECT fulfillment_status f FROM orders WHERE id=?', unpaid.id).f, 'not_started');
-  assert.equal((await adm.post(`/admin/orders/${paid.reference}/supplier`, { _csrf: t, confirm: 'yes' })).status, 303);
+  const t = csrf((await adm.get(`/admin/orders/${paid.reference}`)).text); const st = (o) => ctx.db.q.get('SELECT fulfillment_status f FROM orders WHERE id=?', o.id).f;
+  assert.match((await adm.post(`/admin/orders/${paid.reference}/fulfilment`, { _csrf: t, to: 'products_secured' })).status.toString(), /303/);
+  assert.equal(st(paid), 'not_started', 'cannot mark secured before every item is secured');
+  await adm.post(`/admin/orders/${paid.reference}/fulfilment`, { _csrf: t, to: 'sourcing' }); assert.equal(st(paid), 'sourcing');
+  for (const i of ctx.db.q.all('SELECT id FROM order_items WHERE order_id=?', paid.id)) await adm.post(`/admin/orders/${paid.reference}/items/${i.id}`, { _csrf: t, item_status: 'secured' });
+  await adm.post(`/admin/orders/${paid.reference}/fulfilment`, { _csrf: t, to: 'out_for_delivery', note: 'Rider on the way' });
+  assert.equal(st(paid), 'sourcing', 'a flagged order (earlier payment mismatch) cannot move on until the flag is cleared');
+  await adm.post(`/admin/orders/${paid.reference}/attention`, { _csrf: t, on: '0' });
+  await adm.post(`/admin/orders/${paid.reference}/fulfilment`, { _csrf: t, to: 'out_for_delivery', note: 'Rider on the way' }); assert.equal(st(paid), 'out_for_delivery');
+  await adm.post(`/admin/orders/${paid.reference}/fulfilment`, { _csrf: t, to: 'sourcing' }); assert.equal(st(paid), 'out_for_delivery', 'cannot move backwards');
+  await adm.post(`/admin/orders/${unpaid.reference}/fulfilment`, { _csrf: t, to: 'sourcing' }); assert.equal(st(unpaid), 'not_started', 'unconfirmed orders cannot be fulfilled');
+  assert.equal((await adm.post(`/admin/orders/${paid.reference}/supplier`, { _csrf: t, confirm: 'yes' })).status, 404);
   assert.equal(ctx.db.q.get('SELECT COUNT(*) n FROM supplier_orders').n, 0);
+  assert.match((await client(ctx.base).get(`/order/${paid.reference}?t=${require('../src/orders').accessToken(paid.reference)}`)).text, /Rider on the way/);
 });
 test('security headers present, no secrets in pages, path traversal blocked', async () => {
   const r = await fetch(ctx.base + '/'); assert.match(r.headers.get('content-security-policy'), /script-src 'self'/); assert.equal(r.headers.get('x-content-type-options'), 'nosniff');

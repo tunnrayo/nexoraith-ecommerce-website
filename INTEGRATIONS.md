@@ -1,22 +1,19 @@
-# Integrations - actual status
-## Paystack (payments)
-**Status: implemented, NOT verified against Paystack. No keys were available.** Live payments are not active.
-Implemented per https://paystack.com/docs/api/: `POST /transaction/initialize` (amount in kobo, our unique reference, callback URL), `GET /transaction/verify/:reference`, webhook header `x-paystack-signature` = HMAC-SHA512(raw body, secret key).
-Flow: order saved -> customer clicks Pay on order page -> redirected to Paystack -> returns to `/payment/callback` (server calls verify) and/or Paystack calls `/webhooks/paystack` (signature checked) -> `applyPaymentResult` checks status=success, amount and currency match, then marks paid once.
-Missing: `PAYSTACK_SECRET_KEY` (test then live), business activation, webhook URL in dashboard, a real sandbox run by you. Never expose the secret key; it lives only in `.env`/host variables. Card data never touches this server.
-Known to confirm: supported currencies for your Paystack account (NGN default), `form-action` CSP allows `https://*.paystack.com` for the redirect.
-## CJdropshipping
-**Status: adapter written; UNTESTED against a live account.** Official docs: https://developers.cjdropshipping.com/en/api/api2/ . Base `https://developers.cjdropshipping.com/api2.0/v1`.
-Auth: `POST /authentication/getAccessToken` with `{apiKey}` (token ~15 days; limited to one call per 5 min; header `CJ-Access-Token`). Endpoints referenced: `/product/query`, `/product/variant/queryByVid`, `/product/stock/queryByVid`, `/logistic/getTrackInfo`, `/shopping/order/createOrderV2`. Endpoint paths come from CJ's published index; **request parameter names and response fields are not verified** and are marked "check docs" in `src/suppliers/cj.js`.
-What works without CJ: manual product mapping (CJ product/variant IDs and cost stored privately), order payload preview in Admin.
-Safeguards: order submission needs `CJ_ALLOW_ORDER_SUBMISSION=true`, a paid confirmed order, all items mapped, an explicit admin authorisation tick; one supplier order per order (DB UNIQUE); failures leave the order "awaiting supplier", never "fulfilled". Creating a CJ order may still need payment on CJ's side (their balance/confirm endpoints are NOT called by this software).
-Not built: scheduled sync, tracking back-fill, CJ shipping-cost quotes (use `/logistic/freightCalculate` later), CJ product import UI.
-Missing: CJ account, API key, a test product, your approval of the fulfilment workflow.
-## Email
-Not integrated. Contact messages are stored (Admin > Inquiries). Order emails are not sent.
-## Demonstration checkout (not a payment integration)
-Built-in, active only with `DEMO_MODE=true`. Takes no money and talks to no provider. Demo orders cannot be paid or fulfilled. Turn off before trading.
+# Integrations - actual status (2026-10-21)
+## Business model
+The owner sources products herself after customers order. **No supplier/dropshipping integration is used.** The CJdropshipping adapter from v0.1 is kept in `src/suppliers/cj.js` but its admin tools are hidden unless `SUPPLIER_INTEGRATION=cj`.
+
+## Paystack (payments, incl. Mastercard)
+**Status: implemented; NOT verified against Paystack (no keys yet).** Live payments are not active.
+Per https://paystack.com/docs/api/transaction/ : `POST https://api.paystack.co/transaction/initialize` (Bearer secret key; `email`, `amount` in kobo, `currency`, our unique `reference`, `callback_url`, `metadata`), `GET /transaction/verify/:reference`, webhook header `x-paystack-signature` = HMAC-SHA512(raw body, secret key). Card payments (Mastercard/Visa/Verve) belong to Paystack's `card` channel; we do not restrict channels, so whatever your account has enabled is offered.
+Flow: order (review first: only after the owner requests payment) -> customer clicks Pay -> Paystack page -> `/payment/callback` verifies server-side and/or the signed webhook arrives -> `applyPaymentResult` requires status success + same amount + same currency -> payment confirmed, order confirmed, delivery estimate set. Duplicates are ignored (event table + per-payment status). Failed/abandoned never confirm. A payment for a cancelled order is flagged for refund.
+Refunds: done by the owner in the Paystack dashboard, then recorded in Admin (reference kept). Not automated.
+Needed from the owner: Paystack account + business verification, test secret key, webhook URL, a sandbox run, then live key.
+
+## Email (Resend)
+**Status: implemented; tested only against a local stand-in server.** Per https://resend.com/docs/api-reference/emails/send-email : `POST https://api.resend.com/emails`, `Authorization: Bearer re_...`, JSON `from`, `to`, `subject`, `html`, `text`. Without `RESEND_API_KEY` + `EMAIL_FROM` nothing is sent and each message is logged as "skipped"; failures are logged and never block orders. Needs a verified sending domain in Resend.
+
+## DummyJSON (demo catalogue only)
+**Status: importer implemented; tested against a local imitation of the documented format** (https://dummyjson.com/docs/products: `products`, `total`, `skip`, `limit`; `limit`/`skip` paging). The build environment cannot reach dummyjson.com, so the real fetch has not been run here. Imported: title, description, brand, category, sample price (converted with a stated rate), image URLs from allowed hosts. Not imported: ratings, reviews, stock, availabilityStatus, shipping/warranty/return text. Products are stored in our database and marked demo; customers never call DummyJSON.
+
 ## Hosting (Railway)
-Prepared only (`railway.json`, README section 7). **Not deployed and no Railway resources were created**: the owner will connect Railway herself.
-## Supplier options (not yet chosen; no agreement secured)
-CJdropshipping (adapter exists, see above), BigBuy and Alibaba are under consideration. Their reseller/API terms have not been reviewed against an actual account in this build; the supplier adapter pattern (`src/suppliers/`) and private `supplier_mappings` table allow adding another supplier without changing the storefront.
+Prepared only (`railway.json`, README section 8). Not deployed; no Railway resources created.

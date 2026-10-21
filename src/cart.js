@@ -12,7 +12,8 @@ function ensureCart(token) {
   return t;
 }
 function problemFor(r) {
-  if (r.status !== 'published') return 'This product is no longer available.';
+  if (r.status !== 'published' || r.product_availability === 'discontinued') return 'This product is no longer available.';
+  if (r.product_availability === 'temporarily_unavailable') return 'This product is temporarily unavailable.';
   if (r.is_development && !cfg.allowDevProducts) return 'This is a sample product and cannot be ordered.';
   if (r.availability === 'unavailable') return 'This option is currently unavailable.';
   if (r.availability !== 'available') return 'Availability for this option has not been verified yet.';
@@ -21,8 +22,8 @@ function problemFor(r) {
 }
 // Live lines: prices always come from the database, never from the browser.
 function lines(token) {
-  return q.all(`SELECT ci.variant_id, ci.quantity, v.sku, v.label variant_label, v.price_minor, v.availability, v.stock_qty,
-      p.id product_id, p.slug, p.name, p.status, p.is_development, p.currency,
+  return q.all(`SELECT ci.variant_id, ci.quantity, v.sku, v.label variant_label, v.options_json, v.price_minor, v.availability, v.stock_qty,
+      p.id product_id, p.slug, p.name, p.status, p.availability product_availability, p.is_development, p.currency,
       (SELECT url FROM product_images WHERE product_id=p.id ORDER BY sort_order,id LIMIT 1) image
     FROM cart_items ci JOIN variants v ON v.id=ci.variant_id JOIN products p ON p.id=v.product_id WHERE ci.cart_token=? ORDER BY ci.rowid`, token)
     .map((r) => ({ ...r, line_total: r.price_minor * r.quantity, problem: problemFor(r) }));
@@ -38,7 +39,7 @@ function add(token, variantId, qty) {
   const vid = Number(variantId);
   if (!Number.isInteger(vid)) throw new UserError('Please choose a product option.');
   return tx(() => {
-    const r = q.get(`SELECT v.id, v.availability, v.stock_qty, p.status, p.is_development, p.currency FROM variants v JOIN products p ON p.id=v.product_id WHERE v.id=?`, vid);
+    const r = q.get(`SELECT v.id, v.availability, v.stock_qty, p.status, p.availability product_availability, p.is_development, p.currency FROM variants v JOIN products p ON p.id=v.product_id WHERE v.id=?`, vid);
     if (!r) throw new UserError('That product option could not be found.');
     const have = q.get('SELECT quantity FROM cart_items WHERE cart_token=? AND variant_id=?', token, vid)?.quantity || 0;
     const total = Math.min(have + n, MAX_QTY);

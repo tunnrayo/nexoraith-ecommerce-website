@@ -1,4 +1,12 @@
 # Changelog
+## 0.3.0 - 2026-10-21
+- Business model changed to self-sourcing: review-first (default) or pay-first payment timing; request-payment step; confirmation = payment verified.
+- 10-day delivery estimate stored at confirmation (Africa/Lagos), revisable with reason; shown to customer and admin.
+- Exact-item records (image, options, SKU) and per-item sourcing status; no substitutions; approval-recorded item removal; refunds recorded; cancellation flow; attention flags.
+- Customer order page timeline, owner messages, Call/WhatsApp/Email links, optional Resend email with delivery log.
+- New admin order dashboard, filters, settings page; product search/filters, store-owned availability, options (Colour/Size/Model), image links, private market cost.
+- DummyJSON demo import (CLI + admin), image fallback, external image hosts in CSP.
+- DB migration v3; CJ tools hidden. Tests: 35.
 ## 0.2.0 - 2026-10-21
 - Redesigned storefront to the brand direction: deep navy + champagne gold primary, teal for buttons/interactive states only; new landing page; self-hosted fonts; mobile fixes (email overflow, table columns).
 - 12-product labelled demo catalogue in 3 categories with new demo illustrations; product summaries; category descriptions and images.

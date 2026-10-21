@@ -27,13 +27,13 @@ test('demo checkout: totals from server, completes without payment, never marked
   assert.equal(r.status, 303); const ref = r.location.split('/')[2].split('?')[0];
   let o = ctx.db.q.get('SELECT * FROM orders WHERE reference=?', ref);
   assert.equal(o.is_demo, 1); assert.equal(o.payment_method, 'demo'); assert.equal(o.total_minor, 950050 + 450000);
-  const page = await cl.get(r.location); assert.match(page.text, /Complete demonstration order/);
+  const page = await cl.get(r.location); assert.match(page.text, /Complete demonstration payment/);
   const pay = await cl.post(`/order/${ref}/pay`, { _csrf: csrf(page.text), t: r.location.split('t=')[1] });
   assert.match((await cl.get(pay.location)).text, /demonstration order/i);
   const done = await cl.post(`/order/${ref}/demo-confirm`, { _csrf: csrf(page.text), t: r.location.split('t=')[1] });
-  const conf = await cl.get(done.location); assert.match(conf.text, /Demonstration order complete/); assert.match(conf.text, /No payment was taken/);
+  const conf = await cl.get(done.location); assert.match(conf.text, /Demonstration order confirmed/); assert.match(conf.text, /No payment was taken/); assert.match(conf.text, /Estimated delivery/);
   o = ctx.db.q.get('SELECT * FROM orders WHERE reference=?', ref);
-  assert.ok(o.demo_confirmed_at); assert.equal(o.payment_status, 'unpaid'); assert.equal(o.fulfillment_status, 'not_started');
+  assert.ok(o.demo_confirmed_at); assert.equal(o.status, 'confirmed'); assert.ok(o.estimated_delivery_date); assert.equal(o.payment_status, 'unpaid'); assert.equal(o.fulfillment_status, 'not_started');
   assert.equal(ctx.db.q.get("SELECT stock_qty s FROM variants WHERE sku='DEV-WAL-BRN'").s, stock);
   assert.equal((await client(ctx.base).post(`/order/${ref}/demo-confirm`, { _csrf: 'x', t: 'wrong' })).status, 403);
 });

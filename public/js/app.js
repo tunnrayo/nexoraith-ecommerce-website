@@ -1,5 +1,10 @@
 // Small progressive enhancements. The site works fully without JavaScript; the server always recalculates totals.
 (function () {
+  // Image fallback: if a product image fails to load (e.g. an external demo image host is down), show a neutral placeholder.
+  document.addEventListener('error', function (e) {
+    var img = e.target;
+    if (img && img.tagName === 'IMG' && !img.dataset.fallback) { img.dataset.fallback = '1'; img.src = '/img/placeholder.svg'; img.classList.add('img-fallback'); }
+  }, true);
   var btn = document.querySelector('.menu-btn'), nav = document.getElementById('site-nav');
   if (btn && nav) btn.addEventListener('click', function () {
     var open = nav.classList.toggle('open'); btn.setAttribute('aria-expanded', open ? 'true' : 'false');

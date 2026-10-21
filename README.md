@@ -1,101 +1,99 @@
 # Nexoraith Absolute Ventures Ltd - Online Store
 
-A complete e-commerce application: branded storefront, catalogue, cart, checkout, database, order processing, a clearly labelled **demonstration checkout** for presentations, Paystack payment integration, CJdropshipping groundwork, and a protected admin area.
+An online store where customers choose **exactly** what they want, and the owner personally sources those exact items in the market and arranges delivery. Includes the storefront, cart, checkout, order management dashboard, Paystack card payments (Mastercard, Visa, Verve where enabled on your Paystack account), a 10-day delivery estimate, customer messages and optional email.
 
-**Honest status:** everything below is built and automatically tested locally with demo data. Paystack and CJdropshipping have **not** been connected to real accounts (no credentials yet). The website has **not** been deployed. Read `PROJECT_STATUS.md` before launching.
+**Honest status:** built and automatically tested on a computer with demo data. Paystack and email have **not** been connected to real accounts (no keys yet). The website has **not** been deployed. Read `PROJECT_STATUS.md` before launching.
 
 Company: Nexoraith Absolute Ventures Ltd, RC 9921594, NEXORAITHABSOLUTEVENTURES@GMAIL.COM
 
 ---
-## 1. Run it on your computer (first time)
+## 1. How orders work (your business model)
+1. **Customer chooses exact items** (product, option such as colour/size/model, quantity) and checks out with name, email, phone and delivery address.
+2. **When the customer pays** depends on Admin > Settings:
+   - **Review first** (default, recommended for market sourcing): the order is saved as **Pending review** and the customer is *not* charged. You check every item in the market, mark each one **Available in market**, then click **Request payment**. The customer's order page now shows a **Pay** button (and they are emailed if email is set up).
+   - **Pay at checkout**: the customer pays straight away.
+3. **Payment is confirmed only when Paystack verifies it** (server-to-server check + signed webhook). A customer returning from the payment page proves nothing on its own.
+4. **Order confirmed = payment verified.** At that moment the store saves the confirmation time and the **estimated delivery date = confirmation date (Lagos time) + 10 calendar days**. Example: confirmed 21 October 2026 -> estimated 31 October 2026. The date is stored with the order and never silently recalculated.
+5. **You source the exact items**: on the order page, mark each line **Secured (bought)**. Progress: Sourcing products -> Products secured -> Preparing for delivery -> Ready for dispatch -> Out for delivery -> Delivered. "Products secured" and later stages need every item secured.
+6. **If an exact item can't be found**: mark it **Unavailable**. The order is flagged **Needs attention**, and the customer is told you will contact them and that nothing will be changed without their approval. Contact them (Call / WhatsApp / Email buttons, or post a message on their order page). Then either mark the item found, **remove it with their recorded approval** (totals are recalculated and a refund is recorded if they had paid), or **cancel the order** with their agreement (a full refund is recorded as due). The store **never substitutes** anything automatically.
+7. **Refunds**: refund in your Paystack dashboard, then click **Mark refund completed** and enter the Paystack refund reference. The customer sees it.
+8. **Delays**: use **Revise the estimate** with a reason; the customer sees the new date, the original date and the reason.
 
-**You need:** Node.js version 22.13 or newer (the "LTS" download from https://nodejs.org). No `npm install` is needed: the project has zero third-party dependencies.
+Statuses are kept separate: **Order** (Pending review, Awaiting payment, Order confirmed, Cancelled), **Payment** (Not paid, Payment in progress, Payment confirmed, Payment failed, Payment not completed, Refund pending, Refunded) and **Fulfilment** (Not started ... Delivered, Cancelled). Customers can never change any of them.
 
-1. Open a terminal: Windows = press Start, type `PowerShell`, Enter. Mac = Cmd+Space, type `Terminal`, Enter.
-2. Check Node: type `node -v` and press Enter. You should see `v22.x` or higher. If not, install Node first.
-3. Go to the project folder: `cd path/to/nexoraith` (tip: type `cd ` then drag the folder into the window).
-4. Copy the settings template.
-   - Mac/Linux: `cp .env.example .env`
-   - Windows PowerShell: `copy .env.example .env`
-5. Create the database and load the **demo** products and preliminary delivery zones:
+## 2. Run it on your computer (first time)
+**You need:** Node.js 22.13 or newer (the "LTS" download from https://nodejs.org). No `npm install` is needed: the project has zero third-party dependencies.
+1. Open a terminal: Windows = Start, type `PowerShell`, Enter. Mac = Cmd+Space, type `Terminal`, Enter.
+2. Check Node: `node -v` should show `v22.x` or higher.
+3. Go to the project folder: `cd path/to/nexoraith-ecommerce-website` (tip: type `cd ` then drag the folder into the window).
+4. Copy the settings template. Mac/Linux: `cp .env.example .env` Windows: `copy .env.example .env`
+5. Create the database and load the demo products and delivery zones:
    ```
    npm run migrate
    npm run seed
    ```
-   Expected: `Database is up to date at schema version 2` and `Demo catalogue: created 12 ...`.
-6. Create your admin login (choose your own email and a password of 12+ characters):
+   Expected: `Database is up to date at schema version 3` and `Demo catalogue: created 12 ...`.
+6. (Optional, needs internet) Import about 194 demo products from DummyJSON: `npm run import:dummyjson`. Expected: `Fetched 194. Created 194 ...`. You can also do this later from **Admin > Settings > Import demo products**.
+7. Create your admin login (12+ character password):
    - Mac/Linux: `ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='your-long-password' npm run create-admin`
    - Windows PowerShell: `$env:ADMIN_EMAIL="you@example.com"; $env:ADMIN_PASSWORD="your-long-password"; npm run create-admin`
-   Expected: `Admin user ready: you@example.com`.
-7. Start the store: `npm start`. Expected: `Nexoraith store running at http://localhost:3000 (development)`.
-8. Open http://localhost:3000 in your browser. Admin: http://localhost:3000/admin (log in with step 6). Stop the server with Ctrl+C.
+8. Start: `npm start`. Expected: `Nexoraith store running at http://localhost:3000 (development)`.
+9. Open http://localhost:3000 (shop) and http://localhost:3000/admin (your dashboard). Stop the server with Ctrl+C.
 
-(The ExperimentalWarning about SQLite printed by Node is normal and harmless.)
+(The ExperimentalWarning about SQLite printed by Node is normal.)
 
 **If something goes wrong**
 - `node: command not found` -> install Node.js, then reopen the terminal.
-- `Cannot find module 'node:sqlite'` or similar -> your Node is too old; install version 22.13+.
-- `EADDRINUSE` -> port 3000 is busy; set `PORT=3001` in `.env` and also `SITE_URL=http://localhost:3001`.
-- Admin login says "Incorrect": rerun step 6 (it resets that admin's password).
-- Pages look unstyled: hard-refresh the browser (Ctrl+Shift+R / Cmd+Shift+R).
+- `Cannot find module 'node:sqlite'` -> Node is too old; install 22.13+.
+- `EADDRINUSE` -> port 3000 is busy; set `PORT=3001` and `SITE_URL=http://localhost:3001` in `.env`.
+- `Could not reach DummyJSON ... Nothing was changed` -> no internet or DummyJSON is down; try again later. Your store keeps working.
+- Product images show "Image not available" -> the image link is broken or blocked; upload a photo in Admin > Products.
+- Admin login says "Incorrect" -> rerun step 7 (it resets that admin's password).
 
-## 2. Presenting the store (demo mode)
-On your computer demo mode is on automatically. Demo mode:
-- shows the 12 demo products (each marked "Demo product", every image marked "DEMO IMAGE") and a yellow "Demonstration store" bar;
-- allows the preliminary delivery fees (Lagos NGN 2,500; other Nigerian locations NGN 4,500), marked "preliminary";
-- offers **Demonstration checkout (no payment)**. The customer reviews the order and clicks "Complete demonstration order" to see the confirmation page. No money is taken, stock is not reduced, and the order is labelled DEMO in Admin and can never become "paid".
+## 3. Try the whole workflow (demo mode)
+Demo mode is on automatically on your computer. As a customer: pick a product and option -> Add to cart -> Checkout -> choose **Demonstration checkout** -> Place order. As the owner (in another browser window): Admin > Orders > open the order -> mark items **Available in market** -> **Request payment**. Back as the customer: refresh the order page -> **Complete demonstration payment** -> you see the confirmation and the estimated delivery date. As the owner: move fulfilment to Sourcing, mark items Secured, then Out for delivery and Delivered. Demo orders never count as paid and are labelled DEMO.
 
-Suggested walk-through for your boss: Home -> Shop by category -> a product (choose an option) -> Add to cart -> Checkout (pick a destination: the total updates) -> Review -> Complete demonstration order -> Track order (reference + email) -> Admin (dashboard, orders, products, categories, delivery).
+## 4. Run the automated tests
+`npm test` (expect `# pass 35`, `# fail 0`). Details in `TESTING.md`.
 
-## 3. Run the automated tests
-`npm test` (expect `# pass 25`, `# fail 0`). Details in `TESTING.md`.
+## 5. Turn on payments (Paystack, Mastercard)
+1. Create a Paystack account at https://paystack.com and complete **business verification** (typically your CAC registration (RC 9921594), director ID and a business bank account; Paystack shows the exact list in your dashboard). Card payments, including Mastercard, are part of Paystack's "card" channel once your account is activated.
+2. Dashboard > Settings > **API Keys & Webhooks**: copy the **Test Secret Key** (`sk_test_...`). Put it in `.env` as `PAYSTACK_SECRET_KEY=sk_test_...` (no quotes, no spaces) and restart.
+3. Set the **Test Webhook URL** to `https://<your-site>/webhooks/paystack` (needs the site online, or a tunnel such as ngrok on your computer, with `SITE_URL` set to that address).
+4. Place an order, request payment, and pay with Paystack's published **test cards** (never real cards in test mode). Check Admin shows "Payment confirmed" and the estimated delivery date.
+5. Going live: switch to the **Live** secret key and live webhook URL only after the readiness checklist below. Then make one small real payment yourself and refund it.
 
-## 4. Manage the store (Admin)
-- **Products**: "+ Add product", edit name / short description / description / category / status, prices, availability, stock, add or delete variants (options), upload images (JPG/PNG/WebP up to 5 MB) and choose the main image. Tick "Demo / sample product" only for test items.
-- **Categories**: add, rename, describe, reorder, delete when empty.
-- **Delivery**: edit or add zones. Tick **Confirmed** only after the fee is approved; in live mode, checkout refuses unconfirmed zones.
-- **Orders**: filter real vs demonstration orders; move paid orders through fulfilment (shipped needs a tracking number).
-- **Inquiries**: messages from the contact form (no email is sent automatically).
-Bulk import: see `PRODUCT_CATALOG_GUIDE.md`.
+## 6. Email notifications (optional)
+Without email, customers still see every update on their private order page. To also email them (order received, payment link, confirmed with delivery date, progress, estimate changes, cancellation/refund) and to alert yourself about new orders:
+1. Create an account at https://resend.com, add and verify your own domain (for example `nexoraith.com`).
+2. Create an API key. Set `RESEND_API_KEY=re_...`, `EMAIL_FROM=Nexoraith <orders@yourdomain.com>` and your alert address in `OWNER_NOTIFY_EMAIL` (or Admin > Settings).
+3. Every email attempt is listed on the order page in Admin (sent / skipped / failed). A failed email never blocks an order.
 
-## 5. Turn on payments (Paystack)
-1. Create a Paystack account and, in the dashboard, copy your **Test Secret Key** (starts `sk_test_`): Settings > API Keys & Webhooks.
-2. Open `.env` in a text editor and set `PAYSTACK_SECRET_KEY=sk_test_...` (no spaces, no quotes). Restart `npm start`. Checkout now also offers "Pay online with Paystack".
-3. Paystack must reach the server to send webhooks. On a hosted site set the Paystack **Webhook URL** to `https://<your-domain>/webhooks/paystack`. Locally use a tunnel (e.g. ngrok) and set `SITE_URL` to the tunnel address.
-4. Place a test order and pay with Paystack's published test cards. Never use real cards in test mode.
-5. Going live needs Paystack business activation, the live key, and every item in the readiness checklist. Details: `INTEGRATIONS.md`.
+## 7. Manage the store (Admin)
+- **Dashboard**: what needs attention, orders pending review, awaiting payment, to source, in delivery, refunds, deliveries due soon.
+- **Orders**: search by reference/name/email/phone; filter by order, payment and fulfilment status, demo/real, dates, needs attention, refunds. Each order shows customer details, delivery address and instructions, every item with photo, option, SKU, quantity and price, totals, dates, estimate, history, emails and payment attempts.
+- **Products**: search and filter; quick Availability (Available to order / Temporarily unavailable / Discontinued) and visibility (Active / Inactive / Archived); edit names, descriptions, prices, options (Colour, Size, Model), photos (upload or image link), and your private market cost.
+- **Categories**, **Delivery** (zones and fees), **Inquiries** (contact form), **Settings** (payment timing, delivery days, alert email, DummyJSON demo import, archive all demo products).
 
-## 6. CJdropshipping
-Set `CJ_API_KEY` (CJ account > API Key Management > Generate). Admin > Supplier sync can then check mapped variants. Order submission to CJ stays **off** (`CJ_ALLOW_ORDER_SUBMISSION=false`) until you have tested and approved the workflow. See `INTEGRATIONS.md`.
+## 8. Deploy to Railway (prepared, NOT done)
+`railway.json` (start `npm start`, health check `/health`) and `.node-version` (Node 22) are included. On first start the server creates its tables, loads the 12 demo products if `DEMO_MODE=true` and the store is empty, and creates the first admin from `ADMIN_EMAIL`/`ADMIN_PASSWORD` if none exists. No terminal is needed on Railway.
+1. Railway: New Project > Deploy from GitHub repo > `tunnrayo/nexoraith-ecommerce-website`. (Railway does not need a separate database service: the database is a file.)
+2. Add a **Volume** to the service, mount path `/data`. Without it, every redeploy wipes orders.
+3. Variables: `NODE_ENV=production`, `DATABASE_PATH=/data/nexoraith.db`, `UPLOAD_DIR=/data/uploads`, `SITE_URL=https://<your Railway or custom domain>` (no trailing slash), `DEMO_MODE=true` for a presentation (set `false` before real trading), `ADMIN_EMAIL` + `ADMIN_PASSWORD` (delete the password after the first start), `PAYMENT_TIMING=review_first`, `BUSINESS_TIMEZONE=Africa/Lagos`, later `PAYSTACK_SECRET_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `OWNER_NOTIFY_EMAIL`, `COMPANY_PHONE`/`COMPANY_ADDRESS` once confirmed.
+4. Settings > Networking > Generate Domain (or add your domain; HTTPS is automatic). Make `SITE_URL` match. Set the Paystack webhook to `https://<domain>/webhooks/paystack`.
+5. Check the deploy logs for `Nexoraith store running at ...` and open `/health` (`{"ok":true}`).
+6. Then in Admin > Settings click **Import demo products** if you want the DummyJSON catalogue online.
+7. Keep **one** instance (SQLite). Back up `/data` (database + uploads) regularly. No CORS setup is needed (the site and its server are the same address).
 
-## 7. Deploy to Railway (prepared, NOT done)
-The project includes `railway.json` (start command `npm start`, health check `/health`) and `.node-version` (Node 22). On first start the server creates its tables automatically, loads the demo catalogue if `DEMO_MODE=true` and the store is empty, and creates the first admin from `ADMIN_EMAIL`/`ADMIN_PASSWORD` if no admin exists. So **no terminal commands are needed on Railway**.
-1. Put the project in a **private** GitHub repository (`.env`, the database and uploads are git-ignored).
-2. Railway: New Project > Deploy from GitHub repo > choose the repo.
-3. Add a **Volume** to the service, mount path `/data` (SQLite is a file; without a volume every redeploy wipes orders).
-4. Variables (service > Variables):
-   - `NODE_ENV=production`
-   - `DATABASE_PATH=/data/nexoraith.db`
-   - `UPLOAD_DIR=/data/uploads`
-   - `SITE_URL=https://<the Railway or custom domain>` (no trailing slash)
-   - `DEMO_MODE=true` for the presentation site (set `false` before real trading)
-   - `ADMIN_EMAIL=...` and `ADMIN_PASSWORD=...` (12+ characters; delete the password variable after the first successful start)
-   - later: `PAYSTACK_SECRET_KEY`, `CJ_API_KEY`, `COMPANY_PHONE`/`COMPANY_ADDRESS` once confirmed
-5. Settings > Networking > Generate Domain (or add your own domain; HTTPS is automatic). Update `SITE_URL` to match.
-6. Check the deploy logs for `Nexoraith store running at ...` and open `/health` (should show `{"ok":true}`).
-7. Keep **one** instance (SQLite). Back up `/data` regularly.
-
-## 8. Production-readiness checklist
-- [ ] `DEMO_MODE=false`; real products, images, prices, availability imported; demo products archived
-- [ ] Delivery zones, fees, estimates confirmed and ticked "Confirmed" in Admin > Delivery
-- [ ] Shipping, returns, privacy, terms, FAQ text approved (they are DRAFTS in `src/views.js`, `PAGES`)
-- [ ] Company address/phone decision made (none supplied; see `PROJECT_STATUS.md`)
-- [ ] Original logo files supplied (current logo is a crop of the style-guide image)
-- [ ] Paystack live activation + live key + webhook set + one real small test payment you authorise
-- [ ] CJ API access verified with a test product; supplier workflow approved
-- [ ] HTTPS domain live; `NODE_ENV=production`; volume backups scheduled
-- [ ] Admin password strong; `ADMIN_PASSWORD` variable removed from the host
-- [ ] Contact-form inbox process agreed (messages stored in Admin > Inquiries; no email is sent)
+## 9. Production-readiness checklist
+- [ ] Real products with your own photos, names, options and prices; all demo products archived (Admin > Settings); `DEMO_MODE=false`; `IMAGE_HOSTS=` emptied once no demo image links remain
+- [ ] Delivery zones and fees confirmed and ticked "Confirmed" in Admin > Delivery
+- [ ] Shipping, returns/refunds, privacy, terms and FAQ text approved (DRAFTS in `src/views.js`, `PAGES`)
+- [ ] Company address/phone decision made (none supplied)
+- [ ] Original logo files supplied
+- [ ] Paystack business verification done; live key + live webhook set; one small real payment + refund tested
+- [ ] Email service set up and a test email received (or decide to rely on order pages + phone/WhatsApp)
+- [ ] HTTPS domain live; volume backups scheduled; strong admin password; `ADMIN_PASSWORD` removed from Railway variables
 
 ## Folder map
-`server.js` web server and routes - `src/` business logic - `scripts/` setup/import tools - `public/` CSS, JS, fonts, images - `brand-assets/` reference brand files (not served publicly) - `data/` database, uploads, demo catalogue - `tests/` automated tests - `*.md` documentation.
+`server.js` web server and routes - `src/` business logic (`orders.js` workflow, `delivery-date.js`, `notify.js`, `admin.js`, `importers/dummyjson.js`, `payments/paystack.js`) - `scripts/` setup/import tools - `public/` CSS, JS, fonts, images - `brand-assets/` reference brand files (not public) - `data/` database, uploads, demo catalogue - `tests/` automated tests - `*.md` documentation.
