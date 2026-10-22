@@ -15,5 +15,12 @@ Needed from the owner: Paystack account + business verification, test secret key
 ## DummyJSON (REMOVED in v0.7, 2026-10-22)
 The DummyJSON importer, its bundled data, the photo installer and the image manifest have been removed at the owner's request. The store makes no calls to DummyJSON or its image server, and allows no outside image hosts by default (`IMAGE_HOSTS` empty). Old imported products in an existing database are removed with `npm run catalogue:remove-demo` (backup first; products that appear in orders are archived, not deleted).
 
+## Product photos (v0.8)
+No image service. Photos are files in the project (`public/images/products`, deployed with the code) or Admin uploads (volume). Candidate official sources (Oraimo, NIVEA) and retailer listings (Syinix, SILVER CREST, Maxi, Binatone) are recorded in the approved list; none downloaded (blocked in Claude's workspace) and permission is unconfirmed for all.
+
 ## Hosting (Railway)
 Prepared only (`railway.json`, README section 8). Not deployed; no Railway resources created.
+
+
+## Status check (2026-10-22, v0.10)
+Paystack: code complete and tested only against a simulated Paystack; **no key is configured here, so nothing has been verified against the real service.** Email (Resend): not configured. CJdropshipping: switched off; the business sources items manually. Admin > Health check shows these as BLOCKED / NOT RUN until you supply credentials, and never claims they work.

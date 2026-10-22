@@ -8,6 +8,8 @@ function setup(env = {}) {
   process.env.PAYSTACK_SECRET_KEY = env.PAYSTACK_SECRET_KEY ?? 'sk_test_unit_test_secret';
   process.env.ALLOW_DEVELOPMENT_PRODUCTS = env.ALLOW_DEVELOPMENT_PRODUCTS ?? 'true';
   process.env.ALLOW_UNCONFIRMED_DELIVERY = env.ALLOW_UNCONFIRMED_DELIVERY ?? 'true';
+  // tests must not pick up a developer's private .env.local: set these explicitly (an empty value still counts as "set")
+  process.env.SESSION_SECRET = env.SESSION_SECRET ?? ''; process.env.ADMIN_EMAIL = ''; process.env.ADMIN_PASSWORD = ''; process.env.TRUST_PROXY = env.TRUST_PROXY ?? 'false';
   process.env.SITE_URL = 'http://localhost:3999';
   process.env.PAYMENT_TIMING = env.PAYMENT_TIMING ?? 'pay_first';
   process.env.DEMO_CHECKOUT = env.DEMO_CHECKOUT ?? 'true';

@@ -150,6 +150,15 @@ DELETE FROM product_images WHERE url LIKE 'https://cdn.dummyjson.com/%/thumbnail
 -- v6 (2026-10-21): owner's visual confirmation that a product photo really shows the product.
 CREATE TABLE photo_reviews(product_id INTEGER PRIMARY KEY REFERENCES products(id) ON DELETE CASCADE,
   verdict TEXT NOT NULL CHECK(verdict IN('matches','wrong')), note TEXT NOT NULL DEFAULT '', reviewed_by TEXT NOT NULL, reviewed_at TEXT NOT NULL DEFAULT (datetime('now')));
+`, `
+-- v7 (2026-10-22): photo check on each product's admin page also records where the photo came from and whether the
+-- owner has confirmed the right to use it commercially (default: unconfirmed).
+ALTER TABLE photo_reviews ADD COLUMN source_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE photo_reviews ADD COLUMN permission TEXT NOT NULL DEFAULT 'unconfirmed' CHECK(permission IN('unconfirmed','confirmed'));
+`, `
+-- v8 (2026-10-22): administrator activity log (who did what, when). Never stores passwords, tokens or form contents.
+CREATE TABLE admin_audit(id INTEGER PRIMARY KEY, at TEXT NOT NULL DEFAULT (datetime('now')), actor TEXT NOT NULL, action TEXT NOT NULL, target TEXT NOT NULL DEFAULT '', ip TEXT NOT NULL DEFAULT '');
+CREATE INDEX idx_audit_at ON admin_audit(id);
 `];
 
 let db;

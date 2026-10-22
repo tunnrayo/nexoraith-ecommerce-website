@@ -27,12 +27,11 @@ test.before(async () => {
 });
 test.after(() => { ctx.server.close(); cdn.close(); });
 
-test('only the neutral placeholder images remain; no demo product or demo category pictures are shipped', () => {
+test('no demo product or demo category pictures are shipped; one neutral placeholder', () => {
   const pub = path.join(__dirname, '..', 'public', 'img');
   assert.deepEqual(fs.readdirSync(path.join(pub, 'categories')), ['default.svg']);
   assert.ok(!fs.existsSync(path.join(pub, 'products')), 'demo product illustrations removed');
-  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'public', 'images', 'products')), 'experimental photo folder removed');
-  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'data', 'catalogue')), 'bundled DummyJSON data and manifest removed');
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'data', 'catalogue', 'dummyjson-products.json')), 'bundled DummyJSON data removed');
   assert.equal(require('../src/images').placeholderFor('anything'), '/img/categories/default.svg');
 });
 

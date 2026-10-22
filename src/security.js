@@ -32,6 +32,7 @@ function rateLimit(key, max, windowMs) {
   if (hits.size > 5000) for (const [k, v] of hits) if (!v.some((t) => now - t < windowMs)) hits.delete(k);
   return arr.length <= max;
 }
+const resetRateLimits = () => hits.clear(); // for automated tests
 // Password hashing with scrypt
 function hashPassword(pw) {
   const salt = crypto.randomBytes(16);
@@ -41,7 +42,18 @@ function hashPassword(pw) {
 function verifyPassword(pw, stored) {
   const [alg, salt, key] = String(stored).split('$');
   if (alg !== 'scrypt' || !salt || !key) return false;
-  const k = crypto.scryptSync(pw, Buffer.from(salt, 'hex'), 64);
-  return crypto.timingSafeEqual(k, Buffer.from(key, 'hex'));
+  const k = crypto.scryptSync(pw, Buffer.from(salt, 'hex'), 64); const want = Buffer.from(key, 'hex');
+  return k.length === want.length && crypto.timingSafeEqual(k, want); // a malformed stored hash fails safely instead of throwing
 }
-module.exports = { esc, rand, sha256, safeEqual, parseCookies, cookie, rateLimit, hashPassword, verifyPassword };
+// Admin login tokens are stored only as a keyed hash (HMAC with SESSION_SECRET when set, plain SHA-256 otherwise),
+// so a copy of the database alone cannot be used to forge a session.
+const sessionHash = (t) => (cfg.sessionSecret ? crypto.createHmac('sha256', cfg.sessionSecret).update(String(t)).digest('hex') : sha256(String(t)));
+// The visitor's address. Behind a hosting proxy only the LAST X-Forwarded-For entry (added by the proxy itself) is trusted.
+function clientIp(req) {
+  if (cfg.trustProxy) {
+    const xff = String(req.headers['x-forwarded-for'] || '').split(',').map((x) => x.trim()).filter(Boolean);
+    if (xff.length) return xff[xff.length - 1].slice(0, 64);
+  }
+  return req.socket.remoteAddress || 'unknown';
+}
+module.exports = { resetRateLimits, sessionHash, clientIp, esc, rand, sha256, safeEqual, parseCookies, cookie, rateLimit, hashPassword, verifyPassword };

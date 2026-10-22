@@ -1,0 +1,8 @@
+{
+ "_comment": "TEST-ONLY invented numbers. Not the owner's prices.",
+ "prices": {
+  "NX-001": 4321,
+  "NX-004": 8888,
+  "NX-011": 47777
+ }
+}

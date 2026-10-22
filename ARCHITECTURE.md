@@ -40,3 +40,7 @@
 - `src/settings.js`: owner-editable settings in the `settings` table override `.env` defaults.
 - Product availability: product-level `availability` (available / temporarily_unavailable / discontinued) + per-option availability; both must allow ordering.
 - Images: local `/img`, `/uploads`, or https links from `IMAGE_HOSTS` (CSP `img-src`); `app.js` swaps broken images for `/img/placeholder.svg`.
+
+
+## Admin additions (v0.10)
+`src/audit.js` (activity log), `src/health.js` (diagnostics), `/admin/health`, `/admin/audit`, `/admin/account` in `src/admin.js`. `security.clientIp()` reads the proxy-supplied visitor address (last X-Forwarded-For entry) when `TRUST_PROXY` is on. Admin session tokens are stored as HMAC-SHA256 with `SESSION_SECRET`.

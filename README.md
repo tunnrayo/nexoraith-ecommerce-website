@@ -4,7 +4,7 @@ An online store where customers choose **exactly** what they want from your cata
 
 **Honest status:** built and automatically tested on a computer. Paystack and email have **not** been connected to real accounts (no keys yet). The website has **not** been deployed. Read `PROJECT_STATUS.md` before launching.
 
-**The shop starts EMPTY.** There are no demonstration or imported products. Customers see "Our collection is being prepared. Please check back soon." until you add your own products in **Admin > Products** (see `PRODUCT_CATALOG_GUIDE.md`). Nothing ever adds products automatically.
+**Your catalogue:** your approved list of 100 products is in `data/catalogue/approved-products.json`. It is added to a database with one command (`npm run catalogue:import`) or one button (Admin > Settings > **Import / refresh approved catalogue**). Nothing adds products automatically. Until products are imported, customers see "Our collection is being prepared. Please check back soon."
 
 Company: Nexoraith Absolute Ventures Ltd, RC 9921594, NEXORAITHABSOLUTEVENTURES@GMAIL.COM
 
@@ -41,11 +41,16 @@ Statuses are kept separate: **Order** (Pending review, Awaiting payment, Order c
    npm run catalogue:remove-demo
    ```
    The first command only shows what would be removed. The second makes a backup copy of your database in `data/backups/` and then removes the old demo products. Expected: `Done.` and `Active products after: 0` (or the number of products you added yourself). Orders, payments, refunds, admin logins, delivery zones and settings are not touched; a demo product that appears in a customer order is archived (hidden) instead of deleted so the order stays complete. You can also do this in **Admin > Settings > Remove old demo catalogue**.
-7. Create your admin login (12+ character password):
+7. Add your approved catalogue (100 products, 7 categories):
+   ```
+   npm run catalogue:import
+   ```
+   Expected: `Approved list: 100 products. Added 100 ...` and `With a photo: N`. Safe to run again at any time (no duplicates; products you edited in Admin are kept as you left them; orders untouched).
+8. Create your admin login (12+ character password):
    - Mac/Linux: `ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='your-long-password' npm run create-admin`
    - Windows PowerShell: `$env:ADMIN_EMAIL="you@example.com"; $env:ADMIN_PASSWORD="your-long-password"; npm run create-admin`
-8. Start: `npm start`. Expected: `Nexoraith store running at http://localhost:3000 (development)`.
-9. Open http://localhost:3000 (shop) and http://localhost:3000/admin (your dashboard). Stop the server with Ctrl+C.
+9. Start: `npm start`. Expected: `Nexoraith store running at http://localhost:3000 (development)`.
+10. Open http://localhost:3000 (shop) and http://localhost:3000/admin (your dashboard). Stop the server with Ctrl+C.
 
 (The ExperimentalWarning about SQLite printed by Node is normal.)
 
@@ -55,10 +60,14 @@ Statuses are kept separate: **Order** (Pending review, Awaiting payment, Order c
 - `EADDRINUSE` -> port 3000 is busy; set `PORT=3001` and `SITE_URL=http://localhost:3001` in `.env`.
 - A product shows a plain "Image not available" picture -> it has no photo yet (or its photo link is broken); upload a photo in Admin > Products.
 - The start-up log says `This database still contains N old demonstration product(s)` -> run step 6.
-- Admin login says "Incorrect" -> rerun step 7 (it resets that admin's password).
+- Admin login says "Incorrect" -> rerun step 8 (it resets that admin's password).
 
 ## 2b. Product photos
-Upload photos in **Admin > Products > (the product) > Images** (JPG, PNG or WebP). They are stored by the store itself (`data/uploads`, on Railway the `/data` volume) and served with long caching. A product without a photo shows a neutral "Image not available" picture, never a broken image. Use your own photos of the items you actually source: that avoids any question about who owns the photo. `npm run images:check` lists products that still need a photo.
+**Approved catalogue photos (recommended):** save each photo in the project folder `public/images/products/`, named after the product code: `nx-001.jpg` for NX-001, extra photos `nx-001-2.jpg`, `nx-001-3.jpg` (codes are in `data/catalogue/approved-products.json` and in Admin > Products). JPG, PNG or WebP, at least 200x200 px (800x800 looks best), max 4 MB. Then run `npm run catalogue:import`: each file is checked (a real image, big enough) and linked to its product; problems are listed by name. Then open Admin > Products > the product > **Photo check**: confirm the photo shows exactly that product, record its source, and tick permission only if you have it. `data/catalogue/image-manifest.json` is rewritten each time with the status of every product's photo. Commit `public/images/products` to Git so the photos are deployed with the site (they survive Railway redeploys).
+
+**Installed now:** all 100 products have a photo (`nx-001.jpg` ... `nx-100.jpg`) cut from your category collages; see `docs/photo-mapping.csv`. Please still do the Photo check in Admin for each product and decide on the 20 flagged in `data/catalogue/photo-sources.json` (`needs_review`).
+
+**Or** upload photos in **Admin > Products > (the product) > Images** (JPG, PNG or WebP). They are stored by the store itself (`data/uploads`, on Railway the `/data` volume) and served with long caching. A product without a photo shows a neutral "Image not available" picture, never a broken image. Use your own photos of the items you actually source: that avoids any question about who owns the photo. `npm run images:check` lists products that still need a photo.
 
 ## 3. Try the whole workflow
 First add at least one product in Admin > Products (status **Active**). As a customer: pick a product and option -> Add to cart -> Checkout -> Place order (no payment yet). As the owner (in another browser window): Admin > Orders > open the order -> mark items **Available in market** -> **Request payment**. The customer's order page now shows the Pay button (once Paystack keys are set; until then it says online payment is not switched on). To rehearse the payment step without Paystack, set `DEMO_CHECKOUT=true` on your computer: customers then also see a clearly labelled "Demonstration checkout (no payment)"; such orders are labelled DEMO in Admin and never count as paid. Leave it `false` on the live site.
@@ -80,24 +89,29 @@ Without email, customers still see every update on their private order page. To 
 3. Every email attempt is listed on the order page in Admin (sent / skipped / failed). A failed email never blocks an order.
 
 ## 7. Manage the store (Admin)
+**Sign in:** start the shop (`npm start`), open **http://localhost:3000/admin/login**, enter your admin email and password. First time only, run **`npm run setup:local`** in the project folder: it asks for your email and password, writes your private `.env.local` (Git ignores it) with a freshly generated `SESSION_SECRET`, and creates your admin account. Then `npm run catalogue:import` (loads the 100 products) and `npm start`. Change your password any time in **Admin > Account** (12+ characters; signs out other sessions).
+- **Health check**: press *Run all checks now* for real PASS / FAIL / WARNING / NOT RUN / BLOCKED results (pages, cart and checkout rules, admin protection, database, settings, Paystack/email status). Never shows secrets.
+- **Activity log**: who signed in and what they changed (no passwords or form contents).
+- **Dashboard business overview**: product counts, verified payments received (only Paystack-confirmed money), orders waiting, refunds due, failed payments.
 - **Dashboard**: what needs attention, orders pending review, awaiting payment, to source, in delivery, refunds, deliveries due soon.
 - **Orders**: search by reference/name/email/phone; filter by order, payment and fulfilment status, demo/real, dates, needs attention, refunds. Each order shows customer details, delivery address and instructions, every item with photo, option, SKU, quantity and price, totals, dates, estimate, history, emails and payment attempts.
 - **Products**: search and filter; quick Availability (Available to order / Temporarily unavailable / Discontinued) and visibility (Active / Inactive / Archived); edit names, descriptions, prices, options (Colour, Size, Model), photos (upload or image link), and your private market cost.
 - **Categories**, **Delivery** (zones and fees), **Inquiries** (contact form), **Settings** (payment timing, delivery days, alert email, product image check, remove old demo catalogue).
 
-## 8. Deploy to Railway (prepared, NOT done)
+## 8. Deploy to Railway (prepared, NOT done) - full guide: DEPLOYMENT.md
+This store needs a persistent disk, so it is built for **Railway + Volume**, not Vercel/serverless (see DEPLOYMENT.md). Set `SESSION_SECRET` as well as the variables below.
 `railway.json` (start `npm start`, health check `/health`) and `.node-version` (Node 22) are included. On first start the server creates its tables and the preliminary delivery zones, and creates the first admin from `ADMIN_EMAIL`/`ADMIN_PASSWORD` if none exists. No terminal is needed on Railway.
 1. Railway: New Project > Deploy from GitHub repo > `tunnrayo/nexoraith-ecommerce-website`. (Railway does not need a separate database service: the database is a file.)
 2. Add a **Volume** to the service, mount path `/data`. Without it, every redeploy wipes orders.
 3. Variables: `NODE_ENV=production`, `DATABASE_PATH=/data/nexoraith.db`, `UPLOAD_DIR=/data/uploads`, `SITE_URL=https://<your Railway or custom domain>` (no trailing slash), `ADMIN_EMAIL` + `ADMIN_PASSWORD` (delete the password after the first start), `PAYMENT_TIMING=review_first`, `BUSINESS_TIMEZONE=Africa/Lagos`, later `PAYSTACK_SECRET_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `OWNER_NOTIFY_EMAIL`, `COMPANY_PHONE`/`COMPANY_ADDRESS` once confirmed.
 4. Settings > Networking > Generate Domain (or add your domain; HTTPS is automatic). Make `SITE_URL` match. Set the Paystack webhook to `https://<domain>/webhooks/paystack`.
 5. Check the deploy logs for `Nexoraith store running at ...` and open `/health` (`{"ok":true}`).
-6. The shop is empty on a new Railway database. Sign in to `/admin` and add your products (with photos) in Admin > Products; they are stored on the volume.
+6. A new Railway database starts empty. Sign in to `/admin` > Settings > **Import / refresh approved catalogue** once: the 100 products and every photo committed in `public/images/products` appear. Photos you upload in Admin are stored on the volume.
 7. In **Admin > Delivery**, tick **Confirmed** on the Lagos and other-Nigeria zones once you are happy with the fees. In production, checkout refuses unconfirmed zones (or set `ALLOW_UNCONFIRMED_DELIVERY=true` to accept them while they are marked preliminary).
 8. Keep **one** instance (SQLite). Back up `/data` (database + uploads) regularly. No CORS setup is needed (the site and its server are the same address).
 
 ## 9. Production-readiness checklist
-- [ ] Your own products added (names, prices, options, your own photos), each one something you can really source; `DEMO_CHECKOUT=false`
+- [ ] Approved catalogue imported; product descriptions/brands/sizes completed where needed; a verified photo for every product (Photo check done, permission recorded); `DEMO_CHECKOUT=false`
 - [ ] Delivery zones and fees confirmed and ticked "Confirmed" in Admin > Delivery
 - [ ] Shipping, returns/refunds, privacy, terms and FAQ text approved (DRAFTS in `src/views.js`, `PAGES`)
 - [ ] Company address/phone decision made (none supplied)

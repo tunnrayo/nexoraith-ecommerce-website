@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const cfg = require('./src/config');
 const db = require('./src/db');
-const { esc, rand, safeEqual, parseCookies, cookie, rateLimit } = require('./src/security');
+const { esc, rand, safeEqual, parseCookies, cookie, rateLimit, clientIp } = require('./src/security');
 const { UserError } = require('./src/errors');
 const catalog = require('./src/catalog');
 const cart = require('./src/cart');
@@ -93,7 +93,7 @@ route('GET', '/product/:slug', (ctx) => {
   if (!p) return send(ctx, 404, views.notFound(ctx));
   send(ctx, 200, views.product(ctx, p, catalog.related(p), zones(), checkoutInfo()));
 });
-for (const slug of Object.keys(views.PAGES)) route('GET', `/${slug}`, (ctx) => send(ctx, 200, views.infoPage(ctx, slug, { zones: zones() })));
+for (const slug of Object.keys(views.PAGES)) route('GET', `/${slug}`, (ctx) => send(ctx, 200, views.infoPage(ctx, slug, { zones: zones(), days: settings.deliveryDays() })));
 
 function needCsrf(ctx) { if (!checkCsrf(ctx)) { send(ctx, 403, views.errorPage(ctx, 'Your session expired. Please go back, reload the page and try again.')); return false; } return true; }
 function withCart(ctx) {
@@ -227,7 +227,7 @@ admin.register(route, helpers);
 
 async function handle(req, res) {
   const url = new URL(req.url, 'http://localhost');
-  const ctx = { req, res, url, path: url.pathname, method: req.method, cookies: parseCookies(req.headers.cookie), setCookies: [], params: {}, body: {}, ip: req.socket.remoteAddress || 'unknown' };
+  const ctx = { req, res, url, path: url.pathname, method: req.method, cookies: parseCookies(req.headers.cookie), setCookies: [], params: {}, body: {}, ip: clientIp(req) };
   try {
     if ((ctx.method === 'GET' || ctx.method === 'HEAD') && serveStatic(ctx)) return;
     const fits = (r) => (r.method === ctx.method || (ctx.method === 'HEAD' && r.method === 'GET')) && r.re.test(ctx.path);

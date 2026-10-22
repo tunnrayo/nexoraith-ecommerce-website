@@ -22,7 +22,10 @@ test.before(async () => {
 test.after(() => ctx.server.close());
 
 test('the project ships no demo catalogue, importer, photo installer or product images', () => {
-  for (const f of ['src/importers', 'scripts/import-dummyjson.js', 'scripts/install-product-photos.js', 'data/catalogue', 'data/dev-catalog.json', 'public/img/products', 'public/images']) assert.ok(!fs.existsSync(path.join(ROOT, f)), f);
+  for (const f of ['src/importers', 'scripts/import-dummyjson.js', 'scripts/install-product-photos.js', 'data/catalogue/dummyjson-products.json', 'data/dev-catalog.json', 'public/img/products']) assert.ok(!fs.existsSync(path.join(ROOT, f)), f);
+  // since v0.8 the only catalogue data is the owner's approved list, and the photo folder holds only its photos (nx-NNN...)
+  assert.deepEqual(fs.readdirSync(path.join(ROOT, 'data', 'catalogue')).filter((f) => !['approved-products.json', 'image-manifest.json', 'photo-sources.json', 'private'] /* private = the owner's Git-ignored market prices, local only */.includes(f)), []);
+  for (const f of fs.readdirSync(path.join(ROOT, 'public', 'images', 'products'))) assert.match(f, /^(README\.txt|nx-\d{3}(-\d{1,2})?\.(jpe?g|png|webp))$/i, f);
   const pkg = require('../package.json'); assert.ok(!pkg.scripts['import:dummyjson'] && !pkg.scripts['photos:install']);
   const code = ['server.js', 'src/config.js', 'src/bootstrap.js', 'src/views.js', 'src/catalog.js', 'scripts/seed.js'].map((f) => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
   assert.doesNotMatch(code, /dummyjson|dev-catalog|autoImport/i);
@@ -128,6 +131,8 @@ test('removing the old demo catalogue from an existing database: backup first, o
   assert.ok(!fs.existsSync(path.join(cfg.uploadDir, 'catalog', 'aaa.webp')), 'unused saved demo photo removed');
   assert.ok(fs.existsSync(path.join(cfg.uploadDir, 'catalog', 'bbb.webp')), 'photo used by an order kept');
   assert.ok(fs.existsSync(path.join(cfg.uploadDir, 'p99-mine.png')), 'owner upload kept');
+  for (const f of fs.readdirSync(path.join(ROOT, 'public', 'images', 'products')).filter((x) => /^nx-/.test(x)).slice(0, 5)) assert.ok(fs.existsSync(path.join(ROOT, 'public', 'images', 'products', f)), `approved photo ${f} never removed by the cleanup`);
+  assert.ok(fs.existsSync(path.join(ROOT, 'public', 'images', 'products', 'README.txt')));
   const backups = fs.readdirSync(path.join(path.dirname(cfg.dbPath), 'backups'));
   assert.equal(backups.length, 1); assert.match(backups[0], /^before-demo-removal-.+\.db$/);
   const { DatabaseSync } = require('node:sqlite'); const b = new DatabaseSync(path.join(path.dirname(cfg.dbPath), 'backups', backups[0]), { readOnly: true });

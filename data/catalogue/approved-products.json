@@ -1,0 +1,1055 @@
+{
+ "_comment": "APPROVED CATALOGUE supplied by the owner on 2026-10-22 (100 products). Source of truth for names and prices. Your private market (reference) prices are NOT stored in this file; see data/catalogue/private/ (kept only on your computer, ignored by Git). Imported with: npm run catalogue:import (or Admin > Settings > Approved catalogue). Photos: put files in public/images/products/ named <sku>.jpg|.png|.webp (e.g. nx-001.jpg); extra photos <sku>-2.jpg, <sku>-3.jpg ...",
+ "approved_on": "2026-10-22",
+ "currency": "NGN",
+ "delivery_policy": "Estimated Delivery: Within 10 days after order confirmation. Orders are processed after confirmation. Estimated delivery is within 10 days of order confirmation, subject to product availability, supplier processing, shipping arrangements, and the customer's delivery location. If a product becomes unavailable or a delay occurs, we will notify the customer and explain the available options before proceeding.",
+ "categories": [
+  {
+   "slug": "home-kitchen",
+   "name": "Home and Kitchen",
+   "sort_order": 1
+  },
+  {
+   "slug": "fashion-accessories",
+   "name": "Fashion and Accessories",
+   "sort_order": 2
+  },
+  {
+   "slug": "beauty-personal-care",
+   "name": "Beauty and Personal Care",
+   "sort_order": 3
+  },
+  {
+   "slug": "gadgets-electronics",
+   "name": "Everyday Gadgets and Electronics",
+   "sort_order": 4
+  },
+  {
+   "slug": "baby-kids",
+   "name": "Baby and Kids",
+   "sort_order": 5
+  },
+  {
+   "slug": "sports-outdoor",
+   "name": "Sports and Outdoor",
+   "sort_order": 6
+  },
+  {
+   "slug": "office-accessories",
+   "name": "Office Accessories",
+   "sort_order": 7
+  }
+ ],
+ "products": [
+  {
+   "id": "NX-001",
+   "list_no": 1,
+   "name": "Syinix 2.2L electric kettle",
+   "brand": "Syinix",
+   "category": "home-kitchen",
+   "price": 6150,
+   "details": [
+    "Capacity: 2.2 litres"
+   ],
+   "photo_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://take.app/shoppermallng/p/cm2xjp4af003610vxesbgy90h",
+     "note": "Retailer listing \"Syinix 2.2L Electric Kettle - Blue\"; no official Syinix page found. Confirm colour/model."
+    }
+   ]
+  },
+  {
+   "id": "NX-002",
+   "list_no": 2,
+   "name": "Electric hand mixer",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 6199,
+   "details": []
+  },
+  {
+   "id": "NX-003",
+   "list_no": 3,
+   "name": "Digital kitchen scale",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 5946,
+   "details": []
+  },
+  {
+   "id": "NX-004",
+   "list_no": 4,
+   "name": "Vegetable multi-chopper",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 16500,
+   "details": []
+  },
+  {
+   "id": "NX-005",
+   "list_no": 5,
+   "name": "10-piece plastic cereal container set",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 15900,
+   "details": [
+    "Set of 10 containers",
+    "Material: plastic"
+   ]
+  },
+  {
+   "id": "NX-006",
+   "list_no": 6,
+   "name": "Dish drying rack",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 17890,
+   "details": []
+  },
+  {
+   "id": "NX-007",
+   "list_no": 7,
+   "name": "Electric sandwich maker",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 8680,
+   "details": []
+  },
+  {
+   "id": "NX-008",
+   "list_no": 8,
+   "name": "Electric iron",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 5959,
+   "details": []
+  },
+  {
+   "id": "NX-009",
+   "list_no": 9,
+   "name": "SILVER CREST 2L blender with two jars",
+   "brand": "SILVER CREST",
+   "category": "home-kitchen",
+   "price": 25954,
+   "details": [
+    "Capacity: 2 litres",
+    "Two jars"
+   ],
+   "photo_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://jiji.co.ke/nairobi-central/kitchen-appliances/silver-crest-electric-2l-2-in-1-blender-sc-1589-nOxs1a9j6yOBwUlteif0CQge",
+     "note": "Marketplace listing (model SC-1589 2-in-1); no official page found. Confirm model."
+    }
+   ]
+  },
+  {
+   "id": "NX-010",
+   "list_no": 10,
+   "name": "SILVER CREST 8L air fryer",
+   "brand": "SILVER CREST",
+   "category": "home-kitchen",
+   "price": 35999,
+   "details": [
+    "Capacity: 8 litres"
+   ],
+   "photo_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://zit.ng/products/silver-crest-8l-extra-large-capacity-air-fryer",
+     "note": "Retailer listing (Zit Nigeria); no official manufacturer page found."
+    }
+   ]
+  },
+  {
+   "id": "NX-011",
+   "list_no": 11,
+   "name": "Maxi 20L microwave oven",
+   "brand": "Maxi",
+   "category": "home-kitchen",
+   "price": 56185,
+   "details": [
+    "Capacity: 20 litres"
+   ],
+   "photo_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://zit.ng/products/maxi-20l-digital-microwave-oven-maximwo20cgv",
+     "note": "Retailer listing (Zit Nigeria), model MWO20CGV. Confirm model you stock."
+    }
+   ]
+  },
+  {
+   "id": "NX-012",
+   "list_no": 12,
+   "name": "Electric hot plate",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 16064,
+   "details": []
+  },
+  {
+   "id": "NX-013",
+   "list_no": 13,
+   "name": "Stainless steel cooking pot set",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 23500,
+   "details": [
+    "Material: stainless steel"
+   ]
+  },
+  {
+   "id": "NX-014",
+   "list_no": 14,
+   "name": "Non-stick frying pan",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 9500,
+   "details": []
+  },
+  {
+   "id": "NX-015",
+   "list_no": 15,
+   "name": "Silicone cooking utensils set",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 18539,
+   "details": [
+    "Material: silicone"
+   ]
+  },
+  {
+   "id": "NX-016",
+   "list_no": 16,
+   "name": "Insulated lunch bag",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 6599,
+   "details": []
+  },
+  {
+   "id": "NX-017",
+   "list_no": 17,
+   "name": "Reusable water bottle set",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 8927,
+   "details": []
+  },
+  {
+   "id": "NX-018",
+   "list_no": 18,
+   "name": "Kitchen spice rack",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 17500,
+   "details": []
+  },
+  {
+   "id": "NX-019",
+   "list_no": 19,
+   "name": "Electric hand blender",
+   "brand": "",
+   "category": "home-kitchen",
+   "price": 19800,
+   "details": []
+  },
+  {
+   "id": "NX-020",
+   "list_no": 20,
+   "name": "Binatone 3L electric jug",
+   "brand": "Binatone",
+   "category": "home-kitchen",
+   "price": 34940,
+   "details": [
+    "Capacity: 3 litres"
+   ],
+   "photo_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://www.jamarahome.com/products/binatone-kettle-3l-2200w-black-cej-3000blk",
+     "note": "Retailer listing: Binatone CEJ-3000 3L 2200W black. Confirm model/colour."
+    }
+   ]
+  },
+  {
+   "id": "NX-021",
+   "list_no": 21,
+   "name": "Men's casual polo shirt",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 3229,
+   "details": []
+  },
+  {
+   "id": "NX-022",
+   "list_no": 22,
+   "name": "Men's cotton socks, 5 pairs",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 4500,
+   "details": [
+    "Pack of 5 pairs",
+    "Material: cotton"
+   ]
+  },
+  {
+   "id": "NX-023",
+   "list_no": 23,
+   "name": "Women's flat slippers",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 7150,
+   "details": []
+  },
+  {
+   "id": "NX-024",
+   "list_no": 24,
+   "name": "Women's everyday handbag",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 17500,
+   "details": []
+  },
+  {
+   "id": "NX-025",
+   "list_no": 25,
+   "name": "Men's casual wristwatch",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 9500,
+   "details": []
+  },
+  {
+   "id": "NX-026",
+   "list_no": 26,
+   "name": "Women's fashion wristwatch",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 16500,
+   "details": []
+  },
+  {
+   "id": "NX-027",
+   "list_no": 27,
+   "name": "Unisex baseball cap",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 4500,
+   "details": []
+  },
+  {
+   "id": "NX-028",
+   "list_no": 28,
+   "name": "Women's sunglasses",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 6500,
+   "details": []
+  },
+  {
+   "id": "NX-029",
+   "list_no": 29,
+   "name": "Men's leather belt",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 5500,
+   "details": [
+    "Material: leather"
+   ]
+  },
+  {
+   "id": "NX-030",
+   "list_no": 30,
+   "name": "Women's crossbody bag",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 18500,
+   "details": []
+  },
+  {
+   "id": "NX-031",
+   "list_no": 31,
+   "name": "Travel backpack",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 20000,
+   "details": []
+  },
+  {
+   "id": "NX-032",
+   "list_no": 32,
+   "name": "Women's casual sneakers",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 23000,
+   "details": []
+  },
+  {
+   "id": "NX-033",
+   "list_no": 33,
+   "name": "Men's casual sneakers",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 25000,
+   "details": []
+  },
+  {
+   "id": "NX-034",
+   "list_no": 34,
+   "name": "Minimalist jewellery set",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 7500,
+   "details": []
+  },
+  {
+   "id": "NX-035",
+   "list_no": 35,
+   "name": "Travel wallet and card holder",
+   "brand": "",
+   "category": "fashion-accessories",
+   "price": 5000,
+   "details": []
+  },
+  {
+   "id": "NX-036",
+   "list_no": 36,
+   "name": "NIVEA Soft cream, 200ml",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "price": 6820,
+   "details": [
+    "Size: 200 ml"
+   ]
+  },
+  {
+   "id": "NX-037",
+   "list_no": 37,
+   "name": "NIVEA orange and avocado shower gel",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "price": 5450,
+   "details": [
+    "Variant: orange and avocado"
+   ],
+   "photo_candidates": [
+    {
+     "type": "official",
+     "url": "https://www.nivea.co.za/products/nivea-orange-and-avocado-oil-40059002570930147.html",
+     "note": "NIVEA official (South Africa). Confirm shower gel vs shower cream and pack size sold in Nigeria."
+    }
+   ]
+  },
+  {
+   "id": "NX-038",
+   "list_no": 38,
+   "name": "NIVEA Deep shower gel for men",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "price": 5395,
+   "details": [
+    "Variant: Deep (for men)"
+   ]
+  },
+  {
+   "id": "NX-039",
+   "list_no": 39,
+   "name": "NIVEA sunscreen SPF 50, 50ml",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "price": 19330,
+   "details": [
+    "Sun protection: SPF 50",
+    "Size: 50 ml"
+   ]
+  },
+  {
+   "id": "NX-040",
+   "list_no": 40,
+   "name": "NIVEA body lotion, 400ml",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "price": 8915,
+   "details": [
+    "Size: 400 ml"
+   ]
+  },
+  {
+   "id": "NX-041",
+   "list_no": 41,
+   "name": "Hair dryer",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 17500,
+   "details": []
+  },
+  {
+   "id": "NX-042",
+   "list_no": 42,
+   "name": "Hair straightener",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 16000,
+   "details": []
+  },
+  {
+   "id": "NX-043",
+   "list_no": 43,
+   "name": "Electric hair clipper",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 9500,
+   "details": []
+  },
+  {
+   "id": "NX-044",
+   "list_no": 44,
+   "name": "Rechargeable facial cleansing brush",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 8500,
+   "details": []
+  },
+  {
+   "id": "NX-045",
+   "list_no": 45,
+   "name": "Makeup brush set",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 6500,
+   "details": []
+  },
+  {
+   "id": "NX-046",
+   "list_no": 46,
+   "name": "Makeup organiser",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 17000,
+   "details": []
+  },
+  {
+   "id": "NX-047",
+   "list_no": 47,
+   "name": "Cosmetic travel bag",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 5500,
+   "details": []
+  },
+  {
+   "id": "NX-048",
+   "list_no": 48,
+   "name": "Electric manicure and pedicure kit",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 9500,
+   "details": []
+  },
+  {
+   "id": "NX-049",
+   "list_no": 49,
+   "name": "Digital bathroom scale",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 16500,
+   "details": []
+  },
+  {
+   "id": "NX-050",
+   "list_no": 50,
+   "name": "Rechargeable facial hair remover",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "price": 7500,
+   "details": []
+  },
+  {
+   "id": "NX-051",
+   "list_no": 51,
+   "name": "Oraimo Traveler 15 power bank, 20,000mAh",
+   "brand": "Oraimo",
+   "category": "gadgets-electronics",
+   "price": 24500,
+   "details": [
+    "Model: Traveler 15",
+    "Capacity: 20,000 mAh"
+   ],
+   "photo_candidates": [
+    {
+     "type": "official",
+     "url": "https://ng.oraimo.com/product/oraimo-traveler-15-20000mah-15w-fast-charge-type-c-2-way-power-bank",
+     "note": "Oraimo Nigeria official store. Note: Oraimo also sells a \"Traveler 15 Flash\"; confirm which model you stock."
+    }
+   ]
+  },
+  {
+   "id": "NX-052",
+   "list_no": 52,
+   "name": "20,000mAh portable power bank",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 7254,
+   "details": [
+    "Capacity: 20,000 mAh"
+   ]
+  },
+  {
+   "id": "NX-053",
+   "list_no": 53,
+   "name": "Oraimo SpaceBuds Lite earbuds",
+   "brand": "Oraimo",
+   "category": "gadgets-electronics",
+   "price": 18142,
+   "details": [
+    "Model: SpaceBuds Lite"
+   ],
+   "photo_candidates": [
+    {
+     "type": "official",
+     "url": "https://ao.oraimo.com/en/product/oraimo-spacebuds-lite-sound360-anti-lost-true-wireless-earbuds-otw-324",
+     "note": "Oraimo official store (model OTW-324). Confirm colour."
+    }
+   ]
+  },
+  {
+   "id": "NX-054",
+   "list_no": 54,
+   "name": "Bluetooth headset",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 6700,
+   "details": []
+  },
+  {
+   "id": "NX-055",
+   "list_no": 55,
+   "name": "USB-C fast charging cable",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 3500,
+   "details": [
+    "Connector: USB-C"
+   ]
+  },
+  {
+   "id": "NX-056",
+   "list_no": 56,
+   "name": "20W USB-C wall charger",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 5500,
+   "details": [
+    "Output: 20 W",
+    "Connector: USB-C"
+   ]
+  },
+  {
+   "id": "NX-057",
+   "list_no": 57,
+   "name": "Wireless mouse",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 6500,
+   "details": []
+  },
+  {
+   "id": "NX-058",
+   "list_no": 58,
+   "name": "Wireless keyboard and mouse combo",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 17500,
+   "details": []
+  },
+  {
+   "id": "NX-059",
+   "list_no": 59,
+   "name": "Laptop stand",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 9500,
+   "details": []
+  },
+  {
+   "id": "NX-060",
+   "list_no": 60,
+   "name": "USB hub",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 7500,
+   "details": []
+  },
+  {
+   "id": "NX-061",
+   "list_no": 61,
+   "name": "Ring light with tripod",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 20000,
+   "details": []
+  },
+  {
+   "id": "NX-062",
+   "list_no": 62,
+   "name": "Portable Bluetooth speaker",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 17500,
+   "details": []
+  },
+  {
+   "id": "NX-063",
+   "list_no": 63,
+   "name": "Rechargeable LED desk lamp",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 8500,
+   "details": []
+  },
+  {
+   "id": "NX-064",
+   "list_no": 64,
+   "name": "Wi-Fi range extender",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 23000,
+   "details": []
+  },
+  {
+   "id": "NX-065",
+   "list_no": 65,
+   "name": "USB external SSD, 500GB",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "price": 70000,
+   "details": [
+    "Capacity: 500 GB",
+    "Connection: USB"
+   ]
+  },
+  {
+   "id": "NX-066",
+   "list_no": 66,
+   "name": "Children's clothing set",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 4430,
+   "details": []
+  },
+  {
+   "id": "NX-067",
+   "list_no": 67,
+   "name": "Baby feeding bottle set",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 5500,
+   "details": []
+  },
+  {
+   "id": "NX-068",
+   "list_no": 68,
+   "name": "Insulated children's lunch bag",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 6599,
+   "details": []
+  },
+  {
+   "id": "NX-069",
+   "list_no": 69,
+   "name": "Baby changing bag",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 17500,
+   "details": []
+  },
+  {
+   "id": "NX-070",
+   "list_no": 70,
+   "name": "Baby bath support",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 8500,
+   "details": []
+  },
+  {
+   "id": "NX-071",
+   "list_no": 71,
+   "name": "Children's educational building blocks",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 9500,
+   "details": []
+  },
+  {
+   "id": "NX-072",
+   "list_no": 72,
+   "name": "Children's drawing and colouring set",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 4500,
+   "details": []
+  },
+  {
+   "id": "NX-073",
+   "list_no": 73,
+   "name": "Baby nail-care kit",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 3500,
+   "details": []
+  },
+  {
+   "id": "NX-074",
+   "list_no": 74,
+   "name": "Children's backpack",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 7500,
+   "details": []
+  },
+  {
+   "id": "NX-075",
+   "list_no": 75,
+   "name": "Foldable baby play mat",
+   "brand": "",
+   "category": "baby-kids",
+   "price": 20000,
+   "details": []
+  },
+  {
+   "id": "NX-076",
+   "list_no": 76,
+   "name": "Yoga mat",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 9500,
+   "details": []
+  },
+  {
+   "id": "NX-077",
+   "list_no": 77,
+   "name": "Resistance bands set",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 5500,
+   "details": []
+  },
+  {
+   "id": "NX-078",
+   "list_no": 78,
+   "name": "Adjustable skipping rope",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 3500,
+   "details": []
+  },
+  {
+   "id": "NX-079",
+   "list_no": 79,
+   "name": "Dumbbell set",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 20000,
+   "details": []
+  },
+  {
+   "id": "NX-080",
+   "list_no": 80,
+   "name": "Sports water bottle",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 4500,
+   "details": []
+  },
+  {
+   "id": "NX-081",
+   "list_no": 81,
+   "name": "Camping lantern",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 5972,
+   "details": []
+  },
+  {
+   "id": "NX-082",
+   "list_no": 82,
+   "name": "Rechargeable solar floodlight",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 24000,
+   "details": []
+  },
+  {
+   "id": "NX-083",
+   "list_no": 83,
+   "name": "Football",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 8500,
+   "details": []
+  },
+  {
+   "id": "NX-084",
+   "list_no": 84,
+   "name": "Outdoor folding chair",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 19500,
+   "details": []
+  },
+  {
+   "id": "NX-085",
+   "list_no": 85,
+   "name": "Fitness exercise stepper",
+   "brand": "",
+   "category": "sports-outdoor",
+   "price": 30000,
+   "details": []
+  },
+  {
+   "id": "NX-086",
+   "list_no": 86,
+   "name": "A4 notebook set",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 3500,
+   "details": [
+    "Size: A4"
+   ]
+  },
+  {
+   "id": "NX-087",
+   "list_no": 87,
+   "name": "Desk organiser",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 6500,
+   "details": []
+  },
+  {
+   "id": "NX-088",
+   "list_no": 88,
+   "name": "Adjustable laptop stand",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 9500,
+   "details": []
+  },
+  {
+   "id": "NX-089",
+   "list_no": 89,
+   "name": "Ergonomic office chair",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 70000,
+   "details": []
+  },
+  {
+   "id": "NX-090",
+   "list_no": 90,
+   "name": "Wireless presentation clicker",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 17500,
+   "details": []
+  },
+  {
+   "id": "NX-091",
+   "list_no": 91,
+   "name": "A4 paper, 500 sheets",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 8500,
+   "details": [
+    "Size: A4",
+    "500 sheets"
+   ]
+  },
+  {
+   "id": "NX-092",
+   "list_no": 92,
+   "name": "Laminating machine",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 30000,
+   "details": []
+  },
+  {
+   "id": "NX-093",
+   "list_no": 93,
+   "name": "Paper shredder",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 50000,
+   "details": []
+  },
+  {
+   "id": "NX-094",
+   "list_no": 94,
+   "name": "Desktop calculator",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 4500,
+   "details": []
+  },
+  {
+   "id": "NX-095",
+   "list_no": 95,
+   "name": "USB conference microphone",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 23000,
+   "details": []
+  },
+  {
+   "id": "NX-096",
+   "list_no": 96,
+   "name": "Webcam with microphone",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 20000,
+   "details": []
+  },
+  {
+   "id": "NX-097",
+   "list_no": 97,
+   "name": "Monitor stand",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 17500,
+   "details": []
+  },
+  {
+   "id": "NX-098",
+   "list_no": 98,
+   "name": "Surge protector extension socket",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 8500,
+   "details": []
+  },
+  {
+   "id": "NX-099",
+   "list_no": 99,
+   "name": "Portable document scanner",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 60000,
+   "details": []
+  },
+  {
+   "id": "NX-100",
+   "list_no": 100,
+   "name": "Whiteboard with markers",
+   "brand": "",
+   "category": "office-accessories",
+   "price": 20000,
+   "details": []
+  }
+ ]
+}

@@ -2,7 +2,9 @@
 // Administration area. Every route except /admin/login requires a valid server-side session; every POST requires the session CSRF token.
 const cfg = require('./config');
 const { q, tx } = require('./db');
-const { esc, rand, sha256, safeEqual, rateLimit, hashPassword, verifyPassword, cookie } = require('./security');
+const { esc, rand, sessionHash, safeEqual, rateLimit, hashPassword, verifyPassword, cookie } = require('./security');
+const audit = require('./audit');
+const health = require('./health');
 const { UserError } = require('./errors');
 const { layout } = require('./views');
 const money = require('./money');
@@ -14,6 +16,7 @@ const notify = require('./notify');
 const dd = require('./delivery-date');
 const images = require('./images');
 const cleanup = require('./catalog-cleanup');
+const approved = require('./approved-catalogue');
 const fs = require('fs');
 const path = require('path');
 const { imageType } = require('./multipart');
@@ -25,18 +28,18 @@ const VAVAIL = { available: 'Available to order', unavailable: 'Unavailable', un
 const OPTION_KEYS = ['Colour', 'Size', 'Model'];
 
 const SESSION_HOURS = 8;
-const LABEL = orders.LABEL;
+const LABEL = orders.LABEL; const L0 = orders.LABEL;
 const PAVAIL = { available: 'Available to order', temporarily_unavailable: 'Temporarily unavailable', discontinued: 'Discontinued' };
 
 function currentSession(ctx) {
   const t = ctx.cookies.nx_admin;
   if (!t) return null;
-  const s = q.get(`SELECT s.*, u.email FROM admin_sessions s JOIN admin_users u ON u.id=s.user_id WHERE s.token_hash=?`, sha256(t));
+  const s = q.get(`SELECT s.*, u.email FROM admin_sessions s JOIN admin_users u ON u.id=s.user_id WHERE s.token_hash=?`, sessionHash(t));
   if (!s) return null;
   if (new Date(s.expires_at.replace(' ', 'T') + 'Z') < new Date()) { q.run('DELETE FROM admin_sessions WHERE token_hash=?', s.token_hash); return null; }
   return s;
 }
-const nav = (active) => `<nav class="admin-nav" aria-label="Admin">${[['', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['categories', 'Categories'], ['delivery', 'Delivery'], ['inquiries', 'Inquiries'], ['settings', 'Settings'], ...(cfg.supplierIntegration ? [['supplier', 'Supplier sync']] : [])].map(([h, t]) => `<a href="/admin${h ? '/' + h : ''}"${active === h ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
+const nav = (active) => `<nav class="admin-nav" aria-label="Admin">${[['', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['categories', 'Categories'], ['delivery', 'Delivery'], ['inquiries', 'Inquiries'], ['health', 'Health check'], ['audit', 'Activity log'], ['settings', 'Settings'], ['account', 'Account'], ...(cfg.supplierIntegration ? [['supplier', 'Supplier sync']] : [])].map(([h, t]) => `<a href="/admin${h ? '/' + h : ''}"${active === h ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
 <form method="post" action="/admin/logout" class="inline">__CSRF__<button class="link-btn" type="submit">Log out</button></form></nav>`;
 function page(ctx, s, active, title, inner) {
   const body = `<div class="wrap section"><h1>${esc(title)}</h1>${nav(active).replace('__CSRF__', `<input type="hidden" name="_csrf" value="${esc(s.csrf)}">`)}${inner}</div>`;
@@ -51,7 +54,12 @@ function register(route, h) {
     const s = currentSession(ctx);
     if (!s) return h.redirect(ctx, '/admin/login');
     if (ctx.method === 'POST' && !safeEqual(ctx.body._csrf || '', s.csrf)) return h.send(ctx, 403, page(ctx, s, '', 'Forbidden', '<p class="alert">Security check failed. Go back, reload the page and try again.</p>'));
-    try { return await fn(ctx, s); } catch (e) {
+    try {
+      const r = await fn(ctx, s);
+      // activity log: every successful admin change (never the form contents)
+      if (ctx.method === 'POST' && !/^\/admin\/(logout|health\/run)$/.test(ctx.path)) audit.record(s.email, `POST ${ctx.path.replace(/^\/admin\//, '')}`, '', ctx.ip);
+      return r;
+    } catch (e) {
       if (e instanceof UserError) return h.redirect(ctx, ctx.back || '/admin', { type: 'error', text: e.message });
       throw e;
     }
@@ -69,17 +77,64 @@ function register(route, h) {
     const email = String(ctx.body.email || '').trim().toLowerCase();
     const u = q.get('SELECT * FROM admin_users WHERE email=?', email);
     const ok = u ? verifyPassword(String(ctx.body.password || ''), u.password_hash) : (verifyPassword('x', 'scrypt$00$00'), false);
-    if (!ok) return h.redirect(ctx, '/admin/login', { type: 'error', text: 'Incorrect email or password.' });
+    if (!ok) { audit.record(email.slice(0, 80) || '(blank)', 'login failed', '', ctx.ip); return h.redirect(ctx, '/admin/login', { type: 'error', text: 'Incorrect email or password.' }); }
+    audit.record(u.email, 'login', '', ctx.ip);
     const token = rand(32);
-    q.run('INSERT INTO admin_sessions(token_hash,user_id,csrf,expires_at) VALUES(?,?,?,datetime(\'now\',?))', sha256(token), u.id, rand(24), `+${SESSION_HOURS} hours`);
+    q.run('INSERT INTO admin_sessions(token_hash,user_id,csrf,expires_at) VALUES(?,?,?,datetime(\'now\',?))', sessionHash(token), u.id, rand(24), `+${SESSION_HOURS} hours`);
     q.run("DELETE FROM admin_sessions WHERE expires_at < datetime('now')");
     ctx.setCookies.push(cookie('nx_admin', token, { maxAge: SESSION_HOURS * 3600 }));
     h.redirect(ctx, '/admin');
   });
   route('POST', '/admin/logout', guard((ctx, s) => {
+    audit.record(s.email, 'logout', '', ctx.ip);
     q.run('DELETE FROM admin_sessions WHERE token_hash=?', s.token_hash);
     ctx.setCookies.push(cookie('nx_admin', '', { maxAge: 0 }));
     h.redirect(ctx, '/admin/login');
+  }));
+
+
+  // ---------- Website Health-Check Centre ----------
+  const HB = { PASS: 'b-ok', FAIL: 'b-err', WARNING: 'b-warn', 'NOT RUN': '', BLOCKED: 'b-info' };
+  const healthView = (r) => {
+    if (!r) return '<p class="alert">No check has been run yet. Press <strong>Run all checks now</strong>.</p>';
+    const groups = [...new Set(r.results.map((x) => x.group))];
+    const sum = ['PASS', 'FAIL', 'WARNING', 'NOT RUN', 'BLOCKED'].map((k) => `<div><dt>${k}</dt><dd><span class="badge ${HB[k]}">${r.counts[k] || 0}</span></dd></div>`).join('');
+    return `<p class="small muted">Last run: <strong>${esc(dd.formatDateTime(r.at.replace('T', ' ').slice(0, 19)))}</strong> (took ${r.ms} ms). <strong>PASS</strong> = ran and is good &middot; <strong>FAIL</strong> = ran and found a problem &middot; <strong>WARNING</strong> = works but needs attention before launch &middot; <strong>NOT RUN</strong> = could not be checked here (never counted as passed) &middot; <strong>BLOCKED</strong> = waiting for something outside the software, such as a credential.</p>
+<dl class="stats">${sum}</dl>
+${groups.map((g) => `<h2>${esc(g)}</h2>${dt(r.results.filter((x) => x.group === g), [['Check', (x) => esc(x.name)], ['Result', (x) => `<span class="badge ${HB[x.status]}">${esc(x.status)}</span>`], ['Details', (x) => esc(x.detail) + (x.fix ? `<br><span class="small muted">What to do: ${esc(x.fix)}</span>` : '')], ['Checked', (x) => esc(dd.formatDateTime(x.at.replace('T', ' ').slice(0, 19)))]])}`).join('')}`;
+  };
+  route('GET', '/admin/health', guard((ctx, s) => h.send(ctx, 200, page(ctx, s, 'health', 'Website health check',
+    `<p>Checks the shop's pages, cart and checkout rules, admin protection, database, settings and connections. It never places an order, starts a payment, sends an email or contacts a supplier, and it never shows secret values.</p>
+<form method="post" action="/admin/health/run" class="form">${csrf(s)}<button class="btn" type="submit">Run all checks now</button></form>${healthView(health.last())}`))));
+  route('POST', '/admin/health/run', guard(async (ctx, s) => {
+    ctx.back = '/admin/health';
+    if (!rateLimit(`health:${s.user_id}`, 6, 10 * 60 * 1000)) throw new UserError('Please wait a few minutes before running the checks again.');
+    const r = await health.runAll(ctx.req.socket.localPort);
+    audit.record(s.email, 'ran health check', `${r.counts.FAIL || 0} fail, ${r.counts.WARNING || 0} warning`, ctx.ip);
+    h.redirect(ctx, '/admin/health', { type: r.counts.FAIL ? 'error' : 'ok', text: r.counts.FAIL ? `Checks finished: ${r.counts.FAIL} FAIL. Review the red items.` : 'Checks finished: no failures.' });
+  }));
+
+  // ---------- activity log and account ----------
+  route('GET', '/admin/audit', guard((ctx, s) => h.send(ctx, 200, page(ctx, s, 'audit', 'Activity log',
+    `<p class="small muted">The latest 200 administrator actions (sign-ins and changes). Passwords and form contents are never recorded. Order changes also appear in each order's own history.</p>${dt(q.all('SELECT * FROM admin_audit ORDER BY id DESC LIMIT 200'), [['When (UTC)', (r) => when(r.at)], ['Who', (r) => esc(r.actor)], ['Action', (r) => esc(r.action)], ['Detail', (r) => esc(r.target)], ['From', (r) => esc(r.ip)]])}`))));
+  route('GET', '/admin/account', guard((ctx, s) => h.send(ctx, 200, page(ctx, s, 'account', 'Your account',
+    `<p>Signed in as <strong>${esc(s.email)}</strong>. Sessions end automatically after ${SESSION_HOURS} hours.</p><h2>Change password</h2>
+<form method="post" action="/admin/account/password" class="form" autocomplete="off">${csrf(s)}<div class="field"><label for="cur">Current password</label><input id="cur" name="current" type="password" autocomplete="current-password" required></div>
+<div class="field"><label for="np">New password (at least 12 characters)</label><input id="np" name="password" type="password" autocomplete="new-password" minlength="12" required></div>
+<div class="field"><label for="np2">Repeat the new password</label><input id="np2" name="password2" type="password" autocomplete="new-password" minlength="12" required></div>
+<button class="btn" type="submit">Change password</button></form><p class="small muted">Changing the password signs you out everywhere else. Use a password you have never shared; replace any password that was sent in a chat or email.</p>`))));
+  route('POST', '/admin/account/password', guard((ctx, s) => {
+    ctx.back = '/admin/account'; const b = ctx.body;
+    if (!rateLimit(`pw:${s.user_id}`, 6, 15 * 60 * 1000)) throw new UserError('Too many attempts. Please wait 15 minutes.');
+    const u = q.get('SELECT * FROM admin_users WHERE id=?', s.user_id);
+    if (!verifyPassword(String(b.current || ''), u.password_hash)) throw new UserError('Your current password is not correct.');
+    const np = String(b.password || '');
+    if (np.length < 12) throw new UserError('The new password must be at least 12 characters.');
+    if (np !== String(b.password2 || '')) throw new UserError('The two new passwords do not match.');
+    if (np === String(b.current)) throw new UserError('Choose a password different from the current one.');
+    if (np.toLowerCase().includes(u.email.split('@')[0].toLowerCase()) && u.email.split('@')[0].length >= 6) throw new UserError('The password must not contain your email name.');
+    tx(() => { q.run('UPDATE admin_users SET password_hash=? WHERE id=?', hashPassword(np), u.id); q.run('DELETE FROM admin_sessions WHERE user_id=? AND token_hash<>?', u.id, s.token_hash); });
+    h.redirect(ctx, '/admin/account', { type: 'ok', text: 'Password changed. Other sessions were signed out.' });
   }));
 
   route('GET', '/admin', guard((ctx, s) => {
@@ -97,9 +152,23 @@ function register(route, h) {
       ['New inquiries', n("SELECT COUNT(*) n FROM inquiries WHERE status='new'"), '/admin/inquiries', ''],
     ];
     const late = q.all(`SELECT reference, customer_name, estimated_delivery_date FROM orders WHERE status='confirmed' AND fulfillment_status<>'delivered' AND estimated_delivery_date <= ? ORDER BY estimated_delivery_date LIMIT 20`, dd.addDays(dd.localDate(new Date()), 2));
+
+    const cnt = (sql, ...a) => q.get(sql, ...a).n;
+    const prodRows = [['Products in the catalogue', cnt("SELECT COUNT(*) n FROM products WHERE status<>'archived'")], ['Published (visible to customers)', cnt("SELECT COUNT(*) n FROM products WHERE status='published' AND is_development=0")], ['Draft / unpublished', cnt("SELECT COUNT(*) n FROM products WHERE status='draft'")], ['Archived', cnt("SELECT COUNT(*) n FROM products WHERE status='archived'")], ['Categories', cnt('SELECT COUNT(*) n FROM categories')]];
+    const byCur = q.all("SELECT p.currency c, COUNT(*) n, SUM(p.amount_minor) t FROM payments p JOIN orders o ON o.id=p.order_id WHERE p.status='success' AND o.is_demo=0 GROUP BY p.currency");
+    const awaiting = q.all("SELECT currency c, COUNT(*) n, SUM(total_minor) t FROM orders WHERE is_demo=0 AND status IN('pending_review','awaiting_payment') GROUP BY currency");
+    const refDue = q.all("SELECT currency c, COUNT(*) n, SUM(refund_due_minor) t FROM orders WHERE is_demo=0 AND refund_due_minor>0 GROUP BY currency");
+    const m = (rows) => rows.length ? rows.map((r) => `${money.format(r.t, r.c)} (${r.n} ${r.n === 1 ? 'order' : 'orders'})`).join(', ') : 'none';
+    const pst = q.all("SELECT payment_status k, COUNT(*) n FROM orders WHERE is_demo=0 GROUP BY payment_status"); const ost = q.all("SELECT status k, COUNT(*) n FROM orders WHERE is_demo=0 GROUP BY status");
+    const failedPay = cnt("SELECT COUNT(*) n FROM payments p JOIN orders o ON o.id=p.order_id WHERE o.is_demo=0 AND p.status IN('failed','abandoned')");
+    const lastHealth = health.last(); const stock = cnt('SELECT COUNT(*) n FROM variants WHERE stock_qty IS NOT NULL');
+    const overview = `<h2>Business overview</h2><div class="admin-cols"><div><dl class="kv">${prodRows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}<dt>Stock quantities tracked</dt><dd>${stock ? stock + ' option(s)' : 'Not tracked (items are sourced to order; availability is a status you set)'}</dd></dl></div>
+<div><dl class="kv"><dt>Verified payments received</dt><dd>${m(byCur)}</dd><dt>Orders waiting for review / payment (not income)</dt><dd>${m(awaiting)}</dd><dt>Refunds still to pay out</dt><dd>${m(refDue)}</dd><dt>Failed or abandoned payment attempts</dt><dd>${failedPay}</dd><dt>Order statuses (real orders)</dt><dd>${ost.length ? ost.map((r) => `${esc(L0.status[r.k] || r.k)}: ${r.n}`).join(' &middot; ') : 'none yet'}</dd><dt>Payment statuses (real orders)</dt><dd>${pst.length ? pst.map((r) => `${esc(L0.payment[r.k] || r.k)}: ${r.n}`).join(' &middot; ') : 'none yet'}</dd></dl>
+<p class="small muted">Money received counts only payments that Paystack confirmed to the server, excluding demonstration orders. Amounts already refunded are recorded in each order's history, not totalled here. Sales analytics (visitors, conversion) are not collected.</p></div></div>
+<p>Website health: ${lastHealth ? `last check ${esc(dd.formatDateTime(lastHealth.at.replace('T', ' ').slice(0, 19)))} &mdash; ${lastHealth.counts.FAIL || 0} fail, ${lastHealth.counts.WARNING || 0} warning, ${lastHealth.counts['NOT RUN'] || 0} not run, ${lastHealth.counts.BLOCKED || 0} blocked` : 'never run'}. <a href="/admin/health">Open the health check</a></p>`;
     const status = `<h2>Setup status</h2><ul><li>Payment timing: <strong>${settings.paymentTiming() === 'review_first' ? 'Review first (you check availability, then request payment)' : 'Pay at checkout'}</strong>; delivery estimate ${settings.deliveryDays()} calendar days after confirmation. <a href="/admin/settings">Change</a></li><li>Paystack: ${paystack.isConfigured() ? `configured (${paystack.mode()} mode); live behaviour not yet verified by this software` : '<strong>NOT configured</strong> (no payments can be taken)'}</li><li>Email notifications: ${notify.isConfigured() ? 'configured (Resend)' : '<strong>NOT configured</strong>: customers are not emailed; messages still appear on their order page'}</li><li>Catalogue: ${q.get("SELECT COUNT(*) n FROM products WHERE status='published' AND is_development=0").n} active products. <a href="/admin/products/new">Add a product</a>${cleanup.demoProductCount() ? ` &middot; <strong>${cleanup.demoProductCount()} old demo product(s) still in the database</strong>: <a href="/admin/settings#demo">remove them</a>` : ''}</li><li>Delivery zones: ${q.get('SELECT COUNT(*) n FROM delivery_zones WHERE active=1 AND confirmed=0').n ? `<strong>${q.get('SELECT COUNT(*) n FROM delivery_zones WHERE active=1 AND confirmed=0').n} not confirmed</strong>${cfg.allowUnconfirmedDelivery ? ' (allowed for now)' : ': checkout refuses them until you tick Confirmed'} <a href="/admin/delivery">Review</a>` : 'all confirmed'}</li><li>Demonstration checkout for testing: ${cfg.demoCheckout ? '<strong>ON</strong> (customers see a no-payment test option; set DEMO_CHECKOUT=false)' : 'off'}</li>${cfg.supplierIntegration ? `<li>CJdropshipping tools: ${cj.isConfigured() ? 'API key present (untested)' : 'no API key'}</li>` : ''}</ul>`;
     h.send(ctx, 200, page(ctx, s, '', 'Dashboard', `<dl class="stats">${stats.map(([k, v, href, c]) => `<div><dt><a href="${href}">${k}</a></dt><dd>${v ? `<span class="${c ? 'badge ' + c : ''}">${v}</span>` : 0}</dd></div>`).join('')}</dl>
-${late.length ? `<h2>Estimated delivery due within 2 days</h2>${dt(late, [['Order', (o) => `<a href="/admin/orders/${esc(o.reference)}">${esc(o.reference)}</a>`], ['Customer', (o) => esc(o.customer_name)], ['Estimated delivery', (o) => esc(dd.formatDate(o.estimated_delivery_date))]])}<p class="small muted">If you will miss a date, open the order and revise the estimate with a reason: the customer sees it.</p>` : ''}${status}`));
+${overview}${late.length ? `<h2>Estimated delivery due within 2 days</h2>${dt(late, [['Order', (o) => `<a href="/admin/orders/${esc(o.reference)}">${esc(o.reference)}</a>`], ['Customer', (o) => esc(o.customer_name)], ['Estimated delivery', (o) => esc(dd.formatDate(o.estimated_delivery_date))]])}<p class="small muted">If you will miss a date, open the order and revise the estimate with a reason: the customer sees it.</p>` : ''}${status}`));
   }));
 
   const badgeFor = (o) => [
@@ -260,7 +329,12 @@ ${cfg.supplierIntegration ? `<p class="small muted"><strong>CJ mapping</strong> 
 <h2>Add a variant</h2><form method="post" action="/admin/products/${p.id}/variants" class="form vfs">${csrf(s)}<div class="admin-grid">${variantFields()}</div><button class="btn btn-small" type="submit">Add variant</button></form>
 <h2>Images</h2>${imgs.length ? `<ul class="img-list">${imgs.map((i, n) => `<li><img src="${esc(images.displayable(i.url))}" alt="${esc(i.alt)}"><span>${n === 0 ? '<strong>Main image</strong><br>' : ''}${esc(i.alt || '(no description)')}</span><form method="post" action="/admin/products/${p.id}/images/${i.id}/delete">${csrf(s)}<button class="link-btn" type="submit">Remove</button></form>${n ? `<form method="post" action="/admin/products/${p.id}/images/${i.id}/main">${csrf(s)}<button class="link-btn" type="submit">Make main image</button></form>` : ''}</li>`).join('')}</ul>` : '<p class="muted">No images yet.</p>'}
 <form method="post" action="/admin/products/${p.id}/images" enctype="multipart/form-data" class="form vfs">${csrf(s)}<div class="field"><label for="img">Upload image (JPG, PNG or WebP, max 5 MB; square images look best)</label><input id="img" name="image" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label for="alt">Image description for screen readers</label><input id="alt" name="alt" maxlength="150" placeholder="e.g. Tan leather wallet, open"></div><button class="btn btn-small" type="submit">Upload</button></form>
-<form method="post" action="/admin/products/${p.id}/image-url" class="form vfs">${csrf(s)}<div class="field"><label for="iu">Or add an image by web address (https, allowed hosts: ${esc(cfg.imageHosts.join(', ') || 'none')})</label><input id="iu" name="url" type="url" maxlength="400" required placeholder="https://..."></div><div class="field"><label for="iua">Image description</label><input id="iua" name="alt" maxlength="150"></div><button class="btn btn-small btn-outline" type="submit">Add image link</button></form>`;
+<form method="post" action="/admin/products/${p.id}/image-url" class="form vfs">${csrf(s)}<div class="field"><label for="iu">Or add an image by web address (https, allowed hosts: ${esc(cfg.imageHosts.join(', ') || 'none')})</label><input id="iu" name="url" type="url" maxlength="400" required placeholder="https://..."></div><div class="field"><label for="iua">Image description</label><input id="iua" name="alt" maxlength="150"></div><button class="btn btn-small btn-outline" type="submit">Add image link</button></form>
+${imgs.length ? (() => { const r = q.get('SELECT * FROM photo_reviews WHERE product_id=?', p.id) || {}; return `<h2>Photo check</h2><p class="small muted">Look at the photos above. Confirm they show exactly this product (right model, colour, size). A wrong photo is hidden from customers at once. Record where the photo came from and whether you have permission to use it commercially (your own photo, or written permission from the brand or supplier).</p>
+<form method="post" action="/admin/products/${p.id}/photo-check" class="form vfs">${csrf(s)}<fieldset class="opts"><legend>Does the photo show this exact product?</legend><label><input type="radio" name="verdict" value="matches" required${r.verdict === 'matches' ? ' checked' : ''}> Yes, it matches</label> <label><input type="radio" name="verdict" value="wrong"${r.verdict === 'wrong' ? ' checked' : ''}> No, wrong photo (hide it)</label></fieldset>
+<div class="field"><label for="psrc">Photo source (your own photo, or the web page it came from)</label><input id="psrc" name="source_url" maxlength="300" value="${esc(r.source_url || '')}" placeholder="e.g. Own photo, or https://..."></div>
+<label class="small"><input type="checkbox" name="permission" value="confirmed"${r.permission === 'confirmed' ? ' checked' : ''}> I have permission to use this photo commercially</label>
+<div class="field"><label for="pnote">Note (optional)</label><input id="pnote" name="note" maxlength="200" value="${esc(r.note || '')}"></div><button class="btn btn-small" type="submit">Save photo check</button>${r.verdict ? `<p class="small muted">Last checked by ${esc(r.reviewed_by)}, ${esc(dd.formatDateTime(r.reviewed_at))}.</p>` : ''}</form>`; })() : ''}`;
     h.send(ctx, 200, page(ctx, s, 'products', p.name, inner));
   }));
   route('POST', '/admin/products/:id', guard((ctx) => {
@@ -363,6 +437,21 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
     q.run('INSERT INTO product_images(product_id,url,alt,sort_order) VALUES(?,?,?,(SELECT COALESCE(MAX(sort_order),-1)+1 FROM product_images WHERE product_id=?))', id, `/uploads/${name}`, String(ctx.body.alt || '').trim().slice(0, 150), id); edited(id);
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Image uploaded.' });
   }));
+  route('POST', '/admin/products/:id/photo-check', guard((ctx, s) => {
+    const id = Number(ctx.params.id); ctx.back = `/admin/products/${id}`;
+    if (!q.get('SELECT 1 x FROM products WHERE id=?', id)) return h.send(ctx, 404, h.notFound(ctx));
+    const b = ctx.body; if (!['matches', 'wrong'].includes(b.verdict)) throw new UserError('Choose whether the photo matches.');
+    const who = q.get('SELECT email FROM admin_users WHERE id=?', s.user_id)?.email || 'admin';
+    tx(() => {
+      q.run(`INSERT INTO photo_reviews(product_id,verdict,note,reviewed_by,reviewed_at,source_url,permission) VALUES(?,?,?,?,datetime('now'),?,?)
+        ON CONFLICT(product_id) DO UPDATE SET verdict=excluded.verdict, note=excluded.note, reviewed_by=excluded.reviewed_by, reviewed_at=excluded.reviewed_at, source_url=excluded.source_url, permission=excluded.permission`,
+        id, b.verdict, String(b.note || '').trim().slice(0, 200), who, String(b.source_url || '').trim().slice(0, 300), b.permission === 'confirmed' ? 'confirmed' : 'unconfirmed');
+      const st = b.verdict === 'wrong' ? 'broken' : 'ok';
+      q.run('UPDATE product_images SET status=? WHERE product_id=?', st, id);
+      q.run("UPDATE products SET card_image_status=? WHERE id=? AND card_image_url<>''", st, id);
+    });
+    h.redirect(ctx, ctx.back, { type: 'ok', text: b.verdict === 'wrong' ? 'Photo marked wrong and hidden from customers. Add the correct photo.' : 'Photo check saved.' });
+  }));
   route('POST', '/admin/products/:id/image-url', guard((ctx) => {
     const id = Number(ctx.params.id); ctx.back = `/admin/products/${id}`;
     if (!q.get('SELECT 1 x FROM products WHERE id=?', id)) return h.send(ctx, 404, h.notFound(ctx));
@@ -458,6 +547,9 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
 <div class="field"><label for="days">Estimated delivery: calendar days after confirmation</label><input id="days" name="delivery_days" inputmode="numeric" value="${settings.deliveryDays()}" maxlength="2"><p class="small muted">An order is confirmed when its payment is verified. Each order keeps the date calculated at its confirmation (changing this only affects new confirmations). Timezone: ${esc(cfg.timezone)}.</p></div>
 <div class="field"><label for="oe">Email me about new orders and payments (optional)</label><input id="oe" name="owner_email" type="email" value="${esc(settings.ownerEmail())}" placeholder="${esc(cfg.company.email)}"><p class="small muted">${notify.isConfigured() ? 'Email service is configured.' : 'Emails are not sent until RESEND_API_KEY and EMAIL_FROM are set (see README).'}</p></div>
 <p class="small muted">Changes apply to new orders only; existing orders keep their own payment timing.</p><button class="btn" type="submit">Save settings</button></form>
+<div class="card-a" id="approved"><h2>Approved catalogue</h2>${(() => { const n = q.get("SELECT COUNT(*) n FROM products WHERE source='approved'").n; const tot = approved.load().products.length; const ph = q.get("SELECT COUNT(DISTINCT p.id) n FROM products p JOIN product_images i ON i.product_id=p.id AND i.status<>'broken' WHERE p.source='approved'").n; return `<p>Your approved list has <strong>${tot}</strong> products; <strong>${n}</strong> are in the store, <strong>${ph}</strong> with a photo.</p>`; })()}
+<p class="small muted">"Import / refresh" adds any missing products from your approved list and links photos found in the project folder <code>public/images/products/</code>. It never creates duplicates, never changes products you edited here, never changes visibility or availability you set, and never touches orders.</p>
+<form method="post" action="/admin/settings/approved-import" class="inline-form">${csrf(s)}<button class="btn" type="submit">Import / refresh approved catalogue</button></form></div>
 <div class="card-a" id="images"><h2>Product images</h2>${(() => { const st = images.stats(); return `<p><strong>${st.verified}</strong> of ${st.active} active products have a verified working image. ${st.unchecked ? `${st.unchecked} not checked yet. ` : ''}${st.needImage.length ? `<strong>${st.needImage.length} show a category placeholder</strong> (no working image): <a href="/admin/products?images=missing">see list</a>. ` : ''}${st.remoteOnly ? `${st.remoteOnly} still load images from another website (not yet saved here).` : 'All images are stored on this server.'}</p>`; })()}
 <p class="small muted">Photos you upload are already stored on this server. Only if a product links to a photo on another website: "Save permanent copies" downloads it once and stores it on this server's disk (on Railway: the /data volume), so the shop no longer depends on the other website. Run "Check images" afterwards to confirm every image opens.</p>
 <form method="post" action="/admin/settings/images" class="inline-form">${csrf(s)}<button class="btn" type="submit" name="action" value="download">Save permanent copies</button><button class="btn btn-outline" type="submit" name="action" value="check">Check images</button></form></div>
@@ -472,6 +564,11 @@ ${OPTION_KEYS.map((k) => `<div class="field"><label for="no${k}">${k} (optional)
     const oe = String(b.owner_email || '').trim().toLowerCase(); if (oe && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(oe)) throw new UserError('Enter a valid email address or leave it blank.');
     settings.set('payment_timing', b.payment_timing); settings.set('delivery_days', d); settings.set('owner_email', oe);
     h.redirect(ctx, ctx.back, { type: 'ok', text: 'Settings saved.' });
+  }));
+  route('POST', '/admin/settings/approved-import', guard((ctx) => {
+    ctx.back = '/admin/settings#approved';
+    const r = approved.importApproved();
+    h.redirect(ctx, ctx.back, { type: r.failed.length ? 'error' : 'ok', text: `Approved catalogue: ${r.created} added, ${r.updated} refreshed, ${r.keptYourEdits.length} kept as you edited them, ${r.failed.length} failed. Products with a photo: ${r.productsWithPhoto} of ${r.supplied}.${r.rejectedPhotos.length ? ` ${r.rejectedPhotos.length} photo file(s) rejected (e.g. ${r.rejectedPhotos[0]}).` : ''}` });
   }));
   route('POST', '/admin/settings/images', guard(async (ctx) => {
     ctx.back = '/admin/settings#images';

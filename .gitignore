@@ -9,3 +9,5 @@ data/uploads/
 .DS_Store
 Thumbs.db
 data/backups/
+qa-screenshots/
+data/catalogue/private/

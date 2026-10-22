@@ -1,4 +1,18 @@
 # Changelog
+## 0.10.0 - 2026-10-22
+- Privacy before publishing to GitHub: the owner's private market (reference) prices and the margin rule were removed from the committed catalogue file and from history; they now live in the Git-ignored `data/catalogue/private/reference-prices.json`. Import works with or without it and never erases a saved cost. (v0.8-v0.10 were combined into this single commit for that reason.)
+- Admin: Website Health-Check Centre (`/admin/health`, ~70 live checks, statuses PASS/FAIL/WARNING/NOT RUN/BLOCKED, last result stored), Activity log (`/admin/audit`, migration v8 `admin_audit`), Account page with password change, dashboard Business overview (verified payments only).
+- Sign-in: private `.env.local` support; `SESSION_SECRET` makes admin session tokens keyed hashes (HMAC); `TRUST_PROXY` / correct visitor address behind Railway (rate limits were shared by all visitors behind a proxy).
+- Fix: signing in with an email that does not exist caused a server error (500) instead of "incorrect email or password".
+- Optional `npm run qa:browser` (Playwright) desktop + phone browse/cart/admin check. DEPLOYMENT.md added. Tests: 62.
+## 0.9.0 - 2026-10-22
+- 100 product photos cut from the owner's 7 category collages and installed as public/images/products/nx-NNN.jpg; photo-sources.json, image-manifest.json, docs/photo-mapping.csv, docs/source-collages/, scripts/extract-collage-photos.py.
+- Fix: demo cleanup no longer deletes files in public/images/products (only old dj-*/dev-* folders). Tests: 51.
+## 0.8.0 - 2026-10-22
+- Owner's approved catalogue: 100 products, 7 categories, exact prices, private reference price; `npm run catalogue:import` and Admin import button (repeatable, keeps owner edits/visibility).
+- Product photos from `public/images/products/nx-NNN.*` with validation; Admin Photo check (match, source, permission); `data/catalogue/image-manifest.json`; migration v7.
+- Owner's delivery policy wording on product and shipping pages.
+- 0 genuine photos installed (none supplied; image websites unreachable from the build workspace). Tests: 50.
 ## 0.7.0 - 2026-10-22
 - Shop starts empty: removed the DummyJSON importer, bundled DummyJSON data, built-in sample catalogue, demo product/category images, photo installer, image manifest, Admin Product photos page, import panels, auto-import and auto image download at start-up; `seed` adds delivery zones only; no outside image hosts by default.
 - Branded empty states ("Our collection is being prepared") on home, shop, category and search; category pages without products show a clean message.

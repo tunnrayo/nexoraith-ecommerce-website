@@ -39,8 +39,10 @@ const COPY_DIRS = () => [
 ];
 function listFiles(dir, nested) {
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() && nested
-    ? listFiles(path.join(dir, e.name), false).map((f) => path.join(e.name, f))
+  // public/images/products: ONLY the old photo-installer folders of demo products (dj-123/, dev-.../) are candidates.
+  // Files directly in that folder (your approved-catalogue photos nx-001.jpg ...) are never touched.
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (nested
+    ? (e.isDirectory() && /^(dj|dev)-/i.test(e.name) ? listFiles(path.join(dir, e.name), false).map((f) => path.join(e.name, f)) : [])
     : e.isFile() ? [e.name] : []));
 }
 

@@ -1,0 +1,5264 @@
+{
+ "summary": {
+  "generated_at": "2026-10-22T08:38:13.125Z",
+  "products_supplied": 100,
+  "products_in_store": 100,
+  "with_photo": 100,
+  "visually_confirmed": 0,
+  "matched_by_collage_label": 100,
+  "flagged_for_review": 20,
+  "permission_confirmed": 0,
+  "permission_unconfirmed": 100,
+  "missing_photo": 0
+ },
+ "products": [
+  {
+   "product_id": "NX-001",
+   "list_no": 1,
+   "name": "Syinix 2.2L electric kettle",
+   "brand": "Syinix",
+   "category": "home-kitchen",
+   "store_page": "/product/syinix-2-2l-electric-kettle",
+   "image_paths": [
+    "/images/products/nx-001.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-001.jpg",
+     "file": "nx-001.jpg",
+     "bytes": 26030,
+     "width": 604,
+     "height": 604,
+     "format": "jpg",
+     "sha256": "b220469593905cae8776db163d618f403295ad3e8d37cffbc7b3dcadce55e1ee"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "1. Syinix 2.2L electric kettle",
+    "tile_box_xyxy": [
+     21,
+     132,
+     296,
+     306
+    ],
+    "product_box_xyxy": [
+     21,
+     132,
+     296,
+     306
+    ],
+    "source_px": [
+     275,
+     174
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://take.app/shoppermallng/p/cm2xjp4af003610vxesbgy90h",
+     "note": "Retailer listing \"Syinix 2.2L Electric Kettle - Blue\"; no official Syinix page found. Confirm colour/model."
+    }
+   ],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-002",
+   "list_no": 2,
+   "name": "Electric hand mixer",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/electric-hand-mixer",
+   "image_paths": [
+    "/images/products/nx-002.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-002.jpg",
+     "file": "nx-002.jpg",
+     "bytes": 21355,
+     "width": 484,
+     "height": 484,
+     "format": "jpg",
+     "sha256": "692336d39e7e5671a688d119ad98fd49e0e993dd85f69fe994d165c95c4de4da"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "2. Electric hand mixer",
+    "tile_box_xyxy": [
+     325,
+     132,
+     604,
+     306
+    ],
+    "product_box_xyxy": [
+     342,
+     132,
+     562,
+     303
+    ],
+    "source_px": [
+     220,
+     171
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-003",
+   "list_no": 3,
+   "name": "Digital kitchen scale",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/digital-kitchen-scale",
+   "image_paths": [
+    "/images/products/nx-003.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-003.jpg",
+     "file": "nx-003.jpg",
+     "bytes": 20682,
+     "width": 516,
+     "height": 516,
+     "format": "jpg",
+     "sha256": "c2d9419bf8f0d56534e004df19a4f679fff2b3057f5250bc56180ad9f12a17b6"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "3. Digital kitchen scale",
+    "tile_box_xyxy": [
+     629,
+     132,
+     906,
+     306
+    ],
+    "product_box_xyxy": [
+     645,
+     136,
+     880,
+     306
+    ],
+    "source_px": [
+     235,
+     170
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-004",
+   "list_no": 4,
+   "name": "Vegetable multi-chopper",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/vegetable-multi-chopper",
+   "image_paths": [
+    "/images/products/nx-004.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-004.jpg",
+     "file": "nx-004.jpg",
+     "bytes": 29353,
+     "width": 542,
+     "height": 542,
+     "format": "jpg",
+     "sha256": "47e0e32c3750c25cf659aaf275de328635a1e269e141b1ac0145d185293bbb72"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "4. Vegetable multi-chopper",
+    "tile_box_xyxy": [
+     932,
+     132,
+     1211,
+     306
+    ],
+    "product_box_xyxy": [
+     952,
+     132,
+     1199,
+     306
+    ],
+    "source_px": [
+     247,
+     174
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-005",
+   "list_no": 5,
+   "name": "10-piece plastic cereal container set",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/10-piece-plastic-cereal-container-set",
+   "image_paths": [
+    "/images/products/nx-005.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-005.jpg",
+     "file": "nx-005.jpg",
+     "bytes": 49073,
+     "width": 606,
+     "height": 606,
+     "format": "jpg",
+     "sha256": "54998c011e1bfdff10477ad1fb569c9f676686161d7b19f1eb9a6cf4794d5a6b"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "5. 10-piece plastic cereal container set",
+    "tile_box_xyxy": [
+     1236,
+     132,
+     1516,
+     306
+    ],
+    "product_box_xyxy": [
+     1240,
+     132,
+     1516,
+     303
+    ],
+    "source_px": [
+     276,
+     171
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-006",
+   "list_no": 6,
+   "name": "Dish drying rack",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/dish-drying-rack",
+   "image_paths": [
+    "/images/products/nx-006.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-006.jpg",
+     "file": "nx-006.jpg",
+     "bytes": 37479,
+     "width": 538,
+     "height": 538,
+     "format": "jpg",
+     "sha256": "9b937039d534d2b4ea907a6005024488d270bfe4a7f53d5e5bb6549e242b4eaf"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "6. Dish drying rack",
+    "tile_box_xyxy": [
+     21,
+     362,
+     296,
+     532
+    ],
+    "product_box_xyxy": [
+     34,
+     362,
+     279,
+     532
+    ],
+    "source_px": [
+     245,
+     170
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-007",
+   "list_no": 7,
+   "name": "Electric sandwich maker",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/electric-sandwich-maker",
+   "image_paths": [
+    "/images/products/nx-007.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-007.jpg",
+     "file": "nx-007.jpg",
+     "bytes": 23536,
+     "width": 490,
+     "height": 490,
+     "format": "jpg",
+     "sha256": "0b34c7b016d15eeb9f22f60a99845a8e574363c25168a8a4abd83cbfba2dfce4"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "7. Electric sandwich maker",
+    "tile_box_xyxy": [
+     325,
+     362,
+     604,
+     532
+    ],
+    "product_box_xyxy": [
+     353,
+     369,
+     576,
+     532
+    ],
+    "source_px": [
+     223,
+     163
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-008",
+   "list_no": 8,
+   "name": "Electric iron",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/electric-iron",
+   "image_paths": [
+    "/images/products/nx-008.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-008.jpg",
+     "file": "nx-008.jpg",
+     "bytes": 26655,
+     "width": 492,
+     "height": 492,
+     "format": "jpg",
+     "sha256": "b963093b620cc3b9fd3a74167bba5d1be50acb7ce43e97fcb2ae11d8c9b0e829"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "8. Electric iron",
+    "tile_box_xyxy": [
+     629,
+     362,
+     906,
+     532
+    ],
+    "product_box_xyxy": [
+     649,
+     377,
+     873,
+     532
+    ],
+    "source_px": [
+     224,
+     155
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-009",
+   "list_no": 9,
+   "name": "SILVER CREST 2L blender with two jars",
+   "brand": "SILVER CREST",
+   "category": "home-kitchen",
+   "store_page": "/product/silver-crest-2l-blender-with-two-jars",
+   "image_paths": [
+    "/images/products/nx-009.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-009.jpg",
+     "file": "nx-009.jpg",
+     "bytes": 18472,
+     "width": 374,
+     "height": 374,
+     "format": "jpg",
+     "sha256": "434fc575d23308b6a9ecf10c5ec4fd739f76954bb14de8b30b96462235cda1eb"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "9. SILVER CREST 2L blender with two jars",
+    "tile_box_xyxy": [
+     932,
+     362,
+     1211,
+     532
+    ],
+    "product_box_xyxy": [
+     997,
+     362,
+     1162,
+     532
+    ],
+    "source_px": [
+     165,
+     170
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://jiji.co.ke/nairobi-central/kitchen-appliances/silver-crest-electric-2l-2-in-1-blender-sc-1589-nOxs1a9j6yOBwUlteif0CQge",
+     "note": "Marketplace listing (model SC-1589 2-in-1); no official page found. Confirm model."
+    }
+   ],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-010",
+   "list_no": 10,
+   "name": "SILVER CREST 8L air fryer",
+   "brand": "SILVER CREST",
+   "category": "home-kitchen",
+   "store_page": "/product/silver-crest-8l-air-fryer",
+   "image_paths": [
+    "/images/products/nx-010.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-010.jpg",
+     "file": "nx-010.jpg",
+     "bytes": 20153,
+     "width": 380,
+     "height": 380,
+     "format": "jpg",
+     "sha256": "6e8289d18442932fc339411d0645e669979243d0a5be43ed1004e2759b7716c2"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "10. SILVER CREST 8L air fryer",
+    "tile_box_xyxy": [
+     1236,
+     362,
+     1516,
+     532
+    ],
+    "product_box_xyxy": [
+     1288,
+     362,
+     1461,
+     532
+    ],
+    "source_px": [
+     173,
+     170
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://zit.ng/products/silver-crest-8l-extra-large-capacity-air-fryer",
+     "note": "Retailer listing (Zit Nigeria); no official manufacturer page found."
+    }
+   ],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-011",
+   "list_no": 11,
+   "name": "Maxi 20L microwave oven",
+   "brand": "Maxi",
+   "category": "home-kitchen",
+   "store_page": "/product/maxi-20l-microwave-oven",
+   "image_paths": [
+    "/images/products/nx-011.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-011.jpg",
+     "file": "nx-011.jpg",
+     "bytes": 23931,
+     "width": 558,
+     "height": 558,
+     "format": "jpg",
+     "sha256": "73cc7dd2ea23652727da8df60c93b0097cb8d56e60405fed8ccdca528d34d41b"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "11. Maxi 20L microwave oven",
+    "tile_box_xyxy": [
+     21,
+     588,
+     296,
+     745
+    ],
+    "product_box_xyxy": [
+     31,
+     588,
+     285,
+     745
+    ],
+    "source_px": [
+     254,
+     157
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://zit.ng/products/maxi-20l-digital-microwave-oven-maximwo20cgv",
+     "note": "Retailer listing (Zit Nigeria), model MWO20CGV. Confirm model you stock."
+    }
+   ],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-012",
+   "list_no": 12,
+   "name": "Electric hot plate",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/electric-hot-plate",
+   "image_paths": [
+    "/images/products/nx-012.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-012.jpg",
+     "file": "nx-012.jpg",
+     "bytes": 27365,
+     "width": 488,
+     "height": 488,
+     "format": "jpg",
+     "sha256": "c3b335f9c711f50573b87fbfcc0d3fa426a5d5cdd13b23ed32584648e545c931"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "12. Electric hot plate",
+    "tile_box_xyxy": [
+     325,
+     588,
+     604,
+     745
+    ],
+    "product_box_xyxy": [
+     354,
+     591,
+     576,
+     745
+    ],
+    "source_px": [
+     222,
+     154
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-013",
+   "list_no": 13,
+   "name": "Stainless steel cooking pot set",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/stainless-steel-cooking-pot-set",
+   "image_paths": [
+    "/images/products/nx-013.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-013.jpg",
+     "file": "nx-013.jpg",
+     "bytes": 28316,
+     "width": 586,
+     "height": 586,
+     "format": "jpg",
+     "sha256": "62122ed9517f6415f2a7fac7f81fc1d5caf50d0e9f8a4003f8711ddaaff75639"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "13. Stainless steel cooking pot set",
+    "tile_box_xyxy": [
+     629,
+     588,
+     906,
+     745
+    ],
+    "product_box_xyxy": [
+     633,
+     588,
+     900,
+     745
+    ],
+    "source_px": [
+     267,
+     157
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-014",
+   "list_no": 14,
+   "name": "Non-stick frying pan",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/non-stick-frying-pan",
+   "image_paths": [
+    "/images/products/nx-014.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-014.jpg",
+     "file": "nx-014.jpg",
+     "bytes": 22550,
+     "width": 568,
+     "height": 568,
+     "format": "jpg",
+     "sha256": "881d4e19f436b8eb30f943d1d9523289a9da53282951929f41d8b575e12f56a5"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "14. Non-stick frying pan",
+    "tile_box_xyxy": [
+     932,
+     588,
+     1211,
+     745
+    ],
+    "product_box_xyxy": [
+     948,
+     594,
+     1207,
+     745
+    ],
+    "source_px": [
+     259,
+     151
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-015",
+   "list_no": 15,
+   "name": "Silicone cooking utensils set",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/silicone-cooking-utensils-set",
+   "image_paths": [
+    "/images/products/nx-015.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-015.jpg",
+     "file": "nx-015.jpg",
+     "bytes": 25143,
+     "width": 478,
+     "height": 478,
+     "format": "jpg",
+     "sha256": "40cf863a4a85946553a4d5712c9fc991fa982e2b0d69c5d6919ce187a88c47db"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "15. Silicone cooking utensils set",
+    "tile_box_xyxy": [
+     1236,
+     588,
+     1516,
+     745
+    ],
+    "product_box_xyxy": [
+     1275,
+     588,
+     1493,
+     745
+    ],
+    "source_px": [
+     218,
+     157
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-016",
+   "list_no": 16,
+   "name": "Insulated lunch bag",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/insulated-lunch-bag",
+   "image_paths": [
+    "/images/products/nx-016.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-016.jpg",
+     "file": "nx-016.jpg",
+     "bytes": 27933,
+     "width": 436,
+     "height": 436,
+     "format": "jpg",
+     "sha256": "f28a1e73ce28cd8aa2570eb5123620fe43dcc8742094f8d5d15358e491b7c887"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "16. Insulated lunch bag",
+    "tile_box_xyxy": [
+     21,
+     801,
+     296,
+     963
+    ],
+    "product_box_xyxy": [
+     58,
+     801,
+     257,
+     963
+    ],
+    "source_px": [
+     199,
+     162
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-017",
+   "list_no": 17,
+   "name": "Reusable water bottle set",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/reusable-water-bottle-set",
+   "image_paths": [
+    "/images/products/nx-017.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-017.jpg",
+     "file": "nx-017.jpg",
+     "bytes": 22583,
+     "width": 434,
+     "height": 434,
+     "format": "jpg",
+     "sha256": "0538658d4394b1c30d9121988fdb97d9f09e7c80eb655779d54dd91f42f73603"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "17. Reusable water bottle set",
+    "tile_box_xyxy": [
+     325,
+     801,
+     604,
+     963
+    ],
+    "product_box_xyxy": [
+     368,
+     801,
+     566,
+     963
+    ],
+    "source_px": [
+     198,
+     162
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-018",
+   "list_no": 18,
+   "name": "Kitchen spice rack",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/kitchen-spice-rack",
+   "image_paths": [
+    "/images/products/nx-018.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-018.jpg",
+     "file": "nx-018.jpg",
+     "bytes": 26268,
+     "width": 356,
+     "height": 356,
+     "format": "jpg",
+     "sha256": "355ac2b3b1db902de848c20418aae68f68ce8708ab7d303f5a8b682b3469eb97"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "18. Kitchen spice rack",
+    "tile_box_xyxy": [
+     629,
+     801,
+     906,
+     963
+    ],
+    "product_box_xyxy": [
+     688,
+     801,
+     848,
+     963
+    ],
+    "source_px": [
+     160,
+     162
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-019",
+   "list_no": 19,
+   "name": "Electric hand blender",
+   "brand": "",
+   "category": "home-kitchen",
+   "store_page": "/product/electric-hand-blender",
+   "image_paths": [
+    "/images/products/nx-019.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-019.jpg",
+     "file": "nx-019.jpg",
+     "bytes": 10936,
+     "width": 356,
+     "height": 356,
+     "format": "jpg",
+     "sha256": "1b8c9ae1ed00b52ce4e3fb80ea6a10e2d0057797093a3282f7a7e790c091f874"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "19. Electric hand blender",
+    "tile_box_xyxy": [
+     932,
+     801,
+     1211,
+     963
+    ],
+    "product_box_xyxy": [
+     1025,
+     801,
+     1145,
+     963
+    ],
+    "source_px": [
+     120,
+     162
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows SILVER CREST branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo. Small in the collage (120x162 px); enlarged 2.0x, slightly soft.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-020",
+   "list_no": 20,
+   "name": "Binatone 3L electric jug",
+   "brand": "Binatone",
+   "category": "home-kitchen",
+   "store_page": "/product/binatone-3l-electric-jug",
+   "image_paths": [
+    "/images/products/nx-020.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-020.jpg",
+     "file": "nx-020.jpg",
+     "bytes": 16688,
+     "width": 366,
+     "height": 366,
+     "format": "jpg",
+     "sha256": "756ca5f9a1d86fe56bd81e4761badae9bb1a33a2310f78782ea36c5eb2b9582a"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/home-and-kitchen-collage.png",
+    "label_in_collage": "20. Binatone 3L electric jug",
+    "tile_box_xyxy": [
+     1236,
+     801,
+     1516,
+     963
+    ],
+    "product_box_xyxy": [
+     1296,
+     801,
+     1463,
+     963
+    ],
+    "source_px": [
+     167,
+     162
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [
+    {
+     "type": "retailer",
+     "url": "https://www.jamarahome.com/products/binatone-kettle-3l-2200w-black-cej-3000blk",
+     "note": "Retailer listing: Binatone CEJ-3000 3L 2200W black. Confirm model/colour."
+    }
+   ],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-021",
+   "list_no": 21,
+   "name": "Men's casual polo shirt",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/men-s-casual-polo-shirt",
+   "image_paths": [
+    "/images/products/nx-021.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-021.jpg",
+     "file": "nx-021.jpg",
+     "bytes": 21796,
+     "width": 462,
+     "height": 462,
+     "format": "jpg",
+     "sha256": "21dc563b21ffea0db003cc7a19b698d3ec94cf7c12b1a5b1cef89188f6b0c493"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "21. Men's casual polo shirt",
+    "tile_box_xyxy": [
+     26,
+     112,
+     300,
+     322
+    ],
+    "product_box_xyxy": [
+     60,
+     112,
+     261,
+     322
+    ],
+    "source_px": [
+     201,
+     210
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-022",
+   "list_no": 22,
+   "name": "Men's cotton socks, 5 pairs",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/men-s-cotton-socks-5-pairs",
+   "image_paths": [
+    "/images/products/nx-022.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-022.jpg",
+     "file": "nx-022.jpg",
+     "bytes": 28836,
+     "width": 544,
+     "height": 544,
+     "format": "jpg",
+     "sha256": "8e9a89e2dee79072f76fd84b37f7055333a8e7a3ea3a73bb6c9fb1734863d0ca"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "22. Men's cotton socks, 5 pairs",
+    "tile_box_xyxy": [
+     329,
+     112,
+     604,
+     322
+    ],
+    "product_box_xyxy": [
+     337,
+     129,
+     585,
+     317
+    ],
+    "source_px": [
+     248,
+     188
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-023",
+   "list_no": 23,
+   "name": "Women's flat slippers",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/women-s-flat-slippers",
+   "image_paths": [
+    "/images/products/nx-023.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-023.jpg",
+     "file": "nx-023.jpg",
+     "bytes": 34331,
+     "width": 562,
+     "height": 562,
+     "format": "jpg",
+     "sha256": "970e5f6b0de28910c154de8a6597a6a2d9b3c4eba8e79da10675ddc3bc494746"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "23. Women's flat slippers",
+    "tile_box_xyxy": [
+     632,
+     112,
+     905,
+     323
+    ],
+    "product_box_xyxy": [
+     644,
+     132,
+     900,
+     323
+    ],
+    "source_px": [
+     256,
+     191
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-024",
+   "list_no": 24,
+   "name": "Women's everyday handbag",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/women-s-everyday-handbag",
+   "image_paths": [
+    "/images/products/nx-024.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-024.jpg",
+     "file": "nx-024.jpg",
+     "bytes": 26736,
+     "width": 478,
+     "height": 478,
+     "format": "jpg",
+     "sha256": "a0a226af94dfd5b74cf867163a8bb1ed669e363f92dde7df521103ee85bb0c1c"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "24. Women's everyday handbag",
+    "tile_box_xyxy": [
+     934,
+     112,
+     1208,
+     323
+    ],
+    "product_box_xyxy": [
+     962,
+     112,
+     1180,
+     323
+    ],
+    "source_px": [
+     218,
+     211
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-025",
+   "list_no": 25,
+   "name": "Men's casual wristwatch",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/men-s-casual-wristwatch",
+   "image_paths": [
+    "/images/products/nx-025.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-025.jpg",
+     "file": "nx-025.jpg",
+     "bytes": 25789,
+     "width": 464,
+     "height": 464,
+     "format": "jpg",
+     "sha256": "a8da2e851de83833a04798bef60de42250e145b665b124652bd8bb1a449e10f6"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "25. Men's casual wristwatch",
+    "tile_box_xyxy": [
+     1237,
+     112,
+     1511,
+     323
+    ],
+    "product_box_xyxy": [
+     1300,
+     112,
+     1447,
+     323
+    ],
+    "source_px": [
+     147,
+     211
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-026",
+   "list_no": 26,
+   "name": "Women's fashion wristwatch",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/women-s-fashion-wristwatch",
+   "image_paths": [
+    "/images/products/nx-026.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-026.jpg",
+     "file": "nx-026.jpg",
+     "bytes": 20299,
+     "width": 428,
+     "height": 428,
+     "format": "jpg",
+     "sha256": "0f3c2956f7121e1301c5ad52e62df161d7406b5dc4481f16fa95ebd3bf6af2c4"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "26. Women's fashion wristwatch",
+    "tile_box_xyxy": [
+     26,
+     387,
+     300,
+     582
+    ],
+    "product_box_xyxy": [
+     101,
+     387,
+     222,
+     582
+    ],
+    "source_px": [
+     121,
+     195
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Small in the collage (121x195 px); enlarged 2.0x, slightly soft.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-027",
+   "list_no": 27,
+   "name": "Unisex baseball cap",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/unisex-baseball-cap",
+   "image_paths": [
+    "/images/products/nx-027.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-027.jpg",
+     "file": "nx-027.jpg",
+     "bytes": 22636,
+     "width": 542,
+     "height": 542,
+     "format": "jpg",
+     "sha256": "9034db38fe04658f28d79e13c7228e77fb27fa387a1394a7c213e41fe41b5b81"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "27. Unisex baseball cap",
+    "tile_box_xyxy": [
+     329,
+     387,
+     604,
+     582
+    ],
+    "product_box_xyxy": [
+     340,
+     402,
+     587,
+     581
+    ],
+    "source_px": [
+     247,
+     179
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-028",
+   "list_no": 28,
+   "name": "Women's sunglasses",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/women-s-sunglasses",
+   "image_paths": [
+    "/images/products/nx-028.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-028.jpg",
+     "file": "nx-028.jpg",
+     "bytes": 20425,
+     "width": 600,
+     "height": 600,
+     "format": "jpg",
+     "sha256": "ed84990eb5e1cf04bb77494195cbdd002de038e386bbe9dec335991eb9d2dd91"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "28. Women's sunglasses",
+    "tile_box_xyxy": [
+     632,
+     387,
+     905,
+     582
+    ],
+    "product_box_xyxy": [
+     632,
+     424,
+     905,
+     562
+    ],
+    "source_px": [
+     273,
+     138
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-029",
+   "list_no": 29,
+   "name": "Men's leather belt",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/men-s-leather-belt",
+   "image_paths": [
+    "/images/products/nx-029.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-029.jpg",
+     "file": "nx-029.jpg",
+     "bytes": 27852,
+     "width": 520,
+     "height": 520,
+     "format": "jpg",
+     "sha256": "ce62015cd722aa9c917b1663b53580b03518431feaf4d0b551e0add99b275138"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "29. Men's leather belt",
+    "tile_box_xyxy": [
+     935,
+     387,
+     1208,
+     582
+    ],
+    "product_box_xyxy": [
+     950,
+     398,
+     1187,
+     575
+    ],
+    "source_px": [
+     237,
+     177
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-030",
+   "list_no": 30,
+   "name": "Women's crossbody bag",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/women-s-crossbody-bag",
+   "image_paths": [
+    "/images/products/nx-030.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-030.jpg",
+     "file": "nx-030.jpg",
+     "bytes": 31073,
+     "width": 584,
+     "height": 584,
+     "format": "jpg",
+     "sha256": "6fac143962f81c5ff37e9e18a72ea39b11573e0ed0ec72b3c5ee1436d1383864"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "30. Women's crossbody bag",
+    "tile_box_xyxy": [
+     1238,
+     387,
+     1511,
+     582
+    ],
+    "product_box_xyxy": [
+     1243,
+     411,
+     1509,
+     577
+    ],
+    "source_px": [
+     266,
+     166
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-031",
+   "list_no": 31,
+   "name": "Travel backpack",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/travel-backpack",
+   "image_paths": [
+    "/images/products/nx-031.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-031.jpg",
+     "file": "nx-031.jpg",
+     "bytes": 25893,
+     "width": 452,
+     "height": 452,
+     "format": "jpg",
+     "sha256": "e9360ee709d0e2edcee89942519f737759c6e001aaeb4ebfe9867038f1aaf3e2"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "31. Travel backpack",
+    "tile_box_xyxy": [
+     26,
+     648,
+     300,
+     854
+    ],
+    "product_box_xyxy": [
+     72,
+     648,
+     255,
+     854
+    ],
+    "source_px": [
+     183,
+     206
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-032",
+   "list_no": 32,
+   "name": "Women's casual sneakers",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/women-s-casual-sneakers",
+   "image_paths": [
+    "/images/products/nx-032.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-032.jpg",
+     "file": "nx-032.jpg",
+     "bytes": 32026,
+     "width": 546,
+     "height": 546,
+     "format": "jpg",
+     "sha256": "7a7695d40ea0a8570cdcda0c48aac728bf7f2b2319fb7756805b824915541e05"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "32. Women's casual sneakers",
+    "tile_box_xyxy": [
+     329,
+     648,
+     604,
+     854
+    ],
+    "product_box_xyxy": [
+     340,
+     656,
+     589,
+     849
+    ],
+    "source_px": [
+     249,
+     193
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-033",
+   "list_no": 33,
+   "name": "Men's casual sneakers",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/men-s-casual-sneakers",
+   "image_paths": [
+    "/images/products/nx-033.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-033.jpg",
+     "file": "nx-033.jpg",
+     "bytes": 30071,
+     "width": 566,
+     "height": 566,
+     "format": "jpg",
+     "sha256": "982849a4f8736a26a3aa3bac4d3c7183e4e4b1d42e7e2e39f5482076ae069013"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "33. Men's casual sneakers",
+    "tile_box_xyxy": [
+     632,
+     648,
+     905,
+     854
+    ],
+    "product_box_xyxy": [
+     641,
+     662,
+     899,
+     851
+    ],
+    "source_px": [
+     258,
+     189
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-034",
+   "list_no": 34,
+   "name": "Minimalist jewellery set",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/minimalist-jewellery-set",
+   "image_paths": [
+    "/images/products/nx-034.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-034.jpg",
+     "file": "nx-034.jpg",
+     "bytes": 21592,
+     "width": 496,
+     "height": 496,
+     "format": "jpg",
+     "sha256": "8eb3d3d049211c5eeacefea54aa5e820f616d91e9897b9f082778531d2191b1b"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "34. Minimalist jewellery set",
+    "tile_box_xyxy": [
+     935,
+     648,
+     1208,
+     854
+    ],
+    "product_box_xyxy": [
+     956,
+     648,
+     1182,
+     851
+    ],
+    "source_px": [
+     226,
+     203
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-035",
+   "list_no": 35,
+   "name": "Travel wallet and card holder",
+   "brand": "",
+   "category": "fashion-accessories",
+   "store_page": "/product/travel-wallet-and-card-holder",
+   "image_paths": [
+    "/images/products/nx-035.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-035.jpg",
+     "file": "nx-035.jpg",
+     "bytes": 32734,
+     "width": 566,
+     "height": 566,
+     "format": "jpg",
+     "sha256": "9bb870dc76dbed72ac8b6f70848d2feaf591f5bbeb9f21a82fd5b0b37ba2fe12"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+    "label_in_collage": "35. Travel wallet and card holder",
+    "tile_box_xyxy": [
+     1238,
+     648,
+     1510,
+     854
+    ],
+    "product_box_xyxy": [
+     1250,
+     650,
+     1508,
+     852
+    ],
+    "source_px": [
+     258,
+     202
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-036",
+   "list_no": 36,
+   "name": "NIVEA Soft cream, 200ml",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "store_page": "/product/nivea-soft-cream-200ml",
+   "image_paths": [
+    "/images/products/nx-036.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-036.jpg",
+     "file": "nx-036.jpg",
+     "bytes": 25502,
+     "width": 488,
+     "height": 488,
+     "format": "jpg",
+     "sha256": "37346c2e25f5406c8b5273a9f20bfb485bd1fec26fd97a44d2d06b988b789a9d"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "36. NIVEA Soft cream, 200ml",
+    "tile_box_xyxy": [
+     25,
+     107,
+     303,
+     325
+    ],
+    "product_box_xyxy": [
+     54,
+     137,
+     276,
+     325
+    ],
+    "source_px": [
+     222,
+     188
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-037",
+   "list_no": 37,
+   "name": "NIVEA orange and avocado shower gel",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "store_page": "/product/nivea-orange-and-avocado-shower-gel",
+   "image_paths": [
+    "/images/products/nx-037.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-037.jpg",
+     "file": "nx-037.jpg",
+     "bytes": 23117,
+     "width": 474,
+     "height": 474,
+     "format": "jpg",
+     "sha256": "f8a81c2404393820892f03ff4bf9ffbea3e57ee1b291cbab4a72ce950a2034f6"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "37. NIVEA orange and avocado shower gel",
+    "tile_box_xyxy": [
+     332,
+     106,
+     605,
+     322
+    ],
+    "product_box_xyxy": [
+     408,
+     106,
+     528,
+     322
+    ],
+    "source_px": [
+     120,
+     216
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [
+    {
+     "type": "official",
+     "url": "https://www.nivea.co.za/products/nivea-orange-and-avocado-oil-40059002570930147.html",
+     "note": "NIVEA official (South Africa). Confirm shower gel vs shower cream and pack size sold in Nigeria."
+    }
+   ],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Small in the collage (120x216 px); enlarged 2.0x, slightly soft.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-038",
+   "list_no": 38,
+   "name": "NIVEA Deep shower gel for men",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "store_page": "/product/nivea-deep-shower-gel-for-men",
+   "image_paths": [
+    "/images/products/nx-038.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-038.jpg",
+     "file": "nx-038.jpg",
+     "bytes": 21946,
+     "width": 474,
+     "height": 474,
+     "format": "jpg",
+     "sha256": "8898c556cfe17d050362a352b2232e56dd9593749dd7172a4c3d1fb30d2bc5c0"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "38. NIVEA Deep shower gel for men",
+    "tile_box_xyxy": [
+     632,
+     106,
+     905,
+     322
+    ],
+    "product_box_xyxy": [
+     714,
+     106,
+     823,
+     322
+    ],
+    "source_px": [
+     109,
+     216
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Small in the collage (109x216 px); enlarged 2.0x, slightly soft.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-039",
+   "list_no": 39,
+   "name": "NIVEA sunscreen SPF 50, 50ml",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "store_page": "/product/nivea-sunscreen-spf-50-50ml",
+   "image_paths": [
+    "/images/products/nx-039.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-039.jpg",
+     "file": "nx-039.jpg",
+     "bytes": 16120,
+     "width": 430,
+     "height": 430,
+     "format": "jpg",
+     "sha256": "374f3a19abe2ee31773b4481d7dc55956944c68d8aadb1fc7ac1e4b9dc0e02a6"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "39. NIVEA sunscreen SPF 50, 50ml",
+    "tile_box_xyxy": [
+     934,
+     106,
+     1206,
+     322
+    ],
+    "product_box_xyxy": [
+     1025,
+     126,
+     1125,
+     322
+    ],
+    "source_px": [
+     100,
+     196
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Small in the collage (100x196 px); enlarged 2.0x, slightly soft.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-040",
+   "list_no": 40,
+   "name": "NIVEA body lotion, 400ml",
+   "brand": "NIVEA",
+   "category": "beauty-personal-care",
+   "store_page": "/product/nivea-body-lotion-400ml",
+   "image_paths": [
+    "/images/products/nx-040.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-040.jpg",
+     "file": "nx-040.jpg",
+     "bytes": 18560,
+     "width": 474,
+     "height": 474,
+     "format": "jpg",
+     "sha256": "41152c0bf46c9a5f1c2696dc9edb5940f87387ddc899a6369cd94ba8b6333178"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "40. NIVEA body lotion, 400ml",
+    "tile_box_xyxy": [
+     1237,
+     106,
+     1511,
+     322
+    ],
+    "product_box_xyxy": [
+     1321,
+     106,
+     1428,
+     322
+    ],
+    "source_px": [
+     107,
+     216
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Small in the collage (107x216 px); enlarged 2.0x, slightly soft.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-041",
+   "list_no": 41,
+   "name": "Hair dryer",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/hair-dryer",
+   "image_paths": [
+    "/images/products/nx-041.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-041.jpg",
+     "file": "nx-041.jpg",
+     "bytes": 18364,
+     "width": 466,
+     "height": 466,
+     "format": "jpg",
+     "sha256": "a811c3950e46f0065923d7c452f3fcfbc37a9a609dab19eb3921ac48520ed62e"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "41. Hair dryer",
+    "tile_box_xyxy": [
+     26,
+     388,
+     303,
+     580
+    ],
+    "product_box_xyxy": [
+     57,
+     391,
+     269,
+     580
+    ],
+    "source_px": [
+     212,
+     189
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows Remington-style lettering branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-042",
+   "list_no": 42,
+   "name": "Hair straightener",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/hair-straightener",
+   "image_paths": [
+    "/images/products/nx-042.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-042.jpg",
+     "file": "nx-042.jpg",
+     "bytes": 19094,
+     "width": 590,
+     "height": 590,
+     "format": "jpg",
+     "sha256": "d064fd231b019c85d94e588f1362aef0a718e0fa9762a1fae2c28fff01867114"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "42. Hair straightener",
+    "tile_box_xyxy": [
+     332,
+     388,
+     604,
+     579
+    ],
+    "product_box_xyxy": [
+     335,
+     425,
+     604,
+     561
+    ],
+    "source_px": [
+     269,
+     136
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-043",
+   "list_no": 43,
+   "name": "Electric hair clipper",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/electric-hair-clipper",
+   "image_paths": [
+    "/images/products/nx-043.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-043.jpg",
+     "file": "nx-043.jpg",
+     "bytes": 21817,
+     "width": 420,
+     "height": 420,
+     "format": "jpg",
+     "sha256": "ca73d14e357a26675ffa6b28cb4555961b7da0a7c5e517640335072afa146b5e"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "43. Electric hair clipper",
+    "tile_box_xyxy": [
+     632,
+     388,
+     905,
+     579
+    ],
+    "product_box_xyxy": [
+     688,
+     388,
+     838,
+     579
+    ],
+    "source_px": [
+     150,
+     191
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows Kemei branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-044",
+   "list_no": 44,
+   "name": "Rechargeable facial cleansing brush",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/rechargeable-facial-cleansing-brush",
+   "image_paths": [
+    "/images/products/nx-044.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-044.jpg",
+     "file": "nx-044.jpg",
+     "bytes": 21712,
+     "width": 418,
+     "height": 418,
+     "format": "jpg",
+     "sha256": "bb326ec73dc1ec618ecd8ec5c3e42d7eb8c112defc02fc8358f639b14e4cd250"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "44. Rechargeable facial cleansing brush",
+    "tile_box_xyxy": [
+     935,
+     388,
+     1207,
+     578
+    ],
+    "product_box_xyxy": [
+     988,
+     388,
+     1173,
+     578
+    ],
+    "source_px": [
+     185,
+     190
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-045",
+   "list_no": 45,
+   "name": "Makeup brush set",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/makeup-brush-set",
+   "image_paths": [
+    "/images/products/nx-045.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-045.jpg",
+     "file": "nx-045.jpg",
+     "bytes": 37778,
+     "width": 546,
+     "height": 546,
+     "format": "jpg",
+     "sha256": "3e0ac1bedb2f199438ab6d41d38fb84167cc523501e0a41d45b32e06ba7a610f"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "45. Makeup brush set",
+    "tile_box_xyxy": [
+     1236,
+     388,
+     1509,
+     580
+    ],
+    "product_box_xyxy": [
+     1260,
+     393,
+     1509,
+     580
+    ],
+    "source_px": [
+     249,
+     187
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-046",
+   "list_no": 46,
+   "name": "Makeup organiser",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/makeup-organiser",
+   "image_paths": [
+    "/images/products/nx-046.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-046.jpg",
+     "file": "nx-046.jpg",
+     "bytes": 44171,
+     "width": 494,
+     "height": 494,
+     "format": "jpg",
+     "sha256": "c0a90737e4a83ce61a39a5a8d224837aa36b3a3762bbf7ce719d97568f5552d0"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "46. Makeup organiser",
+    "tile_box_xyxy": [
+     26,
+     647,
+     303,
+     844
+    ],
+    "product_box_xyxy": [
+     51,
+     647,
+     276,
+     844
+    ],
+    "source_px": [
+     225,
+     197
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-047",
+   "list_no": 47,
+   "name": "Cosmetic travel bag",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/cosmetic-travel-bag",
+   "image_paths": [
+    "/images/products/nx-047.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-047.jpg",
+     "file": "nx-047.jpg",
+     "bytes": 31376,
+     "width": 478,
+     "height": 478,
+     "format": "jpg",
+     "sha256": "98ceed0e64cb0d9c423683a0af8e59a4b507a6fa57b0b0e01adde1fdb74677b4"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "47. Cosmetic travel bag",
+    "tile_box_xyxy": [
+     333,
+     647,
+     604,
+     844
+    ],
+    "product_box_xyxy": [
+     360,
+     649,
+     578,
+     844
+    ],
+    "source_px": [
+     218,
+     195
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-048",
+   "list_no": 48,
+   "name": "Electric manicure and pedicure kit",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/electric-manicure-and-pedicure-kit",
+   "image_paths": [
+    "/images/products/nx-048.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-048.jpg",
+     "file": "nx-048.jpg",
+     "bytes": 25238,
+     "width": 480,
+     "height": 480,
+     "format": "jpg",
+     "sha256": "936f12013184dc7aeeebcdc93c4eaa5076d9b9b74455d5865940579b456a597b"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "48. Electric manicure and pedicure kit",
+    "tile_box_xyxy": [
+     634,
+     647,
+     902,
+     843
+    ],
+    "product_box_xyxy": [
+     668,
+     647,
+     887,
+     843
+    ],
+    "source_px": [
+     219,
+     196
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-049",
+   "list_no": 49,
+   "name": "Digital bathroom scale",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/digital-bathroom-scale",
+   "image_paths": [
+    "/images/products/nx-049.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-049.jpg",
+     "file": "nx-049.jpg",
+     "bytes": 16444,
+     "width": 436,
+     "height": 436,
+     "format": "jpg",
+     "sha256": "0106ed5628507d5ab9e4b8b26e728dded5dd2dbdb428ba49f262993c19f738b9"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "49. Digital bathroom scale",
+    "tile_box_xyxy": [
+     935,
+     647,
+     1206,
+     844
+    ],
+    "product_box_xyxy": [
+     977,
+     653,
+     1176,
+     844
+    ],
+    "source_px": [
+     199,
+     191
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-050",
+   "list_no": 50,
+   "name": "Rechargeable facial hair remover",
+   "brand": "",
+   "category": "beauty-personal-care",
+   "store_page": "/product/rechargeable-facial-hair-remover",
+   "image_paths": [
+    "/images/products/nx-050.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-050.jpg",
+     "file": "nx-050.jpg",
+     "bytes": 10777,
+     "width": 426,
+     "height": 426,
+     "format": "jpg",
+     "sha256": "378017dc4038c4033ee6850c888f3c317477f7caa7617ed2af546a4ae9353740"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+    "label_in_collage": "50. Rechargeable facial hair remover",
+    "tile_box_xyxy": [
+     1237,
+     647,
+     1509,
+     843
+    ],
+    "product_box_xyxy": [
+     1338,
+     649,
+     1434,
+     843
+    ],
+    "source_px": [
+     96,
+     194
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Small in the collage (96x194 px); enlarged 2.0x, slightly soft.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-051",
+   "list_no": 51,
+   "name": "Oraimo Traveler 15 power bank, 20,000mAh",
+   "brand": "Oraimo",
+   "category": "gadgets-electronics",
+   "store_page": "/product/oraimo-traveler-15-power-bank-20-000mah",
+   "image_paths": [
+    "/images/products/nx-051.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-051.jpg",
+     "file": "nx-051.jpg",
+     "bytes": 34616,
+     "width": 578,
+     "height": 578,
+     "format": "jpg",
+     "sha256": "634af3c12b3bb7550dc2faad2da3cfbdaea8eed2df3697cb452a037969c056f1"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "51. Oraimo Traveler 15 power bank, 20,000mAh",
+    "tile_box_xyxy": [
+     25,
+     115,
+     301,
+     320
+    ],
+    "product_box_xyxy": [
+     38,
+     117,
+     301,
+     320
+    ],
+    "source_px": [
+     263,
+     203
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [
+    {
+     "type": "official",
+     "url": "https://ng.oraimo.com/product/oraimo-traveler-15-20000mah-15w-fast-charge-type-c-2-way-power-bank",
+     "note": "Oraimo Nigeria official store. Note: Oraimo also sells a \"Traveler 15 Flash\"; confirm which model you stock."
+    }
+   ],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-052",
+   "list_no": 52,
+   "name": "20,000mAh portable power bank",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/20-000mah-portable-power-bank",
+   "image_paths": [
+    "/images/products/nx-052.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-052.jpg",
+     "file": "nx-052.jpg",
+     "bytes": 20969,
+     "width": 452,
+     "height": 452,
+     "format": "jpg",
+     "sha256": "17e3f3f9be1f1b06c922655887dce3e18576a2fda351472147d1e41809e5fe20"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "52. 20,000mAh portable power bank",
+    "tile_box_xyxy": [
+     329,
+     115,
+     604,
+     321
+    ],
+    "product_box_xyxy": [
+     371,
+     115,
+     552,
+     321
+    ],
+    "source_px": [
+     181,
+     206
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows Oraimo branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-053",
+   "list_no": 53,
+   "name": "Oraimo SpaceBuds Lite earbuds",
+   "brand": "Oraimo",
+   "category": "gadgets-electronics",
+   "store_page": "/product/oraimo-spacebuds-lite-earbuds",
+   "image_paths": [
+    "/images/products/nx-053.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-053.jpg",
+     "file": "nx-053.jpg",
+     "bytes": 31273,
+     "width": 588,
+     "height": 588,
+     "format": "jpg",
+     "sha256": "f1b03956f8246701b5867aab0af26307105654b9e6173127feef4216d4985ff5"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "53. Oraimo SpaceBuds Lite earbuds",
+    "tile_box_xyxy": [
+     630,
+     115,
+     906,
+     321
+    ],
+    "product_box_xyxy": [
+     638,
+     120,
+     906,
+     321
+    ],
+    "source_px": [
+     268,
+     201
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [
+    {
+     "type": "official",
+     "url": "https://ao.oraimo.com/en/product/oraimo-spacebuds-lite-sound360-anti-lost-true-wireless-earbuds-otw-324",
+     "note": "Oraimo official store (model OTW-324). Confirm colour."
+    }
+   ],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-054",
+   "list_no": 54,
+   "name": "Bluetooth headset",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/bluetooth-headset",
+   "image_paths": [
+    "/images/products/nx-054.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-054.jpg",
+     "file": "nx-054.jpg",
+     "bytes": 19618,
+     "width": 452,
+     "height": 452,
+     "format": "jpg",
+     "sha256": "e75ff7347e8f95060b5fb46b2b699c64c9e43c4ee3beef32cf83c17e21200be9"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "54. Bluetooth headset",
+    "tile_box_xyxy": [
+     933,
+     115,
+     1208,
+     321
+    ],
+    "product_box_xyxy": [
+     1005,
+     115,
+     1153,
+     321
+    ],
+    "source_px": [
+     148,
+     206
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-055",
+   "list_no": 55,
+   "name": "USB-C fast charging cable",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/usb-c-fast-charging-cable",
+   "image_paths": [
+    "/images/products/nx-055.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-055.jpg",
+     "file": "nx-055.jpg",
+     "bytes": 35689,
+     "width": 582,
+     "height": 582,
+     "format": "jpg",
+     "sha256": "51a206c031100919ed9d58cf64e2873de7dc5774bcc74e01ca1e12568e795b10"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "55. USB-C fast charging cable",
+    "tile_box_xyxy": [
+     1236,
+     115,
+     1511,
+     321
+    ],
+    "product_box_xyxy": [
+     1242,
+     129,
+     1507,
+     321
+    ],
+    "source_px": [
+     265,
+     192
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows UGREEN branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-056",
+   "list_no": 56,
+   "name": "20W USB-C wall charger",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/20w-usb-c-wall-charger",
+   "image_paths": [
+    "/images/products/nx-056.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-056.jpg",
+     "file": "nx-056.jpg",
+     "bytes": 13363,
+     "width": 426,
+     "height": 426,
+     "format": "jpg",
+     "sha256": "5640d71b768331ec2e598cf0838f6004f9f29682f5bef63e0d9497a95b76b506"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "56. 20W USB-C wall charger",
+    "tile_box_xyxy": [
+     25,
+     387,
+     301,
+     580
+    ],
+    "product_box_xyxy": [
+     68,
+     413,
+     262,
+     580
+    ],
+    "source_px": [
+     194,
+     167
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows UGREEN branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-057",
+   "list_no": 57,
+   "name": "Wireless mouse",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/wireless-mouse",
+   "image_paths": [
+    "/images/products/nx-057.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-057.jpg",
+     "file": "nx-057.jpg",
+     "bytes": 16162,
+     "width": 404,
+     "height": 404,
+     "format": "jpg",
+     "sha256": "d9734842b2aed87a6bd5b9898781e905ea6434a426f2e4deb201c59826160a45"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "57. Wireless mouse",
+    "tile_box_xyxy": [
+     329,
+     387,
+     603,
+     580
+    ],
+    "product_box_xyxy": [
+     365,
+     396,
+     548,
+     580
+    ],
+    "source_px": [
+     183,
+     184
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows Logitech (logi) branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-058",
+   "list_no": 58,
+   "name": "Wireless keyboard and mouse combo",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/wireless-keyboard-and-mouse-combo",
+   "image_paths": [
+    "/images/products/nx-058.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-058.jpg",
+     "file": "nx-058.jpg",
+     "bytes": 34369,
+     "width": 598,
+     "height": 598,
+     "format": "jpg",
+     "sha256": "c73a7e2486addb13051d242e9c846f902e9a9c21e87cb9ee28d2d57e4e1a9412"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "58. Wireless keyboard and mouse combo",
+    "tile_box_xyxy": [
+     630,
+     387,
+     906,
+     579
+    ],
+    "product_box_xyxy": [
+     630,
+     406,
+     902,
+     579
+    ],
+    "source_px": [
+     272,
+     173
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows Logitech branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-059",
+   "list_no": 59,
+   "name": "Laptop stand",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/laptop-stand",
+   "image_paths": [
+    "/images/products/nx-059.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-059.jpg",
+     "file": "nx-059.jpg",
+     "bytes": 29781,
+     "width": 582,
+     "height": 582,
+     "format": "jpg",
+     "sha256": "2c21b12c54b2b255f5b0b124f8406776d3950760b53e57982b418321d2f1d415"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "59. Laptop stand",
+    "tile_box_xyxy": [
+     934,
+     387,
+     1208,
+     580
+    ],
+    "product_box_xyxy": [
+     937,
+     387,
+     1202,
+     580
+    ],
+    "source_px": [
+     265,
+     193
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-060",
+   "list_no": 60,
+   "name": "USB hub",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/usb-hub",
+   "image_paths": [
+    "/images/products/nx-060.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-060.jpg",
+     "file": "nx-060.jpg",
+     "bytes": 28318,
+     "width": 600,
+     "height": 600,
+     "format": "jpg",
+     "sha256": "c2e3afdf4671c9070608dccb94f53b35e68248e77a1cca507e2e6d89c435e03b"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "60. USB hub",
+    "tile_box_xyxy": [
+     1236,
+     387,
+     1511,
+     580
+    ],
+    "product_box_xyxy": [
+     1238,
+     391,
+     1511,
+     578
+    ],
+    "source_px": [
+     273,
+     187
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows UGREEN branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-061",
+   "list_no": 61,
+   "name": "Ring light with tripod",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/ring-light-with-tripod",
+   "image_paths": [
+    "/images/products/nx-061.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-061.jpg",
+     "file": "nx-061.jpg",
+     "bytes": 14295,
+     "width": 420,
+     "height": 420,
+     "format": "jpg",
+     "sha256": "f731076baef33a761fe9f5c261ecf22f3be5588e49c70eb294d869ea7672d705"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "61. Ring light with tripod",
+    "tile_box_xyxy": [
+     25,
+     644,
+     301,
+     835
+    ],
+    "product_box_xyxy": [
+     100,
+     644,
+     251,
+     835
+    ],
+    "source_px": [
+     151,
+     191
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-062",
+   "list_no": 62,
+   "name": "Portable Bluetooth speaker",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/portable-bluetooth-speaker",
+   "image_paths": [
+    "/images/products/nx-062.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-062.jpg",
+     "file": "nx-062.jpg",
+     "bytes": 34932,
+     "width": 574,
+     "height": 574,
+     "format": "jpg",
+     "sha256": "ddccc08fe04fe125632fbf7eb40ddd03c19fa719a9f548da306c0f5b9191542f"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "62. Portable Bluetooth speaker",
+    "tile_box_xyxy": [
+     329,
+     645,
+     603,
+     835
+    ],
+    "product_box_xyxy": [
+     336,
+     668,
+     597,
+     835
+    ],
+    "source_px": [
+     261,
+     167
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows JBL branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-063",
+   "list_no": 63,
+   "name": "Rechargeable LED desk lamp",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/rechargeable-led-desk-lamp",
+   "image_paths": [
+    "/images/products/nx-063.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-063.jpg",
+     "file": "nx-063.jpg",
+     "bytes": 9927,
+     "width": 418,
+     "height": 418,
+     "format": "jpg",
+     "sha256": "a5f0b263d959d34b26763dd1c940f35ad3e8065c2f4445c7479962c2f0a99dae"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "63. Rechargeable LED desk lamp",
+    "tile_box_xyxy": [
+     631,
+     645,
+     905,
+     835
+    ],
+    "product_box_xyxy": [
+     689,
+     645,
+     873,
+     835
+    ],
+    "source_px": [
+     184,
+     190
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-064",
+   "list_no": 64,
+   "name": "Wi-Fi range extender",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/wi-fi-range-extender",
+   "image_paths": [
+    "/images/products/nx-064.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-064.jpg",
+     "file": "nx-064.jpg",
+     "bytes": 11629,
+     "width": 418,
+     "height": 418,
+     "format": "jpg",
+     "sha256": "2cbbd3decd2d56c57d854251312199516d90a42491ae458ef6a863caec2e25ed"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "64. Wi-Fi range extender",
+    "tile_box_xyxy": [
+     934,
+     645,
+     1208,
+     835
+    ],
+    "product_box_xyxy": [
+     991,
+     645,
+     1141,
+     835
+    ],
+    "source_px": [
+     150,
+     190
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows TP-Link branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-065",
+   "list_no": 65,
+   "name": "USB external SSD, 500GB",
+   "brand": "",
+   "category": "gadgets-electronics",
+   "store_page": "/product/usb-external-ssd-500gb",
+   "image_paths": [
+    "/images/products/nx-065.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-065.jpg",
+     "file": "nx-065.jpg",
+     "bytes": 23463,
+     "width": 542,
+     "height": 542,
+     "format": "jpg",
+     "sha256": "958b90cfb5fa6f50408661a9d94242ddc1d0b92bd60afd147fced6f46565070b"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+    "label_in_collage": "65. USB external SSD, 500GB",
+    "tile_box_xyxy": [
+     1236,
+     644,
+     1511,
+     835
+    ],
+    "product_box_xyxy": [
+     1253,
+     645,
+     1500,
+     835
+    ],
+    "source_px": [
+     247,
+     190
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows Samsung branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-066",
+   "list_no": 66,
+   "name": "Children's clothing set",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/children-s-clothing-set",
+   "image_paths": [
+    "/images/products/nx-066.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-066.jpg",
+     "file": "nx-066.jpg",
+     "bytes": 40632,
+     "width": 634,
+     "height": 634,
+     "format": "jpg",
+     "sha256": "f6fa61ae29a58856089cce151ecb4074194ca83bdd80eeb1874d884db94b4cb4"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "66. Children's clothing set",
+    "tile_box_xyxy": [
+     20,
+     131,
+     294,
+     420
+    ],
+    "product_box_xyxy": [
+     21,
+     131,
+     292,
+     420
+    ],
+    "source_px": [
+     271,
+     289
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-067",
+   "list_no": 67,
+   "name": "Baby feeding bottle set",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/baby-feeding-bottle-set",
+   "image_paths": [
+    "/images/products/nx-067.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-067.jpg",
+     "file": "nx-067.jpg",
+     "bytes": 36093,
+     "width": 580,
+     "height": 580,
+     "format": "jpg",
+     "sha256": "5b75acd478720936be3195c85465aeacf8804c550434873055613e053831c694"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "67. Baby feeding bottle set",
+    "tile_box_xyxy": [
+     325,
+     131,
+     599,
+     422
+    ],
+    "product_box_xyxy": [
+     337,
+     153,
+     586,
+     417
+    ],
+    "source_px": [
+     249,
+     264
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-068",
+   "list_no": 68,
+   "name": "Insulated children's lunch bag",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/insulated-children-s-lunch-bag",
+   "image_paths": [
+    "/images/products/nx-068.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-068.jpg",
+     "file": "nx-068.jpg",
+     "bytes": 56701,
+     "width": 602,
+     "height": 602,
+     "format": "jpg",
+     "sha256": "b7165203529d3a12b8797b9b517bae01bd89bffacd6b1cf4859b75c8ff9e11bc"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "68. Insulated children's lunch bag",
+    "tile_box_xyxy": [
+     630,
+     131,
+     904,
+     417
+    ],
+    "product_box_xyxy": [
+     630,
+     144,
+     904,
+     411
+    ],
+    "source_px": [
+     274,
+     267
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-069",
+   "list_no": 69,
+   "name": "Baby changing bag",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/baby-changing-bag",
+   "image_paths": [
+    "/images/products/nx-069.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-069.jpg",
+     "file": "nx-069.jpg",
+     "bytes": 50938,
+     "width": 640,
+     "height": 640,
+     "format": "jpg",
+     "sha256": "87fc58fd336789feb56f0780a701461fabca0e1fd98005300811cecb68cd8b82"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "69. Baby changing bag",
+    "tile_box_xyxy": [
+     935,
+     131,
+     1209,
+     422
+    ],
+    "product_box_xyxy": [
+     950,
+     131,
+     1203,
+     422
+    ],
+    "source_px": [
+     253,
+     291
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-070",
+   "list_no": 70,
+   "name": "Baby bath support",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/baby-bath-support",
+   "image_paths": [
+    "/images/products/nx-070.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-070.jpg",
+     "file": "nx-070.jpg",
+     "bytes": 47203,
+     "width": 584,
+     "height": 584,
+     "format": "jpg",
+     "sha256": "666c7925b014f6d4fbdc7f80a25924d8b5dab09f41fe5df23759ebe1133c4520"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "70. Baby bath support",
+    "tile_box_xyxy": [
+     1240,
+     131,
+     1514,
+     422
+    ],
+    "product_box_xyxy": [
+     1242,
+     148,
+     1508,
+     410
+    ],
+    "source_px": [
+     266,
+     262
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-071",
+   "list_no": 71,
+   "name": "Children's educational building blocks",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/children-s-educational-building-blocks",
+   "image_paths": [
+    "/images/products/nx-071.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-071.jpg",
+     "file": "nx-071.jpg",
+     "bytes": 40431,
+     "width": 582,
+     "height": 582,
+     "format": "jpg",
+     "sha256": "580cc977d1774389b445fbe4312319a6dbabe5d3b5cb40650e22bd9ac30395a2"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "71. Children's educational building blocks",
+    "tile_box_xyxy": [
+     20,
+     518,
+     294,
+     784
+    ],
+    "product_box_xyxy": [
+     27,
+     518,
+     282,
+     783
+    ],
+    "source_px": [
+     255,
+     265
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-072",
+   "list_no": 72,
+   "name": "Children's drawing and colouring set",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/children-s-drawing-and-colouring-set",
+   "image_paths": [
+    "/images/products/nx-072.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-072.jpg",
+     "file": "nx-072.jpg",
+     "bytes": 68236,
+     "width": 604,
+     "height": 604,
+     "format": "jpg",
+     "sha256": "4187585abda0ee66d73ed50e3c3014e1a40e191e6410594e30eca4362bf83752"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "72. Children's drawing and colouring set",
+    "tile_box_xyxy": [
+     324,
+     518,
+     599,
+     786
+    ],
+    "product_box_xyxy": [
+     324,
+     527,
+     599,
+     779
+    ],
+    "source_px": [
+     275,
+     252
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-073",
+   "list_no": 73,
+   "name": "Baby nail-care kit",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/baby-nail-care-kit",
+   "image_paths": [
+    "/images/products/nx-073.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-073.jpg",
+     "file": "nx-073.jpg",
+     "bytes": 35158,
+     "width": 602,
+     "height": 602,
+     "format": "jpg",
+     "sha256": "b9025989754a6328688918fe17192314c09848c2662d90f58fbea99aa66fe3ec"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "73. Baby nail-care kit",
+    "tile_box_xyxy": [
+     630,
+     518,
+     905,
+     791
+    ],
+    "product_box_xyxy": [
+     631,
+     560,
+     905,
+     767
+    ],
+    "source_px": [
+     274,
+     207
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-074",
+   "list_no": 74,
+   "name": "Children's backpack",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/children-s-backpack",
+   "image_paths": [
+    "/images/products/nx-074.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-074.jpg",
+     "file": "nx-074.jpg",
+     "bytes": 50233,
+     "width": 590,
+     "height": 590,
+     "format": "jpg",
+     "sha256": "b06936f15390ab63ce226751eeb9035447776684f7092434404f7a929e510fab"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "74. Children's backpack",
+    "tile_box_xyxy": [
+     935,
+     518,
+     1209,
+     792
+    ],
+    "product_box_xyxy": [
+     946,
+     523,
+     1199,
+     792
+    ],
+    "source_px": [
+     253,
+     269
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-075",
+   "list_no": 75,
+   "name": "Foldable baby play mat",
+   "brand": "",
+   "category": "baby-kids",
+   "store_page": "/product/foldable-baby-play-mat",
+   "image_paths": [
+    "/images/products/nx-075.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-075.jpg",
+     "file": "nx-075.jpg",
+     "bytes": 46688,
+     "width": 602,
+     "height": 602,
+     "format": "jpg",
+     "sha256": "9af00bd8a556d6fa786351e397fcfc69b8402116b1ad029091122aad6bd737a5"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/baby-and-kids-collage.png",
+    "label_in_collage": "75. Foldable baby play mat",
+    "tile_box_xyxy": [
+     1240,
+     518,
+     1514,
+     793
+    ],
+    "product_box_xyxy": [
+     1240,
+     541,
+     1514,
+     793
+    ],
+    "source_px": [
+     274,
+     252
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-076",
+   "list_no": 76,
+   "name": "Yoga mat",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/yoga-mat",
+   "image_paths": [
+    "/images/products/nx-076.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-076.jpg",
+     "file": "nx-076.jpg",
+     "bytes": 48807,
+     "width": 600,
+     "height": 600,
+     "format": "jpg",
+     "sha256": "20d2966f9813bd7934c6df77dfeb465bf3c6034488d61ee9c1d0f3cf8b72b50e"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "76. Yoga mat",
+    "tile_box_xyxy": [
+     24,
+     143,
+     297,
+     422
+    ],
+    "product_box_xyxy": [
+     24,
+     163,
+     297,
+     411
+    ],
+    "source_px": [
+     273,
+     248
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-077",
+   "list_no": 77,
+   "name": "Resistance bands set",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/resistance-bands-set",
+   "image_paths": [
+    "/images/products/nx-077.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-077.jpg",
+     "file": "nx-077.jpg",
+     "bytes": 42464,
+     "width": 588,
+     "height": 588,
+     "format": "jpg",
+     "sha256": "7c3678870f5a3fac2058bf732917ee066e7fe2325b201413388eda1bbd5ddeef"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "77. Resistance bands set",
+    "tile_box_xyxy": [
+     329,
+     143,
+     600,
+     422
+    ],
+    "product_box_xyxy": [
+     340,
+     151,
+     597,
+     419
+    ],
+    "source_px": [
+     257,
+     268
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-078",
+   "list_no": 78,
+   "name": "Adjustable skipping rope",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/adjustable-skipping-rope",
+   "image_paths": [
+    "/images/products/nx-078.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-078.jpg",
+     "file": "nx-078.jpg",
+     "bytes": 49997,
+     "width": 586,
+     "height": 586,
+     "format": "jpg",
+     "sha256": "2a9566a37d69fb338c032cc1b7d754b300c91ad0c297640ffb3f49e0f1a434d3"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "78. Adjustable skipping rope",
+    "tile_box_xyxy": [
+     632,
+     143,
+     905,
+     422
+    ],
+    "product_box_xyxy": [
+     638,
+     158,
+     905,
+     419
+    ],
+    "source_px": [
+     267,
+     261
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-079",
+   "list_no": 79,
+   "name": "Dumbbell set",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/dumbbell-set",
+   "image_paths": [
+    "/images/products/nx-079.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-079.jpg",
+     "file": "nx-079.jpg",
+     "bytes": 32425,
+     "width": 598,
+     "height": 598,
+     "format": "jpg",
+     "sha256": "49bf2d318ae7bb3987c329fa376149755c0b461335014a9b5bbf785a6ab1376e"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "79. Dumbbell set",
+    "tile_box_xyxy": [
+     937,
+     143,
+     1211,
+     422
+    ],
+    "product_box_xyxy": [
+     939,
+     181,
+     1211,
+     409
+    ],
+    "source_px": [
+     272,
+     228
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-080",
+   "list_no": 80,
+   "name": "Sports water bottle",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/sports-water-bottle",
+   "image_paths": [
+    "/images/products/nx-080.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-080.jpg",
+     "file": "nx-080.jpg",
+     "bytes": 17677,
+     "width": 606,
+     "height": 606,
+     "format": "jpg",
+     "sha256": "fc362a0dfe308ab5caaca8edfd835c6deaf8c2bd233527bc97525402770240e8"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "80. Sports water bottle",
+    "tile_box_xyxy": [
+     1243,
+     143,
+     1515,
+     422
+    ],
+    "product_box_xyxy": [
+     1324,
+     146,
+     1452,
+     422
+    ],
+    "source_px": [
+     128,
+     276
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Small in the collage (128x276 px); enlarged 2.0x, slightly soft.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-081",
+   "list_no": 81,
+   "name": "Camping lantern",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/camping-lantern",
+   "image_paths": [
+    "/images/products/nx-081.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-081.jpg",
+     "file": "nx-081.jpg",
+     "bytes": 23473,
+     "width": 632,
+     "height": 632,
+     "format": "jpg",
+     "sha256": "f86f7bb156b9aa7e485498441f8b154646206fafb164a35247a5d1822dcca27b"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "81. Camping lantern",
+    "tile_box_xyxy": [
+     24,
+     503,
+     297,
+     791
+    ],
+    "product_box_xyxy": [
+     90,
+     503,
+     231,
+     791
+    ],
+    "source_px": [
+     141,
+     288
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-082",
+   "list_no": 82,
+   "name": "Rechargeable solar floodlight",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/rechargeable-solar-floodlight",
+   "image_paths": [
+    "/images/products/nx-082.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-082.jpg",
+     "file": "nx-082.jpg",
+     "bytes": 45427,
+     "width": 580,
+     "height": 580,
+     "format": "jpg",
+     "sha256": "71bae91323b0f04578f662fb756fd949f3b3e124b34526627acbe1d315c9d860"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "82. Rechargeable solar floodlight",
+    "tile_box_xyxy": [
+     329,
+     542,
+     600,
+     791
+    ],
+    "product_box_xyxy": [
+     332,
+     542,
+     596,
+     777
+    ],
+    "source_px": [
+     264,
+     235
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-083",
+   "list_no": 83,
+   "name": "Football",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/football",
+   "image_paths": [
+    "/images/products/nx-083.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-083.jpg",
+     "file": "nx-083.jpg",
+     "bytes": 22470,
+     "width": 516,
+     "height": 516,
+     "format": "jpg",
+     "sha256": "a6d654f8193bd6b490474451c1886535bf7f622df56b2b19fe67c8b451fc154c"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "83. Football",
+    "tile_box_xyxy": [
+     631,
+     503,
+     905,
+     791
+    ],
+    "product_box_xyxy": [
+     649,
+     543,
+     883,
+     778
+    ],
+    "source_px": [
+     234,
+     235
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-084",
+   "list_no": 84,
+   "name": "Outdoor folding chair",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/outdoor-folding-chair",
+   "image_paths": [
+    "/images/products/nx-084.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-084.jpg",
+     "file": "nx-084.jpg",
+     "bytes": 39037,
+     "width": 626,
+     "height": 626,
+     "format": "jpg",
+     "sha256": "463f4d99adca2369ae29a654c38dac8673fa3515c3178ace2917c2d96cf65283"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "84. Outdoor folding chair",
+    "tile_box_xyxy": [
+     937,
+     503,
+     1211,
+     791
+    ],
+    "product_box_xyxy": [
+     943,
+     506,
+     1207,
+     791
+    ],
+    "source_px": [
+     264,
+     285
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-085",
+   "list_no": 85,
+   "name": "Fitness exercise stepper",
+   "brand": "",
+   "category": "sports-outdoor",
+   "store_page": "/product/fitness-exercise-stepper",
+   "image_paths": [
+    "/images/products/nx-085.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-085.jpg",
+     "file": "nx-085.jpg",
+     "bytes": 43687,
+     "width": 576,
+     "height": 576,
+     "format": "jpg",
+     "sha256": "09d030a64518a0b0b2acdff6ebf448eafbde14fbc4d83394711e32d84bdc7587"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+    "label_in_collage": "85. Fitness exercise stepper",
+    "tile_box_xyxy": [
+     1243,
+     503,
+     1515,
+     791
+    ],
+    "product_box_xyxy": [
+     1245,
+     523,
+     1507,
+     784
+    ],
+    "source_px": [
+     262,
+     261
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-086",
+   "list_no": 86,
+   "name": "A4 notebook set",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/a4-notebook-set",
+   "image_paths": [
+    "/images/products/nx-086.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-086.jpg",
+     "file": "nx-086.jpg",
+     "bytes": 40264,
+     "width": 574,
+     "height": 574,
+     "format": "jpg",
+     "sha256": "203586aefa12dd111c8cff7dcbfcf5a853bd9cc706745731fc2a6aec431fb9ba"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "86. A4 notebook set",
+    "tile_box_xyxy": [
+     23,
+     117,
+     301,
+     324
+    ],
+    "product_box_xyxy": [
+     26,
+     127,
+     287,
+     324
+    ],
+    "source_px": [
+     261,
+     197
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-087",
+   "list_no": 87,
+   "name": "Desk organiser",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/desk-organiser",
+   "image_paths": [
+    "/images/products/nx-087.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-087.jpg",
+     "file": "nx-087.jpg",
+     "bytes": 50996,
+     "width": 552,
+     "height": 552,
+     "format": "jpg",
+     "sha256": "da16e34cb82234ff277530e14e09d57e793c15eb45cbcf10dcc838073d750372"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "87. Desk organiser",
+    "tile_box_xyxy": [
+     329,
+     117,
+     602,
+     324
+    ],
+    "product_box_xyxy": [
+     344,
+     117,
+     595,
+     324
+    ],
+    "source_px": [
+     251,
+     207
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-088",
+   "list_no": 88,
+   "name": "Adjustable laptop stand",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/adjustable-laptop-stand",
+   "image_paths": [
+    "/images/products/nx-088.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-088.jpg",
+     "file": "nx-088.jpg",
+     "bytes": 25991,
+     "width": 576,
+     "height": 576,
+     "format": "jpg",
+     "sha256": "c88884068b9f214169b5c78a3bfc5d8a6147ac42ffbb0d0d5f04443860ad5260"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "88. Adjustable laptop stand",
+    "tile_box_xyxy": [
+     630,
+     117,
+     905,
+     326
+    ],
+    "product_box_xyxy": [
+     632,
+     119,
+     894,
+     322
+    ],
+    "source_px": [
+     262,
+     203
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-089",
+   "list_no": 89,
+   "name": "Ergonomic office chair",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/ergonomic-office-chair",
+   "image_paths": [
+    "/images/products/nx-089.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-089.jpg",
+     "file": "nx-089.jpg",
+     "bytes": 17675,
+     "width": 456,
+     "height": 456,
+     "format": "jpg",
+     "sha256": "2474d52d1b139f9bc19e0851b07a4b52fab222aab7f456d4ba835cd7bcce59c1"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "89. Ergonomic office chair",
+    "tile_box_xyxy": [
+     933,
+     117,
+     1208,
+     325
+    ],
+    "product_box_xyxy": [
+     998,
+     117,
+     1142,
+     325
+    ],
+    "source_px": [
+     144,
+     208
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-090",
+   "list_no": 90,
+   "name": "Wireless presentation clicker",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/wireless-presentation-clicker",
+   "image_paths": [
+    "/images/products/nx-090.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-090.jpg",
+     "file": "nx-090.jpg",
+     "bytes": 14733,
+     "width": 456,
+     "height": 456,
+     "format": "jpg",
+     "sha256": "0c2e1d19d5f0b777e77b589fa9384e9d9d85daf4dee1c888df2f9265638d28e4"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "90. Wireless presentation clicker",
+    "tile_box_xyxy": [
+     1236,
+     117,
+     1512,
+     325
+    ],
+    "product_box_xyxy": [
+     1299,
+     117,
+     1432,
+     325
+    ],
+    "source_px": [
+     133,
+     208
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-091",
+   "list_no": 91,
+   "name": "A4 paper, 500 sheets",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/a4-paper-500-sheets",
+   "image_paths": [
+    "/images/products/nx-091.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-091.jpg",
+     "file": "nx-091.jpg",
+     "bytes": 28142,
+     "width": 586,
+     "height": 586,
+     "format": "jpg",
+     "sha256": "5a8d04bcab07a51c2783eda44b7bd703c54f514d6cc4d3eeb0f28bd2876dc7fd"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "91. A4 paper, 500 sheets",
+    "tile_box_xyxy": [
+     24,
+     387,
+     301,
+     582
+    ],
+    "product_box_xyxy": [
+     32,
+     412,
+     299,
+     582
+    ],
+    "source_px": [
+     267,
+     170
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-092",
+   "list_no": 92,
+   "name": "Laminating machine",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/laminating-machine",
+   "image_paths": [
+    "/images/products/nx-092.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-092.jpg",
+     "file": "nx-092.jpg",
+     "bytes": 32545,
+     "width": 594,
+     "height": 594,
+     "format": "jpg",
+     "sha256": "e2e6f21bd3c9fae0a8155ee3fd69dd9a52c233ce7b2156ab2ed8757c95a4d0b9"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "92. Laminating machine",
+    "tile_box_xyxy": [
+     329,
+     387,
+     602,
+     582
+    ],
+    "product_box_xyxy": [
+     332,
+     402,
+     602,
+     581
+    ],
+    "source_px": [
+     270,
+     179
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-093",
+   "list_no": 93,
+   "name": "Paper shredder",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/paper-shredder",
+   "image_paths": [
+    "/images/products/nx-093.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-093.jpg",
+     "file": "nx-093.jpg",
+     "bytes": 21655,
+     "width": 428,
+     "height": 428,
+     "format": "jpg",
+     "sha256": "159fe54d2f7d534bf647ea4c1caf52ec1c3746c2684fae0fc8b77cfdcb80fbf2"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "93. Paper shredder",
+    "tile_box_xyxy": [
+     630,
+     387,
+     905,
+     582
+    ],
+    "product_box_xyxy": [
+     677,
+     387,
+     858,
+     582
+    ],
+    "source_px": [
+     181,
+     195
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-094",
+   "list_no": 94,
+   "name": "Desktop calculator",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/desktop-calculator",
+   "image_paths": [
+    "/images/products/nx-094.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-094.jpg",
+     "file": "nx-094.jpg",
+     "bytes": 33210,
+     "width": 462,
+     "height": 462,
+     "format": "jpg",
+     "sha256": "81d54e3e2ba641940e5f9d430dd32c25325d0bdd9c24ee776ed271c9bddba1f6"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "94. Desktop calculator",
+    "tile_box_xyxy": [
+     933,
+     387,
+     1208,
+     582
+    ],
+    "product_box_xyxy": [
+     956,
+     387,
+     1166,
+     582
+    ],
+    "source_px": [
+     210,
+     195
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-095",
+   "list_no": 95,
+   "name": "USB conference microphone",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/usb-conference-microphone",
+   "image_paths": [
+    "/images/products/nx-095.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-095.jpg",
+     "file": "nx-095.jpg",
+     "bytes": 32951,
+     "width": 554,
+     "height": 554,
+     "format": "jpg",
+     "sha256": "341ddb3bc54f7a736b52d728e78cf99b725612e54101f47aa780a79337e2f8b6"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "95. USB conference microphone",
+    "tile_box_xyxy": [
+     1237,
+     387,
+     1512,
+     582
+    ],
+    "product_box_xyxy": [
+     1242,
+     406,
+     1494,
+     582
+    ],
+    "source_px": [
+     252,
+     176
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-096",
+   "list_no": 96,
+   "name": "Webcam with microphone",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/webcam-with-microphone",
+   "image_paths": [
+    "/images/products/nx-096.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-096.jpg",
+     "file": "nx-096.jpg",
+     "bytes": 20087,
+     "width": 512,
+     "height": 512,
+     "format": "jpg",
+     "sha256": "122977a80921755585834381c45292e667a10819b500585d9d6e4b6d6561cf80"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "96. Webcam with microphone",
+    "tile_box_xyxy": [
+     24,
+     645,
+     300,
+     830
+    ],
+    "product_box_xyxy": [
+     41,
+     656,
+     274,
+     830
+    ],
+    "source_px": [
+     233,
+     174
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-097",
+   "list_no": 97,
+   "name": "Monitor stand",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/monitor-stand",
+   "image_paths": [
+    "/images/products/nx-097.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-097.jpg",
+     "file": "nx-097.jpg",
+     "bytes": 26381,
+     "width": 588,
+     "height": 588,
+     "format": "jpg",
+     "sha256": "ca000027bb16df00fb766c4f119f8aa3a61dc7674444bec384c6409a1905dfb3"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "97. Monitor stand",
+    "tile_box_xyxy": [
+     329,
+     644,
+     602,
+     831
+    ],
+    "product_box_xyxy": [
+     331,
+     644,
+     599,
+     828
+    ],
+    "source_px": [
+     268,
+     184
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-098",
+   "list_no": 98,
+   "name": "Surge protector extension socket",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/surge-protector-extension-socket",
+   "image_paths": [
+    "/images/products/nx-098.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-098.jpg",
+     "file": "nx-098.jpg",
+     "bytes": 23803,
+     "width": 558,
+     "height": 558,
+     "format": "jpg",
+     "sha256": "a3bd63f8aceb60029fb184fedd03eb689e1da51f93d0ececd449b2c5c612d3fa"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "98. Surge protector extension socket",
+    "tile_box_xyxy": [
+     630,
+     645,
+     904,
+     831
+    ],
+    "product_box_xyxy": [
+     637,
+     649,
+     891,
+     830
+    ],
+    "source_px": [
+     254,
+     181
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-099",
+   "list_no": 99,
+   "name": "Portable document scanner",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/portable-document-scanner",
+   "image_paths": [
+    "/images/products/nx-099.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-099.jpg",
+     "file": "nx-099.jpg",
+     "bytes": 27950,
+     "width": 602,
+     "height": 602,
+     "format": "jpg",
+     "sha256": "643f708fbd29effc01a5ebaa1070300e2c9fc59501eab715dec6a833f2f5360a"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "99. Portable document scanner",
+    "tile_box_xyxy": [
+     933,
+     645,
+     1207,
+     831
+    ],
+    "product_box_xyxy": [
+     933,
+     678,
+     1207,
+     831
+    ],
+    "source_px": [
+     274,
+     153
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "Picture shows Brother branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  },
+  {
+   "product_id": "NX-100",
+   "list_no": 100,
+   "name": "Whiteboard with markers",
+   "brand": "",
+   "category": "office-accessories",
+   "store_page": "/product/whiteboard-with-markers",
+   "image_paths": [
+    "/images/products/nx-100.jpg"
+   ],
+   "files": [
+    {
+     "url": "/images/products/nx-100.jpg",
+     "file": "nx-100.jpg",
+     "bytes": 14145,
+     "width": 572,
+     "height": 572,
+     "format": "jpg",
+     "sha256": "8b60d2777ab85bb2ed87e085ff8a2b31324c54c1c9d07c547c315acc71bb137c"
+    }
+   ],
+   "rejected_files": [],
+   "source": "user-provided product collage",
+   "source_detail": {
+    "collage": "docs/source-collages/office-accessories-collage.png",
+    "label_in_collage": "100. Whiteboard with markers",
+    "tile_box_xyxy": [
+     1237,
+     670,
+     1511,
+     831
+    ],
+    "product_box_xyxy": [
+     1244,
+     670,
+     1504,
+     831
+    ],
+    "source_px": [
+     260,
+     161
+    ],
+    "enlarged": 2
+   },
+   "extracted": true,
+   "source_candidates": [],
+   "match_status": "matched by the printed number and name in the collage; checked by Claude, not yet confirmed by owner",
+   "needs_review": true,
+   "review_notes": "",
+   "permission_status": "unconfirmed",
+   "verification_notes": ""
+  }
+ ]
+}

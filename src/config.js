@@ -2,13 +2,16 @@
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
-// Tiny .env loader (no dependencies). Real environment variables win over .env.
-try {
-  for (const line of fs.readFileSync(path.join(root, '.env'), 'utf8').split(/\r?\n/)) {
-    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
-    if (m && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
-  }
-} catch { /* no .env file: fine */ }
+// Tiny env-file loader (no dependencies). Real environment variables always win. ".env.local" (your private local settings) is read
+// before ".env". Both files are ignored by Git. Values are never printed anywhere.
+for (const name of ['.env.local', '.env']) {
+  try {
+    for (const line of fs.readFileSync(path.join(root, name), 'utf8').split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
+      if (m && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^(["'])(.*)\1$/, '$2');
+    }
+  } catch { /* file not present: fine */ }
+}
 const e = process.env;
 const bool = (v, d) => (v == null || v === '' ? d : /^(1|true|yes)$/i.test(v));
 const isProd = e.NODE_ENV === 'production';
@@ -18,6 +21,10 @@ const port = Number(e.PORT) || 3000;
 const demoMode = bool(e.DEMO_MODE, !isProd);
 module.exports = {
   root, isProd, port,
+  // Secret that protects admin sessions (login tokens are stored as a keyed hash). Generate with: node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+  sessionSecret: e.SESSION_SECRET || '',
+  // Behind a hosting proxy (Railway) the visitor's real address is the LAST entry of X-Forwarded-For. Default: on in production.
+  trustProxy: bool(e.TRUST_PROXY, isProd),
   siteUrl: (e.SITE_URL || `http://localhost:${port}`).replace(/\/$/, ''),
   dbPath: e.DATABASE_PATH === ':memory:' || path.isAbsolute(e.DATABASE_PATH || '') ? e.DATABASE_PATH : path.join(root, e.DATABASE_PATH || 'data/nexoraith.db'),
   currency: e.STORE_CURRENCY || 'NGN',

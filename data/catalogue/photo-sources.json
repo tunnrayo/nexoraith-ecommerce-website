@@ -1,0 +1,3505 @@
+{
+ "_comment": "Where each approved-catalogue photo came from. Source: the owner's category collages supplied 2026-10-22 (copies in docs/source-collages/). Each photo was cut from its tile by its printed number and name. Commercial-use permission is NOT confirmed (the owner has not stated she holds the rights). The collages look computer-generated (warped small print), so these are illustrations of each product type, not photographs of the exact stock; confirm in Admin > Products > Photo check.",
+ "photos": {
+  "NX-001": {
+   "name": "Syinix 2.2L electric kettle",
+   "file": "/images/products/nx-001.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "1. Syinix 2.2L electric kettle",
+   "tile_box_xyxy": [
+    21,
+    132,
+    296,
+    306
+   ],
+   "product_box_xyxy": [
+    21,
+    132,
+    296,
+    306
+   ],
+   "source_px": [
+    275,
+    174
+   ],
+   "output_px": [
+    604,
+    604
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-002": {
+   "name": "Electric hand mixer",
+   "file": "/images/products/nx-002.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "2. Electric hand mixer",
+   "tile_box_xyxy": [
+    325,
+    132,
+    604,
+    306
+   ],
+   "product_box_xyxy": [
+    342,
+    132,
+    562,
+    303
+   ],
+   "source_px": [
+    220,
+    171
+   ],
+   "output_px": [
+    484,
+    484
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-003": {
+   "name": "Digital kitchen scale",
+   "file": "/images/products/nx-003.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "3. Digital kitchen scale",
+   "tile_box_xyxy": [
+    629,
+    132,
+    906,
+    306
+   ],
+   "product_box_xyxy": [
+    645,
+    136,
+    880,
+    306
+   ],
+   "source_px": [
+    235,
+    170
+   ],
+   "output_px": [
+    516,
+    516
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-004": {
+   "name": "Vegetable multi-chopper",
+   "file": "/images/products/nx-004.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "4. Vegetable multi-chopper",
+   "tile_box_xyxy": [
+    932,
+    132,
+    1211,
+    306
+   ],
+   "product_box_xyxy": [
+    952,
+    132,
+    1199,
+    306
+   ],
+   "source_px": [
+    247,
+    174
+   ],
+   "output_px": [
+    542,
+    542
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-005": {
+   "name": "10-piece plastic cereal container set",
+   "file": "/images/products/nx-005.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "5. 10-piece plastic cereal container set",
+   "tile_box_xyxy": [
+    1236,
+    132,
+    1516,
+    306
+   ],
+   "product_box_xyxy": [
+    1240,
+    132,
+    1516,
+    303
+   ],
+   "source_px": [
+    276,
+    171
+   ],
+   "output_px": [
+    606,
+    606
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-006": {
+   "name": "Dish drying rack",
+   "file": "/images/products/nx-006.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "6. Dish drying rack",
+   "tile_box_xyxy": [
+    21,
+    362,
+    296,
+    532
+   ],
+   "product_box_xyxy": [
+    34,
+    362,
+    279,
+    532
+   ],
+   "source_px": [
+    245,
+    170
+   ],
+   "output_px": [
+    538,
+    538
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-007": {
+   "name": "Electric sandwich maker",
+   "file": "/images/products/nx-007.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "7. Electric sandwich maker",
+   "tile_box_xyxy": [
+    325,
+    362,
+    604,
+    532
+   ],
+   "product_box_xyxy": [
+    353,
+    369,
+    576,
+    532
+   ],
+   "source_px": [
+    223,
+    163
+   ],
+   "output_px": [
+    490,
+    490
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-008": {
+   "name": "Electric iron",
+   "file": "/images/products/nx-008.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "8. Electric iron",
+   "tile_box_xyxy": [
+    629,
+    362,
+    906,
+    532
+   ],
+   "product_box_xyxy": [
+    649,
+    377,
+    873,
+    532
+   ],
+   "source_px": [
+    224,
+    155
+   ],
+   "output_px": [
+    492,
+    492
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-009": {
+   "name": "SILVER CREST 2L blender with two jars",
+   "file": "/images/products/nx-009.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "9. SILVER CREST 2L blender with two jars",
+   "tile_box_xyxy": [
+    932,
+    362,
+    1211,
+    532
+   ],
+   "product_box_xyxy": [
+    997,
+    362,
+    1162,
+    532
+   ],
+   "source_px": [
+    165,
+    170
+   ],
+   "output_px": [
+    374,
+    374
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-010": {
+   "name": "SILVER CREST 8L air fryer",
+   "file": "/images/products/nx-010.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "10. SILVER CREST 8L air fryer",
+   "tile_box_xyxy": [
+    1236,
+    362,
+    1516,
+    532
+   ],
+   "product_box_xyxy": [
+    1288,
+    362,
+    1461,
+    532
+   ],
+   "source_px": [
+    173,
+    170
+   ],
+   "output_px": [
+    380,
+    380
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-011": {
+   "name": "Maxi 20L microwave oven",
+   "file": "/images/products/nx-011.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "11. Maxi 20L microwave oven",
+   "tile_box_xyxy": [
+    21,
+    588,
+    296,
+    745
+   ],
+   "product_box_xyxy": [
+    31,
+    588,
+    285,
+    745
+   ],
+   "source_px": [
+    254,
+    157
+   ],
+   "output_px": [
+    558,
+    558
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-012": {
+   "name": "Electric hot plate",
+   "file": "/images/products/nx-012.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "12. Electric hot plate",
+   "tile_box_xyxy": [
+    325,
+    588,
+    604,
+    745
+   ],
+   "product_box_xyxy": [
+    354,
+    591,
+    576,
+    745
+   ],
+   "source_px": [
+    222,
+    154
+   ],
+   "output_px": [
+    488,
+    488
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-013": {
+   "name": "Stainless steel cooking pot set",
+   "file": "/images/products/nx-013.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "13. Stainless steel cooking pot set",
+   "tile_box_xyxy": [
+    629,
+    588,
+    906,
+    745
+   ],
+   "product_box_xyxy": [
+    633,
+    588,
+    900,
+    745
+   ],
+   "source_px": [
+    267,
+    157
+   ],
+   "output_px": [
+    586,
+    586
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-014": {
+   "name": "Non-stick frying pan",
+   "file": "/images/products/nx-014.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "14. Non-stick frying pan",
+   "tile_box_xyxy": [
+    932,
+    588,
+    1211,
+    745
+   ],
+   "product_box_xyxy": [
+    948,
+    594,
+    1207,
+    745
+   ],
+   "source_px": [
+    259,
+    151
+   ],
+   "output_px": [
+    568,
+    568
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-015": {
+   "name": "Silicone cooking utensils set",
+   "file": "/images/products/nx-015.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "15. Silicone cooking utensils set",
+   "tile_box_xyxy": [
+    1236,
+    588,
+    1516,
+    745
+   ],
+   "product_box_xyxy": [
+    1275,
+    588,
+    1493,
+    745
+   ],
+   "source_px": [
+    218,
+    157
+   ],
+   "output_px": [
+    478,
+    478
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-016": {
+   "name": "Insulated lunch bag",
+   "file": "/images/products/nx-016.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "16. Insulated lunch bag",
+   "tile_box_xyxy": [
+    21,
+    801,
+    296,
+    963
+   ],
+   "product_box_xyxy": [
+    58,
+    801,
+    257,
+    963
+   ],
+   "source_px": [
+    199,
+    162
+   ],
+   "output_px": [
+    436,
+    436
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-017": {
+   "name": "Reusable water bottle set",
+   "file": "/images/products/nx-017.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "17. Reusable water bottle set",
+   "tile_box_xyxy": [
+    325,
+    801,
+    604,
+    963
+   ],
+   "product_box_xyxy": [
+    368,
+    801,
+    566,
+    963
+   ],
+   "source_px": [
+    198,
+    162
+   ],
+   "output_px": [
+    434,
+    434
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-018": {
+   "name": "Kitchen spice rack",
+   "file": "/images/products/nx-018.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "18. Kitchen spice rack",
+   "tile_box_xyxy": [
+    629,
+    801,
+    906,
+    963
+   ],
+   "product_box_xyxy": [
+    688,
+    801,
+    848,
+    963
+   ],
+   "source_px": [
+    160,
+    162
+   ],
+   "output_px": [
+    356,
+    356
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-019": {
+   "name": "Electric hand blender",
+   "file": "/images/products/nx-019.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "19. Electric hand blender",
+   "tile_box_xyxy": [
+    932,
+    801,
+    1211,
+    963
+   ],
+   "product_box_xyxy": [
+    1025,
+    801,
+    1145,
+    963
+   ],
+   "source_px": [
+    120,
+    162
+   ],
+   "output_px": [
+    356,
+    356
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows SILVER CREST branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo. Small in the collage (120x162 px); enlarged 2.0x, slightly soft.",
+   "permission": "unconfirmed"
+  },
+  "NX-020": {
+   "name": "Binatone 3L electric jug",
+   "file": "/images/products/nx-020.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/home-and-kitchen-collage.png",
+   "collage_title": "Home and Kitchen collage",
+   "label_in_collage": "20. Binatone 3L electric jug",
+   "tile_box_xyxy": [
+    1236,
+    801,
+    1516,
+    963
+   ],
+   "product_box_xyxy": [
+    1296,
+    801,
+    1463,
+    963
+   ],
+   "source_px": [
+    167,
+    162
+   ],
+   "output_px": [
+    366,
+    366
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-021": {
+   "name": "Men's casual polo shirt",
+   "file": "/images/products/nx-021.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "21. Men's casual polo shirt",
+   "tile_box_xyxy": [
+    26,
+    112,
+    300,
+    322
+   ],
+   "product_box_xyxy": [
+    60,
+    112,
+    261,
+    322
+   ],
+   "source_px": [
+    201,
+    210
+   ],
+   "output_px": [
+    462,
+    462
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-022": {
+   "name": "Men's cotton socks, 5 pairs",
+   "file": "/images/products/nx-022.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "22. Men's cotton socks, 5 pairs",
+   "tile_box_xyxy": [
+    329,
+    112,
+    604,
+    322
+   ],
+   "product_box_xyxy": [
+    337,
+    129,
+    585,
+    317
+   ],
+   "source_px": [
+    248,
+    188
+   ],
+   "output_px": [
+    544,
+    544
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-023": {
+   "name": "Women's flat slippers",
+   "file": "/images/products/nx-023.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "23. Women's flat slippers",
+   "tile_box_xyxy": [
+    632,
+    112,
+    905,
+    323
+   ],
+   "product_box_xyxy": [
+    644,
+    132,
+    900,
+    323
+   ],
+   "source_px": [
+    256,
+    191
+   ],
+   "output_px": [
+    562,
+    562
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-024": {
+   "name": "Women's everyday handbag",
+   "file": "/images/products/nx-024.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "24. Women's everyday handbag",
+   "tile_box_xyxy": [
+    934,
+    112,
+    1208,
+    323
+   ],
+   "product_box_xyxy": [
+    962,
+    112,
+    1180,
+    323
+   ],
+   "source_px": [
+    218,
+    211
+   ],
+   "output_px": [
+    478,
+    478
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-025": {
+   "name": "Men's casual wristwatch",
+   "file": "/images/products/nx-025.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "25. Men's casual wristwatch",
+   "tile_box_xyxy": [
+    1237,
+    112,
+    1511,
+    323
+   ],
+   "product_box_xyxy": [
+    1300,
+    112,
+    1447,
+    323
+   ],
+   "source_px": [
+    147,
+    211
+   ],
+   "output_px": [
+    464,
+    464
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-026": {
+   "name": "Women's fashion wristwatch",
+   "file": "/images/products/nx-026.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "26. Women's fashion wristwatch",
+   "tile_box_xyxy": [
+    26,
+    387,
+    300,
+    582
+   ],
+   "product_box_xyxy": [
+    101,
+    387,
+    222,
+    582
+   ],
+   "source_px": [
+    121,
+    195
+   ],
+   "output_px": [
+    428,
+    428
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Small in the collage (121x195 px); enlarged 2.0x, slightly soft.",
+   "permission": "unconfirmed"
+  },
+  "NX-027": {
+   "name": "Unisex baseball cap",
+   "file": "/images/products/nx-027.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "27. Unisex baseball cap",
+   "tile_box_xyxy": [
+    329,
+    387,
+    604,
+    582
+   ],
+   "product_box_xyxy": [
+    340,
+    402,
+    587,
+    581
+   ],
+   "source_px": [
+    247,
+    179
+   ],
+   "output_px": [
+    542,
+    542
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-028": {
+   "name": "Women's sunglasses",
+   "file": "/images/products/nx-028.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "28. Women's sunglasses",
+   "tile_box_xyxy": [
+    632,
+    387,
+    905,
+    582
+   ],
+   "product_box_xyxy": [
+    632,
+    424,
+    905,
+    562
+   ],
+   "source_px": [
+    273,
+    138
+   ],
+   "output_px": [
+    600,
+    600
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-029": {
+   "name": "Men's leather belt",
+   "file": "/images/products/nx-029.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "29. Men's leather belt",
+   "tile_box_xyxy": [
+    935,
+    387,
+    1208,
+    582
+   ],
+   "product_box_xyxy": [
+    950,
+    398,
+    1187,
+    575
+   ],
+   "source_px": [
+    237,
+    177
+   ],
+   "output_px": [
+    520,
+    520
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-030": {
+   "name": "Women's crossbody bag",
+   "file": "/images/products/nx-030.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "30. Women's crossbody bag",
+   "tile_box_xyxy": [
+    1238,
+    387,
+    1511,
+    582
+   ],
+   "product_box_xyxy": [
+    1243,
+    411,
+    1509,
+    577
+   ],
+   "source_px": [
+    266,
+    166
+   ],
+   "output_px": [
+    584,
+    584
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-031": {
+   "name": "Travel backpack",
+   "file": "/images/products/nx-031.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "31. Travel backpack",
+   "tile_box_xyxy": [
+    26,
+    648,
+    300,
+    854
+   ],
+   "product_box_xyxy": [
+    72,
+    648,
+    255,
+    854
+   ],
+   "source_px": [
+    183,
+    206
+   ],
+   "output_px": [
+    452,
+    452
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-032": {
+   "name": "Women's casual sneakers",
+   "file": "/images/products/nx-032.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "32. Women's casual sneakers",
+   "tile_box_xyxy": [
+    329,
+    648,
+    604,
+    854
+   ],
+   "product_box_xyxy": [
+    340,
+    656,
+    589,
+    849
+   ],
+   "source_px": [
+    249,
+    193
+   ],
+   "output_px": [
+    546,
+    546
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-033": {
+   "name": "Men's casual sneakers",
+   "file": "/images/products/nx-033.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "33. Men's casual sneakers",
+   "tile_box_xyxy": [
+    632,
+    648,
+    905,
+    854
+   ],
+   "product_box_xyxy": [
+    641,
+    662,
+    899,
+    851
+   ],
+   "source_px": [
+    258,
+    189
+   ],
+   "output_px": [
+    566,
+    566
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-034": {
+   "name": "Minimalist jewellery set",
+   "file": "/images/products/nx-034.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "34. Minimalist jewellery set",
+   "tile_box_xyxy": [
+    935,
+    648,
+    1208,
+    854
+   ],
+   "product_box_xyxy": [
+    956,
+    648,
+    1182,
+    851
+   ],
+   "source_px": [
+    226,
+    203
+   ],
+   "output_px": [
+    496,
+    496
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-035": {
+   "name": "Travel wallet and card holder",
+   "file": "/images/products/nx-035.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/fashion-and-accessories-collage.png",
+   "collage_title": "Fashion and Accessories collage",
+   "label_in_collage": "35. Travel wallet and card holder",
+   "tile_box_xyxy": [
+    1238,
+    648,
+    1510,
+    854
+   ],
+   "product_box_xyxy": [
+    1250,
+    650,
+    1508,
+    852
+   ],
+   "source_px": [
+    258,
+    202
+   ],
+   "output_px": [
+    566,
+    566
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-036": {
+   "name": "NIVEA Soft cream, 200ml",
+   "file": "/images/products/nx-036.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "36. NIVEA Soft cream, 200ml",
+   "tile_box_xyxy": [
+    25,
+    107,
+    303,
+    325
+   ],
+   "product_box_xyxy": [
+    54,
+    137,
+    276,
+    325
+   ],
+   "source_px": [
+    222,
+    188
+   ],
+   "output_px": [
+    488,
+    488
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-037": {
+   "name": "NIVEA orange and avocado shower gel",
+   "file": "/images/products/nx-037.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "37. NIVEA orange and avocado shower gel",
+   "tile_box_xyxy": [
+    332,
+    106,
+    605,
+    322
+   ],
+   "product_box_xyxy": [
+    408,
+    106,
+    528,
+    322
+   ],
+   "source_px": [
+    120,
+    216
+   ],
+   "output_px": [
+    474,
+    474
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Small in the collage (120x216 px); enlarged 2.0x, slightly soft.",
+   "permission": "unconfirmed"
+  },
+  "NX-038": {
+   "name": "NIVEA Deep shower gel for men",
+   "file": "/images/products/nx-038.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "38. NIVEA Deep shower gel for men",
+   "tile_box_xyxy": [
+    632,
+    106,
+    905,
+    322
+   ],
+   "product_box_xyxy": [
+    714,
+    106,
+    823,
+    322
+   ],
+   "source_px": [
+    109,
+    216
+   ],
+   "output_px": [
+    474,
+    474
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Small in the collage (109x216 px); enlarged 2.0x, slightly soft.",
+   "permission": "unconfirmed"
+  },
+  "NX-039": {
+   "name": "NIVEA sunscreen SPF 50, 50ml",
+   "file": "/images/products/nx-039.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "39. NIVEA sunscreen SPF 50, 50ml",
+   "tile_box_xyxy": [
+    934,
+    106,
+    1206,
+    322
+   ],
+   "product_box_xyxy": [
+    1025,
+    126,
+    1125,
+    322
+   ],
+   "source_px": [
+    100,
+    196
+   ],
+   "output_px": [
+    430,
+    430
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Small in the collage (100x196 px); enlarged 2.0x, slightly soft.",
+   "permission": "unconfirmed"
+  },
+  "NX-040": {
+   "name": "NIVEA body lotion, 400ml",
+   "file": "/images/products/nx-040.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "40. NIVEA body lotion, 400ml",
+   "tile_box_xyxy": [
+    1237,
+    106,
+    1511,
+    322
+   ],
+   "product_box_xyxy": [
+    1321,
+    106,
+    1428,
+    322
+   ],
+   "source_px": [
+    107,
+    216
+   ],
+   "output_px": [
+    474,
+    474
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Small in the collage (107x216 px); enlarged 2.0x, slightly soft.",
+   "permission": "unconfirmed"
+  },
+  "NX-041": {
+   "name": "Hair dryer",
+   "file": "/images/products/nx-041.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "41. Hair dryer",
+   "tile_box_xyxy": [
+    26,
+    388,
+    303,
+    580
+   ],
+   "product_box_xyxy": [
+    57,
+    391,
+    269,
+    580
+   ],
+   "source_px": [
+    212,
+    189
+   ],
+   "output_px": [
+    466,
+    466
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows Remington-style lettering branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-042": {
+   "name": "Hair straightener",
+   "file": "/images/products/nx-042.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "42. Hair straightener",
+   "tile_box_xyxy": [
+    332,
+    388,
+    604,
+    579
+   ],
+   "product_box_xyxy": [
+    335,
+    425,
+    604,
+    561
+   ],
+   "source_px": [
+    269,
+    136
+   ],
+   "output_px": [
+    590,
+    590
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-043": {
+   "name": "Electric hair clipper",
+   "file": "/images/products/nx-043.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "43. Electric hair clipper",
+   "tile_box_xyxy": [
+    632,
+    388,
+    905,
+    579
+   ],
+   "product_box_xyxy": [
+    688,
+    388,
+    838,
+    579
+   ],
+   "source_px": [
+    150,
+    191
+   ],
+   "output_px": [
+    420,
+    420
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows Kemei branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-044": {
+   "name": "Rechargeable facial cleansing brush",
+   "file": "/images/products/nx-044.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "44. Rechargeable facial cleansing brush",
+   "tile_box_xyxy": [
+    935,
+    388,
+    1207,
+    578
+   ],
+   "product_box_xyxy": [
+    988,
+    388,
+    1173,
+    578
+   ],
+   "source_px": [
+    185,
+    190
+   ],
+   "output_px": [
+    418,
+    418
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-045": {
+   "name": "Makeup brush set",
+   "file": "/images/products/nx-045.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "45. Makeup brush set",
+   "tile_box_xyxy": [
+    1236,
+    388,
+    1509,
+    580
+   ],
+   "product_box_xyxy": [
+    1260,
+    393,
+    1509,
+    580
+   ],
+   "source_px": [
+    249,
+    187
+   ],
+   "output_px": [
+    546,
+    546
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-046": {
+   "name": "Makeup organiser",
+   "file": "/images/products/nx-046.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "46. Makeup organiser",
+   "tile_box_xyxy": [
+    26,
+    647,
+    303,
+    844
+   ],
+   "product_box_xyxy": [
+    51,
+    647,
+    276,
+    844
+   ],
+   "source_px": [
+    225,
+    197
+   ],
+   "output_px": [
+    494,
+    494
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-047": {
+   "name": "Cosmetic travel bag",
+   "file": "/images/products/nx-047.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "47. Cosmetic travel bag",
+   "tile_box_xyxy": [
+    333,
+    647,
+    604,
+    844
+   ],
+   "product_box_xyxy": [
+    360,
+    649,
+    578,
+    844
+   ],
+   "source_px": [
+    218,
+    195
+   ],
+   "output_px": [
+    478,
+    478
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-048": {
+   "name": "Electric manicure and pedicure kit",
+   "file": "/images/products/nx-048.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "48. Electric manicure and pedicure kit",
+   "tile_box_xyxy": [
+    634,
+    647,
+    902,
+    843
+   ],
+   "product_box_xyxy": [
+    668,
+    647,
+    887,
+    843
+   ],
+   "source_px": [
+    219,
+    196
+   ],
+   "output_px": [
+    480,
+    480
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-049": {
+   "name": "Digital bathroom scale",
+   "file": "/images/products/nx-049.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "49. Digital bathroom scale",
+   "tile_box_xyxy": [
+    935,
+    647,
+    1206,
+    844
+   ],
+   "product_box_xyxy": [
+    977,
+    653,
+    1176,
+    844
+   ],
+   "source_px": [
+    199,
+    191
+   ],
+   "output_px": [
+    436,
+    436
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-050": {
+   "name": "Rechargeable facial hair remover",
+   "file": "/images/products/nx-050.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/beauty-and-personal-care-collage.png",
+   "collage_title": "Beauty and Personal Care collage",
+   "label_in_collage": "50. Rechargeable facial hair remover",
+   "tile_box_xyxy": [
+    1237,
+    647,
+    1509,
+    843
+   ],
+   "product_box_xyxy": [
+    1338,
+    649,
+    1434,
+    843
+   ],
+   "source_px": [
+    96,
+    194
+   ],
+   "output_px": [
+    426,
+    426
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Small in the collage (96x194 px); enlarged 2.0x, slightly soft.",
+   "permission": "unconfirmed"
+  },
+  "NX-051": {
+   "name": "Oraimo Traveler 15 power bank, 20,000mAh",
+   "file": "/images/products/nx-051.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "51. Oraimo Traveler 15 power bank, 20,000mAh",
+   "tile_box_xyxy": [
+    25,
+    115,
+    301,
+    320
+   ],
+   "product_box_xyxy": [
+    38,
+    117,
+    301,
+    320
+   ],
+   "source_px": [
+    263,
+    203
+   ],
+   "output_px": [
+    578,
+    578
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-052": {
+   "name": "20,000mAh portable power bank",
+   "file": "/images/products/nx-052.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "52. 20,000mAh portable power bank",
+   "tile_box_xyxy": [
+    329,
+    115,
+    604,
+    321
+   ],
+   "product_box_xyxy": [
+    371,
+    115,
+    552,
+    321
+   ],
+   "source_px": [
+    181,
+    206
+   ],
+   "output_px": [
+    452,
+    452
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows Oraimo branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-053": {
+   "name": "Oraimo SpaceBuds Lite earbuds",
+   "file": "/images/products/nx-053.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "53. Oraimo SpaceBuds Lite earbuds",
+   "tile_box_xyxy": [
+    630,
+    115,
+    906,
+    321
+   ],
+   "product_box_xyxy": [
+    638,
+    120,
+    906,
+    321
+   ],
+   "source_px": [
+    268,
+    201
+   ],
+   "output_px": [
+    588,
+    588
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-054": {
+   "name": "Bluetooth headset",
+   "file": "/images/products/nx-054.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "54. Bluetooth headset",
+   "tile_box_xyxy": [
+    933,
+    115,
+    1208,
+    321
+   ],
+   "product_box_xyxy": [
+    1005,
+    115,
+    1153,
+    321
+   ],
+   "source_px": [
+    148,
+    206
+   ],
+   "output_px": [
+    452,
+    452
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-055": {
+   "name": "USB-C fast charging cable",
+   "file": "/images/products/nx-055.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "55. USB-C fast charging cable",
+   "tile_box_xyxy": [
+    1236,
+    115,
+    1511,
+    321
+   ],
+   "product_box_xyxy": [
+    1242,
+    129,
+    1507,
+    321
+   ],
+   "source_px": [
+    265,
+    192
+   ],
+   "output_px": [
+    582,
+    582
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows UGREEN branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-056": {
+   "name": "20W USB-C wall charger",
+   "file": "/images/products/nx-056.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "56. 20W USB-C wall charger",
+   "tile_box_xyxy": [
+    25,
+    387,
+    301,
+    580
+   ],
+   "product_box_xyxy": [
+    68,
+    413,
+    262,
+    580
+   ],
+   "source_px": [
+    194,
+    167
+   ],
+   "output_px": [
+    426,
+    426
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows UGREEN branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-057": {
+   "name": "Wireless mouse",
+   "file": "/images/products/nx-057.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "57. Wireless mouse",
+   "tile_box_xyxy": [
+    329,
+    387,
+    603,
+    580
+   ],
+   "product_box_xyxy": [
+    365,
+    396,
+    548,
+    580
+   ],
+   "source_px": [
+    183,
+    184
+   ],
+   "output_px": [
+    404,
+    404
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows Logitech (logi) branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-058": {
+   "name": "Wireless keyboard and mouse combo",
+   "file": "/images/products/nx-058.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "58. Wireless keyboard and mouse combo",
+   "tile_box_xyxy": [
+    630,
+    387,
+    906,
+    579
+   ],
+   "product_box_xyxy": [
+    630,
+    406,
+    902,
+    579
+   ],
+   "source_px": [
+    272,
+    173
+   ],
+   "output_px": [
+    598,
+    598
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows Logitech branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-059": {
+   "name": "Laptop stand",
+   "file": "/images/products/nx-059.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "59. Laptop stand",
+   "tile_box_xyxy": [
+    934,
+    387,
+    1208,
+    580
+   ],
+   "product_box_xyxy": [
+    937,
+    387,
+    1202,
+    580
+   ],
+   "source_px": [
+    265,
+    193
+   ],
+   "output_px": [
+    582,
+    582
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-060": {
+   "name": "USB hub",
+   "file": "/images/products/nx-060.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "60. USB hub",
+   "tile_box_xyxy": [
+    1236,
+    387,
+    1511,
+    580
+   ],
+   "product_box_xyxy": [
+    1238,
+    391,
+    1511,
+    578
+   ],
+   "source_px": [
+    273,
+    187
+   ],
+   "output_px": [
+    600,
+    600
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows UGREEN branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-061": {
+   "name": "Ring light with tripod",
+   "file": "/images/products/nx-061.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "61. Ring light with tripod",
+   "tile_box_xyxy": [
+    25,
+    644,
+    301,
+    835
+   ],
+   "product_box_xyxy": [
+    100,
+    644,
+    251,
+    835
+   ],
+   "source_px": [
+    151,
+    191
+   ],
+   "output_px": [
+    420,
+    420
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-062": {
+   "name": "Portable Bluetooth speaker",
+   "file": "/images/products/nx-062.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "62. Portable Bluetooth speaker",
+   "tile_box_xyxy": [
+    329,
+    645,
+    603,
+    835
+   ],
+   "product_box_xyxy": [
+    336,
+    668,
+    597,
+    835
+   ],
+   "source_px": [
+    261,
+    167
+   ],
+   "output_px": [
+    574,
+    574
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows JBL branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-063": {
+   "name": "Rechargeable LED desk lamp",
+   "file": "/images/products/nx-063.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "63. Rechargeable LED desk lamp",
+   "tile_box_xyxy": [
+    631,
+    645,
+    905,
+    835
+   ],
+   "product_box_xyxy": [
+    689,
+    645,
+    873,
+    835
+   ],
+   "source_px": [
+    184,
+    190
+   ],
+   "output_px": [
+    418,
+    418
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-064": {
+   "name": "Wi-Fi range extender",
+   "file": "/images/products/nx-064.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "64. Wi-Fi range extender",
+   "tile_box_xyxy": [
+    934,
+    645,
+    1208,
+    835
+   ],
+   "product_box_xyxy": [
+    991,
+    645,
+    1141,
+    835
+   ],
+   "source_px": [
+    150,
+    190
+   ],
+   "output_px": [
+    418,
+    418
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows TP-Link branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-065": {
+   "name": "USB external SSD, 500GB",
+   "file": "/images/products/nx-065.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/everyday-gadgets-and-electronics-collage.png",
+   "collage_title": "Everyday Gadgets and Electronics collage",
+   "label_in_collage": "65. USB external SSD, 500GB",
+   "tile_box_xyxy": [
+    1236,
+    644,
+    1511,
+    835
+   ],
+   "product_box_xyxy": [
+    1253,
+    645,
+    1500,
+    835
+   ],
+   "source_px": [
+    247,
+    190
+   ],
+   "output_px": [
+    542,
+    542
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows Samsung branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-066": {
+   "name": "Children's clothing set",
+   "file": "/images/products/nx-066.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "66. Children's clothing set",
+   "tile_box_xyxy": [
+    20,
+    131,
+    294,
+    420
+   ],
+   "product_box_xyxy": [
+    21,
+    131,
+    292,
+    420
+   ],
+   "source_px": [
+    271,
+    289
+   ],
+   "output_px": [
+    634,
+    634
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-067": {
+   "name": "Baby feeding bottle set",
+   "file": "/images/products/nx-067.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "67. Baby feeding bottle set",
+   "tile_box_xyxy": [
+    325,
+    131,
+    599,
+    422
+   ],
+   "product_box_xyxy": [
+    337,
+    153,
+    586,
+    417
+   ],
+   "source_px": [
+    249,
+    264
+   ],
+   "output_px": [
+    580,
+    580
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-068": {
+   "name": "Insulated children's lunch bag",
+   "file": "/images/products/nx-068.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "68. Insulated children's lunch bag",
+   "tile_box_xyxy": [
+    630,
+    131,
+    904,
+    417
+   ],
+   "product_box_xyxy": [
+    630,
+    144,
+    904,
+    411
+   ],
+   "source_px": [
+    274,
+    267
+   ],
+   "output_px": [
+    602,
+    602
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-069": {
+   "name": "Baby changing bag",
+   "file": "/images/products/nx-069.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "69. Baby changing bag",
+   "tile_box_xyxy": [
+    935,
+    131,
+    1209,
+    422
+   ],
+   "product_box_xyxy": [
+    950,
+    131,
+    1203,
+    422
+   ],
+   "source_px": [
+    253,
+    291
+   ],
+   "output_px": [
+    640,
+    640
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-070": {
+   "name": "Baby bath support",
+   "file": "/images/products/nx-070.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "70. Baby bath support",
+   "tile_box_xyxy": [
+    1240,
+    131,
+    1514,
+    422
+   ],
+   "product_box_xyxy": [
+    1242,
+    148,
+    1508,
+    410
+   ],
+   "source_px": [
+    266,
+    262
+   ],
+   "output_px": [
+    584,
+    584
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-071": {
+   "name": "Children's educational building blocks",
+   "file": "/images/products/nx-071.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "71. Children's educational building blocks",
+   "tile_box_xyxy": [
+    20,
+    518,
+    294,
+    784
+   ],
+   "product_box_xyxy": [
+    27,
+    518,
+    282,
+    783
+   ],
+   "source_px": [
+    255,
+    265
+   ],
+   "output_px": [
+    582,
+    582
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-072": {
+   "name": "Children's drawing and colouring set",
+   "file": "/images/products/nx-072.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "72. Children's drawing and colouring set",
+   "tile_box_xyxy": [
+    324,
+    518,
+    599,
+    786
+   ],
+   "product_box_xyxy": [
+    324,
+    527,
+    599,
+    779
+   ],
+   "source_px": [
+    275,
+    252
+   ],
+   "output_px": [
+    604,
+    604
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-073": {
+   "name": "Baby nail-care kit",
+   "file": "/images/products/nx-073.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "73. Baby nail-care kit",
+   "tile_box_xyxy": [
+    630,
+    518,
+    905,
+    791
+   ],
+   "product_box_xyxy": [
+    631,
+    560,
+    905,
+    767
+   ],
+   "source_px": [
+    274,
+    207
+   ],
+   "output_px": [
+    602,
+    602
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-074": {
+   "name": "Children's backpack",
+   "file": "/images/products/nx-074.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "74. Children's backpack",
+   "tile_box_xyxy": [
+    935,
+    518,
+    1209,
+    792
+   ],
+   "product_box_xyxy": [
+    946,
+    523,
+    1199,
+    792
+   ],
+   "source_px": [
+    253,
+    269
+   ],
+   "output_px": [
+    590,
+    590
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-075": {
+   "name": "Foldable baby play mat",
+   "file": "/images/products/nx-075.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/baby-and-kids-collage.png",
+   "collage_title": "Baby and Kids collage",
+   "label_in_collage": "75. Foldable baby play mat",
+   "tile_box_xyxy": [
+    1240,
+    518,
+    1514,
+    793
+   ],
+   "product_box_xyxy": [
+    1240,
+    541,
+    1514,
+    793
+   ],
+   "source_px": [
+    274,
+    252
+   ],
+   "output_px": [
+    602,
+    602
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-076": {
+   "name": "Yoga mat",
+   "file": "/images/products/nx-076.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "76. Yoga mat",
+   "tile_box_xyxy": [
+    24,
+    143,
+    297,
+    422
+   ],
+   "product_box_xyxy": [
+    24,
+    163,
+    297,
+    411
+   ],
+   "source_px": [
+    273,
+    248
+   ],
+   "output_px": [
+    600,
+    600
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-077": {
+   "name": "Resistance bands set",
+   "file": "/images/products/nx-077.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "77. Resistance bands set",
+   "tile_box_xyxy": [
+    329,
+    143,
+    600,
+    422
+   ],
+   "product_box_xyxy": [
+    340,
+    151,
+    597,
+    419
+   ],
+   "source_px": [
+    257,
+    268
+   ],
+   "output_px": [
+    588,
+    588
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-078": {
+   "name": "Adjustable skipping rope",
+   "file": "/images/products/nx-078.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "78. Adjustable skipping rope",
+   "tile_box_xyxy": [
+    632,
+    143,
+    905,
+    422
+   ],
+   "product_box_xyxy": [
+    638,
+    158,
+    905,
+    419
+   ],
+   "source_px": [
+    267,
+    261
+   ],
+   "output_px": [
+    586,
+    586
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-079": {
+   "name": "Dumbbell set",
+   "file": "/images/products/nx-079.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "79. Dumbbell set",
+   "tile_box_xyxy": [
+    937,
+    143,
+    1211,
+    422
+   ],
+   "product_box_xyxy": [
+    939,
+    181,
+    1211,
+    409
+   ],
+   "source_px": [
+    272,
+    228
+   ],
+   "output_px": [
+    598,
+    598
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-080": {
+   "name": "Sports water bottle",
+   "file": "/images/products/nx-080.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "80. Sports water bottle",
+   "tile_box_xyxy": [
+    1243,
+    143,
+    1515,
+    422
+   ],
+   "product_box_xyxy": [
+    1324,
+    146,
+    1452,
+    422
+   ],
+   "source_px": [
+    128,
+    276
+   ],
+   "output_px": [
+    606,
+    606
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Small in the collage (128x276 px); enlarged 2.0x, slightly soft.",
+   "permission": "unconfirmed"
+  },
+  "NX-081": {
+   "name": "Camping lantern",
+   "file": "/images/products/nx-081.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "81. Camping lantern",
+   "tile_box_xyxy": [
+    24,
+    503,
+    297,
+    791
+   ],
+   "product_box_xyxy": [
+    90,
+    503,
+    231,
+    791
+   ],
+   "source_px": [
+    141,
+    288
+   ],
+   "output_px": [
+    632,
+    632
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-082": {
+   "name": "Rechargeable solar floodlight",
+   "file": "/images/products/nx-082.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "82. Rechargeable solar floodlight",
+   "tile_box_xyxy": [
+    329,
+    542,
+    600,
+    791
+   ],
+   "product_box_xyxy": [
+    332,
+    542,
+    596,
+    777
+   ],
+   "source_px": [
+    264,
+    235
+   ],
+   "output_px": [
+    580,
+    580
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-083": {
+   "name": "Football",
+   "file": "/images/products/nx-083.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "83. Football",
+   "tile_box_xyxy": [
+    631,
+    503,
+    905,
+    791
+   ],
+   "product_box_xyxy": [
+    649,
+    543,
+    883,
+    778
+   ],
+   "source_px": [
+    234,
+    235
+   ],
+   "output_px": [
+    516,
+    516
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-084": {
+   "name": "Outdoor folding chair",
+   "file": "/images/products/nx-084.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "84. Outdoor folding chair",
+   "tile_box_xyxy": [
+    937,
+    503,
+    1211,
+    791
+   ],
+   "product_box_xyxy": [
+    943,
+    506,
+    1207,
+    791
+   ],
+   "source_px": [
+    264,
+    285
+   ],
+   "output_px": [
+    626,
+    626
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-085": {
+   "name": "Fitness exercise stepper",
+   "file": "/images/products/nx-085.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/sports-and-outdoor-collage.png",
+   "collage_title": "Sports and Outdoor collage",
+   "label_in_collage": "85. Fitness exercise stepper",
+   "tile_box_xyxy": [
+    1243,
+    503,
+    1515,
+    791
+   ],
+   "product_box_xyxy": [
+    1245,
+    523,
+    1507,
+    784
+   ],
+   "source_px": [
+    262,
+    261
+   ],
+   "output_px": [
+    576,
+    576
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-086": {
+   "name": "A4 notebook set",
+   "file": "/images/products/nx-086.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "86. A4 notebook set",
+   "tile_box_xyxy": [
+    23,
+    117,
+    301,
+    324
+   ],
+   "product_box_xyxy": [
+    26,
+    127,
+    287,
+    324
+   ],
+   "source_px": [
+    261,
+    197
+   ],
+   "output_px": [
+    574,
+    574
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-087": {
+   "name": "Desk organiser",
+   "file": "/images/products/nx-087.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "87. Desk organiser",
+   "tile_box_xyxy": [
+    329,
+    117,
+    602,
+    324
+   ],
+   "product_box_xyxy": [
+    344,
+    117,
+    595,
+    324
+   ],
+   "source_px": [
+    251,
+    207
+   ],
+   "output_px": [
+    552,
+    552
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-088": {
+   "name": "Adjustable laptop stand",
+   "file": "/images/products/nx-088.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "88. Adjustable laptop stand",
+   "tile_box_xyxy": [
+    630,
+    117,
+    905,
+    326
+   ],
+   "product_box_xyxy": [
+    632,
+    119,
+    894,
+    322
+   ],
+   "source_px": [
+    262,
+    203
+   ],
+   "output_px": [
+    576,
+    576
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-089": {
+   "name": "Ergonomic office chair",
+   "file": "/images/products/nx-089.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "89. Ergonomic office chair",
+   "tile_box_xyxy": [
+    933,
+    117,
+    1208,
+    325
+   ],
+   "product_box_xyxy": [
+    998,
+    117,
+    1142,
+    325
+   ],
+   "source_px": [
+    144,
+    208
+   ],
+   "output_px": [
+    456,
+    456
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-090": {
+   "name": "Wireless presentation clicker",
+   "file": "/images/products/nx-090.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "90. Wireless presentation clicker",
+   "tile_box_xyxy": [
+    1236,
+    117,
+    1512,
+    325
+   ],
+   "product_box_xyxy": [
+    1299,
+    117,
+    1432,
+    325
+   ],
+   "source_px": [
+    133,
+    208
+   ],
+   "output_px": [
+    456,
+    456
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-091": {
+   "name": "A4 paper, 500 sheets",
+   "file": "/images/products/nx-091.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "91. A4 paper, 500 sheets",
+   "tile_box_xyxy": [
+    24,
+    387,
+    301,
+    582
+   ],
+   "product_box_xyxy": [
+    32,
+    412,
+    299,
+    582
+   ],
+   "source_px": [
+    267,
+    170
+   ],
+   "output_px": [
+    586,
+    586
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-092": {
+   "name": "Laminating machine",
+   "file": "/images/products/nx-092.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "92. Laminating machine",
+   "tile_box_xyxy": [
+    329,
+    387,
+    602,
+    582
+   ],
+   "product_box_xyxy": [
+    332,
+    402,
+    602,
+    581
+   ],
+   "source_px": [
+    270,
+    179
+   ],
+   "output_px": [
+    594,
+    594
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-093": {
+   "name": "Paper shredder",
+   "file": "/images/products/nx-093.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "93. Paper shredder",
+   "tile_box_xyxy": [
+    630,
+    387,
+    905,
+    582
+   ],
+   "product_box_xyxy": [
+    677,
+    387,
+    858,
+    582
+   ],
+   "source_px": [
+    181,
+    195
+   ],
+   "output_px": [
+    428,
+    428
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-094": {
+   "name": "Desktop calculator",
+   "file": "/images/products/nx-094.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "94. Desktop calculator",
+   "tile_box_xyxy": [
+    933,
+    387,
+    1208,
+    582
+   ],
+   "product_box_xyxy": [
+    956,
+    387,
+    1166,
+    582
+   ],
+   "source_px": [
+    210,
+    195
+   ],
+   "output_px": [
+    462,
+    462
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-095": {
+   "name": "USB conference microphone",
+   "file": "/images/products/nx-095.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "95. USB conference microphone",
+   "tile_box_xyxy": [
+    1237,
+    387,
+    1512,
+    582
+   ],
+   "product_box_xyxy": [
+    1242,
+    406,
+    1494,
+    582
+   ],
+   "source_px": [
+    252,
+    176
+   ],
+   "output_px": [
+    554,
+    554
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-096": {
+   "name": "Webcam with microphone",
+   "file": "/images/products/nx-096.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "96. Webcam with microphone",
+   "tile_box_xyxy": [
+    24,
+    645,
+    300,
+    830
+   ],
+   "product_box_xyxy": [
+    41,
+    656,
+    274,
+    830
+   ],
+   "source_px": [
+    233,
+    174
+   ],
+   "output_px": [
+    512,
+    512
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-097": {
+   "name": "Monitor stand",
+   "file": "/images/products/nx-097.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "97. Monitor stand",
+   "tile_box_xyxy": [
+    329,
+    644,
+    602,
+    831
+   ],
+   "product_box_xyxy": [
+    331,
+    644,
+    599,
+    828
+   ],
+   "source_px": [
+    268,
+    184
+   ],
+   "output_px": [
+    588,
+    588
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-098": {
+   "name": "Surge protector extension socket",
+   "file": "/images/products/nx-098.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "98. Surge protector extension socket",
+   "tile_box_xyxy": [
+    630,
+    645,
+    904,
+    831
+   ],
+   "product_box_xyxy": [
+    637,
+    649,
+    891,
+    830
+   ],
+   "source_px": [
+    254,
+    181
+   ],
+   "output_px": [
+    558,
+    558
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  },
+  "NX-099": {
+   "name": "Portable document scanner",
+   "file": "/images/products/nx-099.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "99. Portable document scanner",
+   "tile_box_xyxy": [
+    933,
+    645,
+    1207,
+    831
+   ],
+   "product_box_xyxy": [
+    933,
+    678,
+    1207,
+    831
+   ],
+   "source_px": [
+    274,
+    153
+   ],
+   "output_px": [
+    602,
+    602
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": true,
+   "review_notes": "Picture shows Brother branding but the listing names no brand: customers may expect that brand. Confirm you sell that brand or replace the photo.",
+   "permission": "unconfirmed"
+  },
+  "NX-100": {
+   "name": "Whiteboard with markers",
+   "file": "/images/products/nx-100.jpg",
+   "source": "user-provided product collage",
+   "collage": "docs/source-collages/office-accessories-collage.png",
+   "collage_title": "Office Accessories collage",
+   "label_in_collage": "100. Whiteboard with markers",
+   "tile_box_xyxy": [
+    1237,
+    670,
+    1511,
+    831
+   ],
+   "product_box_xyxy": [
+    1244,
+    670,
+    1504,
+    831
+   ],
+   "source_px": [
+    260,
+    161
+   ],
+   "output_px": [
+    572,
+    572
+   ],
+   "enlarged": 2.0,
+   "extracted": true,
+   "matches_product": "yes - printed number and name match the catalogue; picture shows that product type",
+   "match_confidence": "high (by printed label)",
+   "needs_review": false,
+   "review_notes": "",
+   "permission": "unconfirmed"
+  }
+ }
+}
