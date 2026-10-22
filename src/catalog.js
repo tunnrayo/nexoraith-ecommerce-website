@@ -1,7 +1,7 @@
 'use strict';
 const { q } = require('./db');
 const cfg = require('./config');
-// Sample (development) products are hidden from the public site when they are not allowed to be sold.
+// Products marked "Test product only" are hidden from the public site when they are not allowed to be sold.
 const devOk = () => (cfg.allowDevProducts ? '1=1' : 'p.is_development=0');
 const PAGE_SIZE = 24;
 const SORTS = {

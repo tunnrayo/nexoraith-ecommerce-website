@@ -1,8 +1,10 @@
 # Nexoraith Absolute Ventures Ltd - Online Store
 
-An online store where customers choose **exactly** what they want from the catalogue (imported from DummyJSON, priced in Naira at NGN 1,500 per US dollar), and the owner personally sources those exact items in the market and arranges delivery. Includes the storefront, cart, checkout, order management dashboard, Paystack card payments (Mastercard, Visa, Verve where enabled on your Paystack account), a 10-day delivery estimate, customer messages and optional email.
+An online store where customers choose **exactly** what they want from your catalogue, and the owner personally sources those exact items in the market and arranges delivery. Includes the storefront, cart, checkout, order management dashboard, Paystack card payments (Mastercard, Visa, Verve where enabled on your Paystack account), a 10-day delivery estimate, customer messages and optional email.
 
 **Honest status:** built and automatically tested on a computer. Paystack and email have **not** been connected to real accounts (no keys yet). The website has **not** been deployed. Read `PROJECT_STATUS.md` before launching.
+
+**The shop starts EMPTY.** There are no demonstration or imported products. Customers see "Our collection is being prepared. Please check back soon." until you add your own products in **Admin > Products** (see `PRODUCT_CATALOG_GUIDE.md`). Nothing ever adds products automatically.
 
 Company: Nexoraith Absolute Ventures Ltd, RC 9921594, NEXORAITHABSOLUTEVENTURES@GMAIL.COM
 
@@ -27,13 +29,18 @@ Statuses are kept separate: **Order** (Pending review, Awaiting payment, Order c
 2. Check Node: `node -v` should show `v22.x` or higher.
 3. Go to the project folder: `cd path/to/nexoraith-ecommerce-website` (tip: type `cd ` then drag the folder into the window).
 4. Copy the settings template. Mac/Linux: `cp .env.example .env` Windows: `copy .env.example .env`
-5. Create the database, the delivery zones and the catalogue (needs internet for the catalogue):
+5. Create the database and the delivery zones:
    ```
    npm run migrate
    npm run seed
    ```
-   Expected: `Database is up to date at schema version 4`, then `Catalogue from DummyJSON: fetched 194; created 194 ...`. If you are offline, run `npm run seed` again later or use **Admin > Settings > Import catalogue**. (Offline testing only: `npm run seed -- --samples` adds 12 built-in sample illustrations, hidden again once the catalogue is imported.)
-6. If you imported products with an older version of this store, open **Admin > Settings**, tick "Refresh imported products I have not edited" and click **Import catalogue** once, so every price uses the exact NGN 1,500 conversion.
+   Expected: `Database is up to date at schema version 6`, then `Delivery zones added: 2 ...` and `No products are added. Add your own in Admin > Products.`
+6. **Only if you already ran an older version of this store on this computer** (it had the DummyJSON catalogue or the built-in samples): remove those products from your existing database once:
+   ```
+   npm run catalogue:remove-demo -- --dry-run
+   npm run catalogue:remove-demo
+   ```
+   The first command only shows what would be removed. The second makes a backup copy of your database in `data/backups/` and then removes the old demo products. Expected: `Done.` and `Active products after: 0` (or the number of products you added yourself). Orders, payments, refunds, admin logins, delivery zones and settings are not touched; a demo product that appears in a customer order is archived (hidden) instead of deleted so the order stays complete. You can also do this in **Admin > Settings > Remove old demo catalogue**.
 7. Create your admin login (12+ character password):
    - Mac/Linux: `ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='your-long-password' npm run create-admin`
    - Windows PowerShell: `$env:ADMIN_EMAIL="you@example.com"; $env:ADMIN_PASSWORD="your-long-password"; npm run create-admin`
@@ -46,34 +53,18 @@ Statuses are kept separate: **Order** (Pending review, Awaiting payment, Order c
 - `node: command not found` -> install Node.js, then reopen the terminal.
 - `Cannot find module 'node:sqlite'` -> Node is too old; install 22.13+.
 - `EADDRINUSE` -> port 3000 is busy; set `PORT=3001` and `SITE_URL=http://localhost:3001` in `.env`.
-- `Could not reach DummyJSON ... Nothing was changed` -> no internet or DummyJSON is down; try again later. Your store keeps working.
-- Product images show "Image not available" -> the image link is broken or blocked; upload a photo in Admin > Products.
+- A product shows a plain "Image not available" picture -> it has no photo yet (or its photo link is broken); upload a photo in Admin > Products.
+- The start-up log says `This database still contains N old demonstration product(s)` -> run step 6.
 - Admin login says "Incorrect" -> rerun step 7 (it resets that admin's password).
 
-## 2b. Product images (how they work, and how to see them before deploying)
-The catalogue's photos come from DummyJSON's own image server (`cdn.dummyjson.com`). To make them permanent, the store downloads each image **once** and keeps its own copy, so the shop never depends on DummyJSON afterwards:
-- **On Railway**: automatic. On start-up the server saves copies into `/data/uploads/catalog` (the volume) and checks them. Admin > Settings > **Product images** shows how many products have a verified image and has "Save permanent copies" / "Check images" buttons.
-- **On your computer** (to see the real photos before deploying): `npm run seed`, then `npm run images:download`, then `npm start`, and open http://localhost:3000/shop. Expected: `Saved 668 ... Checked 668 image(s): 668 working` and `With a verified working image: 194`.
-- **To keep the images inside the project/Git instead**: `npm run images:download -- --to-repo` saves them into `public/img/catalog` (about 3-15 MB), then commit them.
-- Any product without a working image shows a designed **category placeholder** ("Photo coming soon"), never a blank or broken image. `npm run images:check` lists those products; Admin > Products > `?images=missing` shows them too. Upload your own photo for any of them in Admin > Products.
-
-## 2c. Install the original product photos into the project (do this once, on your computer)
-This puts the real catalogue photos **inside the project** (`public/images/products/<sku>/`), so the website never depends on another website for them. It also writes `data/catalogue/image-manifest.json`, a record for every active product: photo source URL, local file, pixel size, SHA-256, usage-permission status, match confidence and verification result. It works on your **existing** database: nothing is reset, re-seeded or deleted; photos you uploaded yourself are kept.
-
-1. Open the **Terminal** (Mac) or **PowerShell** (Windows) in your existing `nexoraith` project folder (the one that contains `package.json`). You need internet.
-2. Run: `npm run photos:install`
-   Expected at the end: `"active_products_checked": 194` (or your current number), `"with_installed_photo": 194`, `"unresolved": 0` and `Manifest written to data/catalogue/image-manifest.json`. If some say `Failed downloads`, run the same command again later; anything that still fails stays on its category placeholder and is listed in the manifest with the reason.
-3. Run `npm start`, open http://localhost:3000/admin and sign in, then click **Product photos**. For each product, look at the photo next to the product name and click **Photo matches** or **Wrong photo** (a wrong photo is hidden at once and the product shows its category placeholder until you upload the right one in Admin > Products).
-4. Run `npm run photos:install -- --manifest-only` so the manifest records your visual checks.
-5. Save them in Git (GitHub Desktop: tick the new files and click Commit, or in the terminal: `git add public/images/products data/catalogue/image-manifest.json` then `git commit -m "Add product photos"`). Push when you are ready to deploy.
-
-**Permission (important):** DummyJSON publishes no licence for its product photos, and photos of branded products (Apple, Samsung, Rolex, etc.: 102 of the 194 products have a brand) normally belong to the brand. The manifest marks every photo `usage_permission: not confirmed`. Before relying on them commercially, confirm permission with the brand, its authorised distributor or your supplier, or replace them with photos you take yourself of the item you actually source (Admin > Products > the product > upload image). Your own photos are always the safest option.
+## 2b. Product photos
+Upload photos in **Admin > Products > (the product) > Images** (JPG, PNG or WebP). They are stored by the store itself (`data/uploads`, on Railway the `/data` volume) and served with long caching. A product without a photo shows a neutral "Image not available" picture, never a broken image. Use your own photos of the items you actually source: that avoids any question about who owns the photo. `npm run images:check` lists products that still need a photo.
 
 ## 3. Try the whole workflow
-As a customer: pick a product and option -> Add to cart -> Checkout -> Place order (no payment yet). As the owner (in another browser window): Admin > Orders > open the order -> mark items **Available in market** -> **Request payment**. The customer's order page now shows the Pay button (once Paystack keys are set; until then it says online payment is not switched on). To rehearse the payment step without Paystack, set `DEMO_CHECKOUT=true` on your computer: customers then also see a clearly labelled "Demonstration checkout (no payment)"; such orders are labelled DEMO in Admin and never count as paid. Leave it `false` on the live site.
+First add at least one product in Admin > Products (status **Active**). As a customer: pick a product and option -> Add to cart -> Checkout -> Place order (no payment yet). As the owner (in another browser window): Admin > Orders > open the order -> mark items **Available in market** -> **Request payment**. The customer's order page now shows the Pay button (once Paystack keys are set; until then it says online payment is not switched on). To rehearse the payment step without Paystack, set `DEMO_CHECKOUT=true` on your computer: customers then also see a clearly labelled "Demonstration checkout (no payment)"; such orders are labelled DEMO in Admin and never count as paid. Leave it `false` on the live site.
 
 ## 4. Run the automated tests
-`npm test` (expect `# pass 45`, `# fail 0`). Details in `TESTING.md`.
+`npm test` (expect `# pass 45`, `# fail 0`). The tests load their own test-only products into a temporary database; they never touch your store. Details in `TESTING.md`.
 
 ## 5. Turn on payments (Paystack, Mastercard)
 1. Create a Paystack account at https://paystack.com and complete **business verification** (typically your CAC registration (RC 9921594), director ID and a business bank account; Paystack shows the exact list in your dashboard). Card payments, including Mastercard, are part of Paystack's "card" channel once your account is activated.
@@ -92,21 +83,21 @@ Without email, customers still see every update on their private order page. To 
 - **Dashboard**: what needs attention, orders pending review, awaiting payment, to source, in delivery, refunds, deliveries due soon.
 - **Orders**: search by reference/name/email/phone; filter by order, payment and fulfilment status, demo/real, dates, needs attention, refunds. Each order shows customer details, delivery address and instructions, every item with photo, option, SKU, quantity and price, totals, dates, estimate, history, emails and payment attempts.
 - **Products**: search and filter; quick Availability (Available to order / Temporarily unavailable / Discontinued) and visibility (Active / Inactive / Archived); edit names, descriptions, prices, options (Colour, Size, Model), photos (upload or image link), and your private market cost.
-- **Categories**, **Delivery** (zones and fees), **Inquiries** (contact form), **Settings** (payment timing, delivery days, alert email, DummyJSON demo import, archive all demo products).
+- **Categories**, **Delivery** (zones and fees), **Inquiries** (contact form), **Settings** (payment timing, delivery days, alert email, product image check, remove old demo catalogue).
 
 ## 8. Deploy to Railway (prepared, NOT done)
-`railway.json` (start `npm start`, health check `/health`) and `.node-version` (Node 22) are included. On first start the server creates its tables, loads the 12 demo products if `DEMO_MODE=true` and the store is empty, and creates the first admin from `ADMIN_EMAIL`/`ADMIN_PASSWORD` if none exists. No terminal is needed on Railway.
+`railway.json` (start `npm start`, health check `/health`) and `.node-version` (Node 22) are included. On first start the server creates its tables and the preliminary delivery zones, and creates the first admin from `ADMIN_EMAIL`/`ADMIN_PASSWORD` if none exists. No terminal is needed on Railway.
 1. Railway: New Project > Deploy from GitHub repo > `tunnrayo/nexoraith-ecommerce-website`. (Railway does not need a separate database service: the database is a file.)
 2. Add a **Volume** to the service, mount path `/data`. Without it, every redeploy wipes orders.
 3. Variables: `NODE_ENV=production`, `DATABASE_PATH=/data/nexoraith.db`, `UPLOAD_DIR=/data/uploads`, `SITE_URL=https://<your Railway or custom domain>` (no trailing slash), `ADMIN_EMAIL` + `ADMIN_PASSWORD` (delete the password after the first start), `PAYMENT_TIMING=review_first`, `BUSINESS_TIMEZONE=Africa/Lagos`, later `PAYSTACK_SECRET_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `OWNER_NOTIFY_EMAIL`, `COMPANY_PHONE`/`COMPANY_ADDRESS` once confirmed.
 4. Settings > Networking > Generate Domain (or add your domain; HTTPS is automatic). Make `SITE_URL` match. Set the Paystack webhook to `https://<domain>/webhooks/paystack`.
 5. Check the deploy logs for `Nexoraith store running at ...` and open `/health` (`{"ok":true}`).
-6. The catalogue is imported automatically on the first start (from DummyJSON, or from the copy bundled in the project if DummyJSON is unreachable), and product images are saved to the volume. Check the log for `[setup] Empty catalogue: imported ...` and `[setup] Product images: ... saved`. Then open Admin > Settings > Product images: it should say 194 of 194 products have a verified working image.
+6. The shop is empty on a new Railway database. Sign in to `/admin` and add your products (with photos) in Admin > Products; they are stored on the volume.
 7. In **Admin > Delivery**, tick **Confirmed** on the Lagos and other-Nigeria zones once you are happy with the fees. In production, checkout refuses unconfirmed zones (or set `ALLOW_UNCONFIRMED_DELIVERY=true` to accept them while they are marked preliminary).
 8. Keep **one** instance (SQLite). Back up `/data` (database + uploads) regularly. No CORS setup is needed (the site and its server are the same address).
 
 ## 9. Production-readiness checklist
-- [ ] Catalogue reviewed: every product you list is one you can really source; prices adjusted where the NGN 1,500/USD conversion is not right for your market (imported prices are not verified local prices); products you cannot source hidden or discontinued; `DEMO_CHECKOUT=false`
+- [ ] Your own products added (names, prices, options, your own photos), each one something you can really source; `DEMO_CHECKOUT=false`
 - [ ] Delivery zones and fees confirmed and ticked "Confirmed" in Admin > Delivery
 - [ ] Shipping, returns/refunds, privacy, terms and FAQ text approved (DRAFTS in `src/views.js`, `PAGES`)
 - [ ] Company address/phone decision made (none supplied)
@@ -116,4 +107,4 @@ Without email, customers still see every update on their private order page. To 
 - [ ] HTTPS domain live; volume backups scheduled; strong admin password; `ADMIN_PASSWORD` removed from Railway variables
 
 ## Folder map
-`server.js` web server and routes - `src/` business logic (`orders.js` workflow, `delivery-date.js`, `notify.js`, `admin.js`, `importers/dummyjson.js`, `payments/paystack.js`) - `scripts/` setup/import tools - `public/` CSS, JS, fonts, images - `brand-assets/` reference brand files (not public) - `data/` database, uploads, demo catalogue - `tests/` automated tests - `*.md` documentation.
+`server.js` web server and routes - `src/` business logic (`orders.js` workflow, `delivery-date.js`, `notify.js`, `admin.js`, `catalog-cleanup.js`, `payments/paystack.js`) - `scripts/` setup/import tools - `public/` CSS, JS, fonts, images - `brand-assets/` reference brand files (not public) - `data/` database, uploads, backups - `tests/` automated tests (and their test-only fixture products) - `*.md` documentation.

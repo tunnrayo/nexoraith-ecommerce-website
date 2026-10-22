@@ -3,7 +3,7 @@
 //   npm run images:check                 -> checks that every active product image really opens; records the result
 //   npm run images:download              -> saves permanent copies into UPLOAD_DIR/catalog (data/uploads/catalog by default)
 //   npm run images:download -- --to-repo -> saves them into public/img/catalog instead, so you can commit them to Git
-// Needs internet access to the image host (cdn.dummyjson.com for the imported catalogue).
+// Only needed if some products link to photos on another website (IMAGE_HOSTS); uploaded photos are already local.
 const images = require('../src/images');
 require('../src/db').open();
 (async () => {

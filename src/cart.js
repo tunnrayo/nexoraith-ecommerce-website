@@ -14,7 +14,7 @@ function ensureCart(token) {
 function problemFor(r) {
   if (r.status !== 'published' || r.product_availability === 'discontinued') return 'This product is no longer available.';
   if (r.product_availability === 'temporarily_unavailable') return 'This product is temporarily unavailable.';
-  if (r.is_development && !cfg.allowDevProducts) return 'This is a sample product and cannot be ordered.';
+  if (r.is_development && !cfg.allowDevProducts) return 'This product is not available to order.';
   if (r.availability === 'unavailable') return 'This option is currently unavailable.';
   if (r.availability !== 'available') return 'Availability for this option has not been verified yet.';
   if (r.stock_qty != null && r.stock_qty < r.quantity) return r.stock_qty === 0 ? 'This option is out of stock.' : `Only ${r.stock_qty} left. Please reduce the quantity.`;

@@ -8,3 +8,4 @@ data/uploads/
 !.env.example
 .DS_Store
 Thumbs.db
+data/backups/

@@ -1,4 +1,10 @@
 # Changelog
+## 0.7.0 - 2026-10-22
+- Shop starts empty: removed the DummyJSON importer, bundled DummyJSON data, built-in sample catalogue, demo product/category images, photo installer, image manifest, Admin Product photos page, import panels, auto-import and auto image download at start-up; `seed` adds delivery zones only; no outside image hosts by default.
+- Branded empty states ("Our collection is being prepared") on home, shop, category and search; category pages without products show a clean message.
+- `npm run catalogue:remove-demo` / Admin > Settings > Remove old demo catalogue: backup, delete unused demo products, archive those in orders, remove empty demo categories and unused demo photo copies; start-up reminder while demo products remain.
+- Images from hosts that are no longer allowed show the neutral placeholder (no blocked requests). "Test product only" products hidden unless ALLOW_DEVELOPMENT_PRODUCTS=true.
+- Tests: 45 (new empty-shop + cleanup tests; test products moved to tests/fixtures).
 ## 0.6.0 - 2026-10-21
 - `npm run photos:install`: installs each active product's original catalogue photos into `public/images/products/<sku>/` with validation (decodable JPG/PNG/WebP, >=100x100 px, <=5 MB, HTML rejected), re-points products and order snapshots, keeps owner uploads, never substitutes; writes `data/catalogue/image-manifest.json` (source, local path, SHA-256, permission, match confidence, verification, sources checked, resolution).
 - Admin > Product photos: owner confirms or rejects each photo; rejected photos hidden. Migration v6 (photo_reviews). Importer reuses installed photos. `/images/` cached 1 week.

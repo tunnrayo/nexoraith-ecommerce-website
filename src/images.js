@@ -1,6 +1,6 @@
 'use strict';
 // Product images: make them durable and never show a broken image.
-//  - downloadAll(): saves a permanent copy of every remote product image (e.g. DummyJSON's CDN) into the store's own storage
+//  - downloadAll(): saves a permanent copy of every remote product image (from a website listed in IMAGE_HOSTS) into the store's own storage
 //      target 'uploads' -> UPLOAD_DIR/catalog (Railway volume; survives restarts and redeploys)
 //      target 'repo'    -> public/img/catalog (inside the project, so the files can be committed to Git)
 //    and points the product at the local copy. The original URL is kept in original_url for reference.
@@ -43,6 +43,14 @@ function imageInfo(buf) {
   return null;
 }
 const isRemote = (u) => /^https?:\/\//.test(String(u || ''));
+// An image address the browser is allowed to load: a file on this site, or https from a host listed in IMAGE_HOSTS.
+// Anything else (e.g. an old link to a website that is no longer allowed) returns the neutral placeholder instead.
+function displayable(u) {
+  const s = String(u || ''); if (!s) return '';
+  if (s.startsWith('/')) return s;
+  try { const x = new URL(s); if (x.protocol === 'https:' && cfg.imageHosts.includes(x.origin)) return s; } catch { /* not a URL */ }
+  return '/img/placeholder.svg';
+}
 function localFile(u) {
   if (String(u).startsWith('/uploads/')) return path.join(cfg.uploadDir, path.normalize(u.slice(9)).replace(/^(\.\.[/\\])+/, ''));
   if (/^\/(img|images)\//.test(String(u))) return path.join(PUBLIC, path.normalize(u).replace(/^(\.\.[/\\])+/, ''));
@@ -123,4 +131,4 @@ function stats() {
   }
   return s;
 }
-module.exports = { placeholderFor, checkAll, downloadAll, stats, localOk, isRemote, imageInfo };
+module.exports = { placeholderFor, checkAll, downloadAll, stats, localOk, isRemote, imageInfo, displayable };

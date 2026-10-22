@@ -1,5 +1,6 @@
 'use strict';
-// v0.5: product images are durable (saved locally once), verified, cached, and never shown broken.
+// Shared product-image handling (kept for the owner's own products): fixed dimensions, fallback placeholder, broken-image
+// detection, optional local copies of linked photos, caching. Uses the test-only fixture catalogue and a local stand-in image server.
 const test = require('node:test'); const assert = require('node:assert/strict');
 const http = require('http'); const fs = require('fs'); const path = require('path');
 const { spawn } = require('child_process');
@@ -16,6 +17,7 @@ const cdn = http.createServer((req, res) => {
 let ctx; let CDN; let adm; let T;
 const csrf = (html) => html.match(/name="_csrf" value="([^"]+)"/)[1];
 const imgs = (html) => [...html.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
+const pid = (slug) => ctx.db.q.get('SELECT id FROM products WHERE slug=?', slug).id;
 test.before(async () => {
   await new Promise((r) => cdn.listen(0, r)); CDN = `http://localhost:${cdn.address().port}`;
   ctx = await setup({ DEMO_CHECKOUT: 'false', PAYMENT_TIMING: 'review_first' });
@@ -25,89 +27,69 @@ test.before(async () => {
 });
 test.after(() => { ctx.server.close(); cdn.close(); });
 
-test('bundled DummyJSON data: 194 products, every one gets a card thumbnail and gallery images, every category has a designed placeholder', async () => {
-  const r = await require('../src/importers/dummyjson').importDummyJson({ source: 'snapshot' });
-  assert.equal(r.source, 'snapshot'); assert.equal(r.created, 194); assert.equal(r.failed.length, 0);
-  const active = ctx.db.q.all("SELECT p.*, c.slug cat FROM products p JOIN categories c ON c.id=p.category_id WHERE p.source='dummyjson' AND p.status='published'");
-  assert.equal(active.length, 194);
-  for (const p of active) {
-    assert.match(p.card_image_url, /^https:\/\/cdn\.dummyjson\.com\/product-images\/.+\/thumbnail\.webp$/, p.name);
-    assert.ok(ctx.db.q.get('SELECT COUNT(*) n FROM product_images WHERE product_id=?', p.id).n >= 1, p.name);
-    assert.ok(fs.existsSync(path.join(__dirname, '..', 'public', 'img', 'categories', `${p.cat}.svg`)), `placeholder for ${p.cat}`);
-  }
-  assert.equal(ctx.db.q.get("SELECT COUNT(*) n FROM product_images WHERE url LIKE '%/thumbnail.%' AND product_id IN (SELECT id FROM products WHERE source='dummyjson')").n, 0, 'thumbnail is the card image, not repeated in the gallery');
+test('only the neutral placeholder images remain; no demo product or demo category pictures are shipped', () => {
+  const pub = path.join(__dirname, '..', 'public', 'img');
+  assert.deepEqual(fs.readdirSync(path.join(pub, 'categories')), ['default.svg']);
+  assert.ok(!fs.existsSync(path.join(pub, 'products')), 'demo product illustrations removed');
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'public', 'images', 'products')), 'experimental photo folder removed');
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'data', 'catalogue')), 'bundled DummyJSON data and manifest removed');
+  assert.equal(require('../src/images').placeholderFor('anything'), '/img/categories/default.svg');
 });
 
-test('every image tag has fixed dimensions, a category fallback and sensible loading (first row eager, rest lazy)', async () => {
+test('every product image tag has fixed dimensions, a fallback and sensible loading (first row eager, rest lazy)', async () => {
   const c = client(ctx.base);
   const shop = (await c.get('/shop')).text; const cards = imgs(shop.split('<div class="grid">')[1]).filter((t) => /data-fallback=/.test(t));
-  assert.equal(cards.length, 24);
-  for (const t of cards) { assert.match(t, /width="\d+" height="\d+"/); assert.match(t, /data-fallback="\/img\/categories\/[a-z-]+\.svg"/); assert.match(t, /decoding="async"/); }
-  assert.equal(cards.filter((t) => /fetchpriority="high"/.test(t)).length, 4); assert.equal(cards.filter((t) => /loading="lazy"/.test(t)).length, 20);
-  const slug = ctx.db.q.get("SELECT slug FROM products WHERE source_ref='dummyjson:1'").slug;
-  const pdp = (await c.get(`/product/${slug}`)).text; const main = imgs(pdp).find((t) => /id="main-img"/.test(t));
-  assert.match(main, /fetchpriority="high"/); assert.match(main, /cdn\.dummyjson\.com\/product-images\/beauty\/essence-mascara-lash-princess\/1\.webp/); assert.match(main, /data-fallback="\/img\/categories\/beauty\.svg"/);
+  assert.equal(cards.length, 12);
+  for (const t of cards) { assert.match(t, /width="\d+" height="\d+"/); assert.match(t, /data-fallback="\/img\/categories\/default\.svg"/); assert.match(t, /decoding="async"/); }
+  assert.equal(cards.filter((t) => /fetchpriority="high"/.test(t)).length, 4); assert.equal(cards.filter((t) => /loading="lazy"/.test(t)).length, 8);
+  const main = imgs((await c.get('/product/demo-ceramic-mug')).text).find((t) => /id="main-img"/.test(t));
+  assert.match(main, /fetchpriority="high"/); assert.match(main, /data-fallback="\/img\/categories\/default\.svg"/);
 });
 
-test('image check marks unreachable images broken; pages then show the category placeholder instead of a broken image', async () => {
-  const p = ctx.db.q.get("SELECT * FROM products WHERE source_ref='dummyjson:2'"); // a beauty product
-  ctx.db.q.run("UPDATE products SET card_image_url=? WHERE id=?", `${CDN}/missing.jpg`, p.id);
-  ctx.db.q.run("UPDATE product_images SET url=? WHERE product_id=?", `${CDN}/not-an-image.html`, p.id);
-  const imagesMod = require('../src/images');
-  // check only this product (others point at the real CDN): mark the rest ok so the test does not depend on the internet
-  ctx.db.q.run("UPDATE product_images SET status='ok' WHERE product_id<>?", p.id); ctx.db.q.run("UPDATE products SET card_image_status='ok' WHERE id<>?", p.id);
-  const ref = ctx.db.q.all("SELECT id FROM products WHERE id<>? AND status='published'", p.id).map((x) => x.id);
-  ctx.db.q.run(`UPDATE products SET status='draft' WHERE id IN (${ref.join(',')})`);
-  const r = await imagesMod.checkAll(); assert.equal(r.broken, r.checked, 'both images of this product are broken');
-  ctx.db.q.run(`UPDATE products SET status='published' WHERE id IN (${ref.join(',')})`);
-  const page = (await client(ctx.base).get(`/product/${p.slug}`)).text;
-  assert.match(imgs(page).find((t) => /main-img/.test(t)), /src="\/img\/categories\/beauty\.svg"/);
+test('image check marks unreachable images broken; pages then show the placeholder instead of a broken image', async () => {
+  const id = pid('demo-linen-cushion');
+  ctx.db.q.run('UPDATE products SET card_image_url=? WHERE id=?', `${CDN}/missing.jpg`, id);
+  ctx.db.q.run('UPDATE product_images SET url=? WHERE product_id=?', `${CDN}/not-an-image.html`, id);
+  const r = await require('../src/images').checkAll(); assert.equal(r.broken, 2); assert.equal(r.ok, r.checked - 2);
+  const page = (await client(ctx.base).get('/product/demo-linen-cushion')).text;
+  assert.match(imgs(page).find((t) => /main-img/.test(t)), /src="\/img\/categories\/default\.svg"/);
   assert.doesNotMatch(page, /missing\.jpg|not-an-image/);
-  assert.match((await client(ctx.base).get('/shop?q=' + encodeURIComponent(p.name.split(' ')[0]))).text, /\/img\/categories\/beauty\.svg/);
-  const st = imagesMod.stats(); assert.ok(st.needImage.some((x) => x.id === p.id)); assert.match((await adm.get('/admin/products?images=missing')).text, new RegExp(p.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  const st = require('../src/images').stats(); assert.ok(st.needImage.some((x) => x.id === id)); assert.match((await adm.get('/admin/products?images=missing')).text, /Linen/);
 });
 
-test('download saves permanent local copies once, serves them with long caching, updates order snapshots, survives a restart', async () => {
-  const p = ctx.db.q.get("SELECT * FROM products WHERE source_ref='dummyjson:3'");
-  ctx.db.q.run("UPDATE products SET card_image_url=?, card_image_status='unchecked' WHERE id=?", `${CDN}/p3/thumbnail.webp`, p.id);
-  ctx.db.q.run("UPDATE product_images SET url=?, status='unchecked' WHERE product_id=?", `${CDN}/p3/1.png`, p.id);
-  ctx.db.q.run("UPDATE product_images SET url=?, status='broken' WHERE product_id=(SELECT id FROM products WHERE source_ref='dummyjson:2')", `${CDN}/gone.jpg`);
-  // an existing order that used the remote image keeps the same picture, now stored locally
+test('linked photos can be saved as permanent local copies once, served with long caching, order snapshots updated, survives a restart', async () => {
+  const id = pid('demo-soy-candle');
+  ctx.db.q.run("UPDATE products SET card_image_url=?, card_image_status='unchecked' WHERE id=?", `${CDN}/p3/thumbnail.webp`, id);
+  ctx.db.q.run("UPDATE product_images SET url=?, status='unchecked' WHERE product_id=?", `${CDN}/p3/1.png`, id);
   ctx.db.q.run("INSERT INTO orders(reference,status,customer_name,customer_email,customer_phone,ship_address,ship_city,ship_state,ship_country,currency,subtotal_minor,delivery_fee_minor,total_minor) VALUES('NX-IMG1','pending_review','A','a@b.co','0801','x','y','z','NG','NGN',100,0,100)");
-  ctx.db.q.run("INSERT INTO order_items(order_id,product_name,variant_label,sku,unit_price_minor,quantity,line_total_minor,image_url) VALUES((SELECT id FROM orders WHERE reference='NX-IMG1'),'P','Standard','DJ-3',100,1,100,?)", `${CDN}/p3/thumbnail.webp`);
-  const others = ctx.db.q.all("SELECT id FROM products WHERE id NOT IN (?, (SELECT id FROM products WHERE source_ref='dummyjson:2')) AND status='published'", p.id).map((x) => x.id);
-  ctx.db.q.run(`UPDATE products SET status='draft' WHERE id IN (${others.join(',')})`); // keep the test offline: only our stand-in CDN
+  ctx.db.q.run("INSERT INTO order_items(order_id,product_name,variant_label,sku,unit_price_minor,quantity,line_total_minor,image_url) VALUES((SELECT id FROM orders WHERE reference='NX-IMG1'),'P','Standard','X-1',100,1,100,?)", `${CDN}/p3/thumbnail.webp`);
   const im = require('../src/images');
   hits = 0; const d = await im.downloadAll();
-  assert.equal(d.saved, 2); assert.equal(d.failed, 2, 'the two missing images (404) fail and stay as they were');
-  const card = ctx.db.q.get('SELECT card_image_url u, card_image_original o, card_image_status s FROM products WHERE id=?', p.id);
-  assert.match(card.u, /^\/uploads\/catalog\/[0-9a-f]{24}\.webp$/); assert.match(card.o, /^https:\/\/cdn\.dummyjson\.com\//, 'the true original source is remembered'); assert.equal(card.s, 'ok');
-  assert.match(ctx.db.q.get('SELECT url FROM product_images WHERE product_id=?', p.id).url, /^\/uploads\/catalog\/[0-9a-f]{24}\.png$/);
-  assert.equal(ctx.db.q.get("SELECT image_url u FROM order_items WHERE sku='DJ-3'").u, card.u);
-  assert.ok(fs.existsSync(path.join(process.env.UPLOAD_DIR, 'catalog', path.basename(card.u))));
+  assert.equal(d.saved, 2); assert.equal(d.failed, 2, 'the two missing images from the previous test fail and stay as they were');
+  const card = ctx.db.q.get('SELECT card_image_url u, card_image_original o, card_image_status s FROM products WHERE id=?', id);
+  assert.match(card.u, /^\/uploads\/catalog\/[0-9a-f]{24}\.webp$/); assert.equal(card.o, `${CDN}/p3/thumbnail.webp`); assert.equal(card.s, 'ok');
+  assert.equal(ctx.db.q.get("SELECT image_url u FROM order_items WHERE sku='X-1'").u, card.u);
   const res = await fetch(ctx.base + card.u); assert.equal(res.status, 200); assert.equal(res.headers.get('content-type'), 'image/webp'); assert.match(res.headers.get('cache-control'), /max-age=31536000, immutable/);
-  const again = await fetch(ctx.base + card.u, { headers: { 'if-modified-since': res.headers.get('last-modified') } }); assert.equal(again.status, 304);
-  hits = 0; const d2 = await im.downloadAll(); assert.equal(d2.saved, 0); assert.equal(hits, 2, 'already-saved images are not downloaded again (only the failed ones are retried)');
-  // refreshing the import must not undo the local copies
-  ctx.db.q.run("UPDATE products SET card_image_original='https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp' WHERE id=?", p.id);
-  // restart: a brand-new server process on the same database and upload folder still serves the saved image
+  assert.equal((await fetch(ctx.base + card.u, { headers: { 'if-modified-since': res.headers.get('last-modified') } })).status, 304);
+  hits = 0; const d2 = await im.downloadAll(); assert.equal(d2.saved, 0); assert.equal(hits, 2, 'saved images are not downloaded again');
   const port = 3990 + Math.floor(Math.random() * 9);
   const child = spawn(process.execPath, ['--disable-warning=ExperimentalWarning', '-e', `require('./server').createServer().listen(${port})`], { cwd: path.join(__dirname, '..'), env: { ...process.env } });
   try {
     await new Promise((r) => setTimeout(r, 900));
-    const html = await (await fetch(`http://localhost:${port}/product/${p.slug}`)).text(); assert.match(html, /\/uploads\/catalog\/[0-9a-f]{24}\.png/);
+    assert.match(await (await fetch(`http://localhost:${port}/product/demo-soy-candle`)).text(), /\/uploads\/catalog\/[0-9a-f]{24}\.png/);
     assert.equal((await fetch(`http://localhost:${port}${card.u}`)).status, 200);
   } finally { child.kill(); }
-  ctx.db.q.run(`UPDATE products SET status='published' WHERE id IN (${others.join(',')})`);
 });
 
-test('sitemap lists every active product and category; text responses use a minimal security policy', async () => {
+test('sitemap lists every product for sale and category; text responses use a minimal security policy; no outside image hosts by default', async () => {
   const r = await fetch(ctx.base + '/sitemap.xml'); const x = await r.text();
   assert.equal((x.match(/\/product\//g) || []).length, ctx.db.q.get("SELECT COUNT(*) n FROM products WHERE status='published' AND availability<>'discontinued' AND is_development=0").n);
-  assert.match(x, /shop\?category=smartphones/); assert.match(r.headers.get('content-security-policy'), /default-src 'none'/);
+  assert.match(x, /shop\?category=home-living/); assert.match(r.headers.get('content-security-policy'), /default-src 'none'/);
+  assert.match((await fetch(ctx.base + '/')).headers.get('content-security-policy'), /img-src 'self' data:;/);
 });
 test('admin image panel reports the counts and the check button works', async () => {
   const page = (await adm.get('/admin/settings')).text; assert.match(page, /Product images/); assert.match(page, /active products have a verified working image/);
-  const r = await adm.post('/admin/settings/images', { _csrf: T, action: 'check' }); assert.equal(r.status, 303);
+  assert.doesNotMatch(page, /Import catalogue|import-dummyjson|Product photos/);
+  assert.equal((await adm.post('/admin/settings/images', { _csrf: T, action: 'check' })).status, 303);
   assert.equal((await fetch(ctx.base + '/img/categories/default.svg')).status, 200);
 });

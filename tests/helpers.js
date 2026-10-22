@@ -11,12 +11,13 @@ function setup(env = {}) {
   process.env.SITE_URL = 'http://localhost:3999';
   process.env.PAYMENT_TIMING = env.PAYMENT_TIMING ?? 'pay_first';
   process.env.DEMO_CHECKOUT = env.DEMO_CHECKOUT ?? 'true';
-  process.env.AUTO_IMPORT_DUMMYJSON = 'false';
   for (const k of ['RESEND_API_KEY', 'EMAIL_FROM', 'OWNER_NOTIFY_EMAIL']) process.env[k] = env[k] ?? '';
   if (env.RESEND_API_URL) process.env.RESEND_API_URL = env.RESEND_API_URL;
   const db = require('../src/db'); db.open();
+  // The website itself starts with an EMPTY catalogue. Most tests need products, so they load a test-only fixture
+  // (tests/fixtures/test-catalog.json) into their temporary database. Pass { catalogue: false } to test the empty shop.
   const { importCatalog } = require('../scripts/import-catalog');
-  importCatalog(JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dev-catalog.json'), 'utf8')));
+  if (env.catalogue !== false) importCatalog(JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'test-catalog.json'), 'utf8')));
   db.q.run("INSERT INTO delivery_zones(name,country_code,fee_minor,confirmed,active) VALUES('Test zone','NG',150000,1,1)");
   const server = require('../server').createServer();
   return new Promise((res) => server.listen(0, () => res({ server, base: `http://localhost:${server.address().port}`, db })));

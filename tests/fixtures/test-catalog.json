@@ -1,5 +1,5 @@
 {
- "_comment": "DEVELOPMENT / DEMO DATA ONLY. Products, prices, availability and stock are invented for presentation and testing. They are NOT supplier data and are NOT live. Replace with real products before launch (see PRODUCT_CATALOG_GUIDE.md).",
+ "_comment": "TEST FIXTURE ONLY. Loaded by the automated tests into a temporary database. Never loaded by the website, seed or start-up.",
  "categories": [
   {
    "slug": "home-living",
@@ -31,7 +31,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate colour options: one colour is available, the other is shown as unavailable.",
    "images": [
     {
-     "url": "/img/products/demo-ceramic-mug.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the stoneware ceramic mug (not a product photo)"
     }
    ],
@@ -67,7 +67,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a product whose availability has not yet been verified, so it cannot be added to the cart.",
    "images": [
     {
-     "url": "/img/products/demo-linen-cushion.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the linen throw cushion (not a product photo)"
     }
    ],
@@ -94,7 +94,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate scent variants at the same price.",
    "images": [
     {
-     "url": "/img/products/demo-soy-candle.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the scented soy candle (not a product photo)"
     }
    ],
@@ -131,7 +131,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a single-option product.",
    "images": [
     {
-     "url": "/img/products/demo-glass-bottle.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the glass water bottle (not a product photo)"
     }
    ],
@@ -158,7 +158,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate low stock: only three are recorded in the demo data.",
    "images": [
     {
-     "url": "/img/products/demo-leather-wallet.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the leather bifold wallet (not a product photo)"
     }
    ],
@@ -185,7 +185,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate sizes at different prices.",
    "images": [
     {
-     "url": "/img/products/demo-canvas-tote.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the canvas tote bag (not a product photo)"
     }
    ],
@@ -222,7 +222,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a higher-priced item.",
    "images": [
     {
-     "url": "/img/products/demo-wrist-watch.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the minimalist wrist watch (not a product photo)"
     }
    ],
@@ -249,7 +249,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate frame colour options.",
    "images": [
     {
-     "url": "/img/products/demo-sunglasses.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the classic sunglasses (not a product photo)"
     }
    ],
@@ -286,7 +286,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a simple accessory.",
    "images": [
     {
-     "url": "/img/products/demo-phone-stand.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the aluminium phone stand (not a product photo)"
     }
    ],
@@ -313,7 +313,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nThe lowest-priced demo item, used to test sorting.",
    "images": [
     {
-     "url": "/img/products/demo-cable-organiser.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the cable organiser set (not a product photo)"
     }
    ],
@@ -340,7 +340,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate a gadget listing. Specifications would come from the confirmed supplier.",
    "images": [
     {
-     "url": "/img/products/demo-wireless-earbuds.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the wireless earbuds (not a product photo)"
     }
    ],
@@ -367,7 +367,7 @@
    "description": "DEMO PRODUCT for presentation and testing only. Not for sale; price, stock and details are illustrative, not supplier data.\n\nUsed to demonstrate capacity options at different prices.",
    "images": [
     {
-     "url": "/img/products/demo-power-bank.svg",
+     "url": "/img/placeholder.svg",
      "alt": "Demo illustration of the slim power bank (not a product photo)"
     }
    ],

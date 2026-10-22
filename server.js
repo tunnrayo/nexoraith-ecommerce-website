@@ -26,7 +26,7 @@ function route(method, pattern, handler) {
   routes.push({ method, re, names, handler });
 }
 const SECURITY_HEADERS = {
-  'Content-Security-Policy': `default-src 'self'; img-src 'self' data: ${cfg.imageHosts.join(' ')}; style-src 'self'; script-src 'self'; form-action 'self' https://*.paystack.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'`,
+  'Content-Security-Policy': `default-src 'self'; img-src ${["'self'", 'data:', ...cfg.imageHosts].join(' ')}; style-src 'self'; script-src 'self'; form-action 'self' https://*.paystack.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'`,
   'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'DENY',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 };
@@ -265,7 +265,7 @@ function createServer() { db.open(); return http.createServer(handle); }
 module.exports = { createServer };
 if (require.main === module) {
   if (cfg.isProd && paystack.mode() === 'test') console.warn('WARNING: production mode but Paystack TEST key in use.');
-  if (cfg.isProd && cfg.demoMode) console.warn('NOTICE: DEMO_MODE is ON in production: built-in sample products and unconfirmed delivery fees are allowed.');
+  if (cfg.isProd && cfg.demoMode) console.warn('NOTICE: DEMO_MODE is ON in production: checkout accepts delivery fees not yet marked confirmed.');
   require('./src/bootstrap').bootstrap();
-  createServer().listen(cfg.port, () => { console.log(`Nexoraith store running at ${cfg.siteUrl} (${cfg.isProd ? 'production' : 'development'})`); require('./src/bootstrap').autoImport(); });
+  createServer().listen(cfg.port, () => { console.log(`Nexoraith store running at ${cfg.siteUrl} (${cfg.isProd ? 'production' : 'development'})`); const demo = require('./src/catalog-cleanup').demoProductCount(); if (demo) console.log(`[setup] This database still contains ${demo} old demonstration product(s). Remove them with "npm run catalogue:remove-demo" or Admin > Settings > Remove old demo catalogue.`); });
 }

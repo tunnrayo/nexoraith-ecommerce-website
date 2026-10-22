@@ -1,6 +1,6 @@
 'use strict';
 // v0.3: self-sourcing workflow (review first / pay first), exact-item sourcing, no substitutions without approval,
-// 10-day delivery estimate, refunds, customer messages, email, DummyJSON demo import, product availability, DB upgrade.
+// 10-day delivery estimate, refunds, customer messages, email, product availability, DB upgrade.
 const test = require('node:test'); const assert = require('node:assert/strict');
 const http = require('http'); const crypto = require('crypto'); const fs = require('fs'); const os = require('os'); const path = require('path');
 const { execFileSync } = require('child_process');
@@ -52,7 +52,7 @@ test('review first: order saved unpaid, no payment possible until the owner conf
   assert.match(page.text, /Place order \(no payment yet\)/); assert.match(page.text, /10 calendar days/);
   let o = get(ref); assert.equal(o.status, 'pending_review'); assert.equal(o.payment_status, 'unpaid'); assert.equal(o.payment_timing, 'review_first'); assert.equal(o.confirmed_at, null);
   const its = ctx.db.q.all('SELECT * FROM order_items WHERE order_id=?', o.id);
-  assert.equal(its.length, 2); assert.match(its[0].image_url, /^\/img\/products\/demo-sunglasses\.svg$/); assert.equal(JSON.parse(its[0].options_json).Frame, 'Tortoise'); assert.equal(its[1].quantity, 2);
+  assert.equal(its.length, 2); assert.equal(its[0].image_url, "/img/placeholder.svg", "the exact image shown is kept on the order"); assert.equal(JSON.parse(its[0].options_json).Frame, 'Tortoise'); assert.equal(its[1].quantity, 2);
   const cust = await cl.get(link); assert.match(cust.text, /Order received/); assert.match(cust.text, /You have not been charged/); assert.match(cust.text, /Frame: Tortoise/); assert.doesNotMatch(cust.text, /\/pay"/);
   const pay = await cl.post(`/order/${ref}/pay`, { _csrf: cl.jar.nx_csrf, t: link.split('t=')[1] }); assert.match((await cl.get(pay.location)).text, /still checking/);
   // owner tries to request payment before checking items -> refused
@@ -143,41 +143,6 @@ test('emails: sent through the email API when configured (tested against a local
     const second = await placeOrder([['DEV-CABLE-SET', 1]]); assert.equal(get(second.ref).status, 'pending_review', 'order still created');
     assert.equal(ctx.db.q.get('SELECT status FROM notifications ORDER BY id DESC').status, 'failed');
   } finally { Object.assign(cfg.email, keep); mock.close(); }
-});
-
-test('DummyJSON demo import: imports names/images/categories into our DB, sample prices, no reviews/stock claims; skips on re-run; API failure changes nothing', async () => {
-  const products = [
-    { id: 1, title: 'Essence Mascara Lash Princess', description: 'Popular mascara. Long lasting.', category: 'beauty', price: 9.99, brand: 'Essence', stock: 5, rating: 4.94, availabilityStatus: 'Low Stock', shippingInformation: 'Ships in 1 month', reviews: [{ rating: 5, comment: 'Great!', reviewerName: 'X' }], images: ['https://cdn.dummyjson.com/product-images/1/1.webp'], thumbnail: 'https://cdn.dummyjson.com/product-images/1/thumbnail.webp' },
-    { id: 2, title: 'Mens Cotton Shirt', description: 'A shirt.', category: 'mens-shirts', price: 24.5, images: ['https://evil.example.com/x.png'], thumbnail: '' },
-    { id: 3, title: '', price: 'abc', category: 'x' },
-  ];
-  let fail = false;
-  const mock = http.createServer((req, res) => { if (fail) { res.writeHead(500); return res.end('down'); } const u = new URL(req.url, 'http://x'); const skip = +u.searchParams.get('skip') || 0; const limit = +u.searchParams.get('limit') || 30; res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ products: products.slice(skip, skip + limit), total: products.length, skip, limit })); });
-  await new Promise((r) => mock.listen(0, r)); const base = `http://localhost:${mock.address().port}/products`;
-  const { importDummyJson } = require('../src/importers/dummyjson');
-  try {
-    const r = await importDummyJson({ limit: 200, rate: 1500, base, archiveSamples: false });
-    assert.equal(r.fetched, 3); assert.equal(r.created, 2); assert.equal(r.failed.length, 1); assert.match(r.failed[0].errors.join(), /title|price/);
-    const p = ctx.db.q.get("SELECT * FROM products WHERE slug LIKE 'dj-1-%'"); assert.equal(p.is_development, 0, 'imported products are the regular catalogue'); assert.equal(p.source, 'dummyjson'); assert.equal(p.availability, 'available');
-    assert.doesNotMatch(p.description, /Great!|Ships in 1 month|Low Stock|4\.94|DEMONSTRATION/); assert.equal(p.source_price_text, '9.99 USD x 1500 = NGN 14985.00');
-    const v = ctx.db.q.get("SELECT * FROM variants WHERE sku='DJ-1'"); assert.equal(v.price_minor, 1498500, '9.99 USD x NGN 1,500 exactly'); assert.equal(v.stock_qty, null, 'DummyJSON stock is not trusted');
-    assert.equal(ctx.db.q.get("SELECT name FROM categories WHERE slug='mens-shirts'").name, "Men's Shirts");
-    assert.equal(ctx.db.q.get("SELECT COUNT(*) n FROM product_images WHERE product_id=(SELECT id FROM products WHERE slug LIKE 'dj-2-%')").n, 0, 'images from non-allowed hosts are refused');
-    const html = await fetch(`${ctx.base}/product/${p.slug}`); const text = await html.text();
-    assert.match(text, /cdn\.dummyjson\.com\/product-images\/1\/1\.webp/); assert.match(html.headers.get('content-security-policy'), /img-src 'self' data: https:\/\/cdn\.dummyjson\.com/);
-    ctx.db.q.run("UPDATE variants SET price_minor=777700 WHERE sku='DJ-1'");
-    const again = await importDummyJson({ base, archiveSamples: false }); assert.equal(again.skipped, 2);
-    products[0].title = 'Essence Mascara Renamed'; // DummyJSON renames a product: same id, so it is the same product (no duplicate, no SKU clash)
-    const renamed = await importDummyJson({ base, archiveSamples: false, update: true }); assert.equal(renamed.failed.length, 1, 'only the invalid record'); assert.equal(renamed.updated, 2);
-    assert.equal(ctx.db.q.get("SELECT COUNT(*) n FROM products WHERE source='dummyjson'").n, 2); assert.equal(ctx.db.q.get("SELECT name FROM products WHERE source_ref='dummyjson:1'").name, 'Essence Mascara Renamed');
-    ctx.db.q.run("UPDATE variants SET price_minor=777700 WHERE sku='DJ-1'"); assert.equal(ctx.db.q.get("SELECT price_minor p FROM variants WHERE sku='DJ-1'").p, 777700, 'owner edits kept');
-    fail = true; const before = ctx.db.q.get('SELECT COUNT(*) n FROM products').n;
-    await assert.rejects(importDummyJson({ base, archiveSamples: false }), /Could not reach DummyJSON.*Nothing was changed/);
-    assert.equal(ctx.db.q.get('SELECT COUNT(*) n FROM products').n, before);
-    fail = false;
-    // the store keeps working with no access to DummyJSON at all (catalogue is in our DB)
-    mock.close(); assert.equal((await fetch(`${ctx.base}/shop?q=mascara`)).status, 200);
-  } finally { try { mock.close(); } catch { /* closed */ } }
 });
 
 test('customers cannot change order state: no admin session = no access; order pages need the secret link', async () => {

@@ -13,7 +13,8 @@
 | CJdropshipping adapter | `src/suppliers/cj.js` |
 | Admin (orders, products, variants, images, categories, delivery, inquiries, supplier) | `src/admin.js` |
 | Image upload parsing + file-signature check | `src/multipart.js` |
-| First-start setup (migrate, demo seed, first admin) | `src/bootstrap.js` |
+| First-start setup (migrate, delivery zones, first admin; never adds products) | `src/bootstrap.js` |
+| Removal of the old demo catalogue from existing databases (backup first) | `src/catalog-cleanup.js`, `scripts/remove-demo-catalogue.js` |
 | HTML templates | `src/views.js` |
 | Validation, security helpers, money | `src/validate.js`, `src/security.js`, `src/money.js` |
 
@@ -25,9 +26,9 @@
 - **Guest order access**: token = HMAC(app secret, order reference). Not stored, not guessable, recomputable (lets duplicate submissions redirect safely).
 - **Supplier privacy**: supplier tables are never joined in public queries. Admin-only.
 - **Supplier orders** can never be created automatically: needs env flag + paid order + all variants mapped + admin ticks authorisation; UNIQUE(order, supplier) blocks duplicates.
-- **Sample data** carries `is_development=1`; hidden/blocked in production unless explicitly allowed.
+- **Empty catalogue by default**: the app ships no product data. Products the owner ticks "Test product only" carry `is_development=1` and are hidden/blocked unless `ALLOW_DEVELOPMENT_PRODUCTS=true`. Tests load `tests/fixtures/test-catalog.json` into their own temporary database.
 - **Single-process SQLite** (WAL). Rate limiter is in-memory (per process). Scale-out would need Postgres + shared rate limit store.
-- **Demo mode** (`DEMO_MODE`, default on locally, off in production): enables demo products, unconfirmed delivery fees and the `demo` payment method. Orders get `is_demo=1` when they contain demo products, use the demo method, or use an unconfirmed zone in demo mode. `confirmDemo` only sets `demo_confirmed_at`; payment_status stays `unpaid`, stock untouched, fulfilment impossible. `startPayment` refuses demo orders.
+- **Demo mode** (`DEMO_MODE`, default on locally, off in production): allows unconfirmed delivery fees; `DEMO_CHECKOUT=true` adds the no-payment `demo` method for rehearsals (off by default). Orders get `is_demo=1` when they contain demo products, use the demo method, or use an unconfirmed zone in demo mode. `confirmDemo` only sets `demo_confirmed_at`; payment_status stays `unpaid`, stock untouched, fulfilment impossible. `startPayment` refuses demo orders.
 - **Uploads** are stored in `UPLOAD_DIR` (default `data/uploads`, outside `public/`) and served from `/uploads/` (png/jpg/webp only). Type is decided from the file's first bytes, not the name.
 - **Routing**: exact paths win over `:param` paths (e.g. `/admin/products/new` before `/admin/products/:id`).
 - **Hosting**: `railway.json` (start `npm start`, health `/health`); one instance + persistent volume for `/data`.

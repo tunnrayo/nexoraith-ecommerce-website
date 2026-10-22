@@ -15,7 +15,7 @@ const mail = () => `<a class="email" href="mailto:${esc(C.email)}">${esc(C.email
 // Product image tag: always has a category placeholder to fall back to (server-side when there is no image,
 // in the browser via app.js if a file fails), fixed dimensions (no layout shift) and lazy loading below the fold.
 const pimg = (src, cat, { w = 800, h = 800, alt = '', eager = false, id = '' } = {}) => {
-  const fb = images.placeholderFor(cat);
+  const fb = images.placeholderFor(cat); src = src && images.displayable(src) !== '/img/placeholder.svg' ? src : '';
   return `<img${id ? ` id="${id}"` : ''} src="${esc(src || fb)}" data-fallback="${esc(fb)}" alt="${esc(alt)}" width="${w}" height="${h}" decoding="async"${eager ? ' fetchpriority="high"' : ' loading="lazy"'}>`;
 };
 const absUrl = (u) => (/^https:\/\//.test(u) ? u : cfg.siteUrl + u);
@@ -81,16 +81,18 @@ function card(p, ctx, i = 99) {
 ${p.summary ? `<p class="card-sum">${esc(p.summary)}</p>` : ''}<div class="card-meta"><p class="price">${range}</p>${avail}</div>${quick}</div></article>`;
 }
 
+// Shown while the catalogue has no products at all (the store starts empty; the owner adds products in Admin).
+const preparing = () => `<div class="empty empty-brand"><img src="/img/icon-crop.webp" alt="" width="72" height="70" loading="lazy"><h2>Our collection is being prepared</h2><p>Please check back soon. For questions in the meantime, email ${mail()}.</p><p><a class="btn btn-outline" href="/contact">Contact us</a></p></div>`;
 function home(ctx, { cats, featured }) {
   const body = `<section class="hero"><div class="wrap hero-in">
 <div class="hero-copy"><p class="eyebrow">${esc(C.name)}</p><h1><span class="l">Shop Smarter.</span> <span class="l gold">Live Better.</span></h1>
 <p class="lead">A simple, secure way to shop online. Quality products, clear prices and a checkout that shows your full total, including delivery, before you pay.</p>
-<div class="hero-cta"><a class="btn btn-lg" href="/shop">Shop the collection ${I.arrow}</a><a class="btn btn-lg btn-ghost" href="#categories">Browse categories</a></div>
+<div class="hero-cta"><a class="btn btn-lg" href="/shop">Shop the collection ${I.arrow}</a>${cats.length ? '<a class="btn btn-lg btn-ghost" href="#categories">Browse categories</a>' : '<a class="btn btn-lg btn-ghost" href="/contact">Contact us</a>'}</div>
 <ul class="assure"><li>${I.check}Full price shown before payment</li><li>${I.shield}Card details handled by our payment provider, never stored by us</li><li>${I.truck}Follow every order with your reference</li></ul></div>
 <div class="hero-art" aria-hidden="true"><div class="emblem"><img src="/img/icon-crop.webp" alt="" width="296" height="288" fetchpriority="high"></div><span class="hero-line"></span></div>
 </div></section>
 ${cats.length ? `<section class="wrap section" id="categories"><div class="sec-head row"><div><p class="kicker">Collections</p><h2>Shop by category</h2></div>${cats.length > 6 ? `<a class="more" href="/shop">All ${cats.length} categories ${I.arrow}</a>` : ''}</div><ul class="cat-grid">${cats.slice(0, 6).map((c) => `<li><a class="cat" href="/shop?category=${esc(c.slug)}">${pimg(c.image, c.slug, { w: 120, h: 120 })}<span class="cat-txt"><strong>${esc(c.name)}</strong>${c.description ? `<span>${esc(c.description)}</span>` : ''}<em>${plural(c.n, 'product')} ${I.arrow}</em></span></a></li>`).join('')}</ul></section>` : ''}
-${featured.length ? `<section class="wrap section"><div class="sec-head row"><div><p class="kicker">Featured</p><h2>New in the store</h2></div><a class="more" href="/shop">View all products ${I.arrow}</a></div><div class="grid">${featured.map((p, i) => card(p, ctx, i)).join('')}</div></section>` : `<section class="wrap section"><p class="empty">Products are being added. Please check back soon.</p></section>`}
+${featured.length ? `<section class="wrap section"><div class="sec-head row"><div><p class="kicker">Featured</p><h2>New in the store</h2></div><a class="more" href="/shop">View all products ${I.arrow}</a></div><div class="grid">${featured.map((p, i) => card(p, ctx, i)).join('')}</div></section>` : `<section class="wrap section">${preparing()}</section>`}
 <section class="band"><div class="wrap"><div class="sec-head center"><p class="kicker">Our promise</p><h2>Shopping you can trust</h2></div>
 <ul class="pillars"><li>${I.shield}<h3>Trust</h3><p>Honest product information. If availability or delivery has not been confirmed, we say so.</p></li>
 <li>${I.star}<h3>Quality</h3><p>Products are chosen for the store and described plainly, without exaggerated claims.</p></li>
@@ -113,7 +115,7 @@ function shop(ctx, { res, cats, query, current }) {
 <div><label for="sort">Sort by</label><select id="sort" name="sort">${sortOpts.map(([v, x]) => `<option value="${v}"${query.sort === v ? ' selected' : ''}>${x}</option>`).join('')}</select></div>
 <div class="filters-actions"><button class="btn" type="submit">Apply</button> <a class="btn btn-outline" href="/shop">Clear</a></div></form>
 <p class="muted count" aria-live="polite">${res.total} product${res.total === 1 ? '' : 's'} found</p>
-${res.items.length ? `<div class="grid">${res.items.map((p, i) => card(p, ctx, i)).join('')}</div>` : `<div class="empty"><h2>No products found</h2><p>Try a different search or <a href="/shop">clear the filters</a>.</p></div>`}
+${res.items.length ? `<div class="grid">${res.items.map((p, i) => card(p, ctx, i)).join('')}</div>` : !cats.length ? preparing() : current && !query.search ? `<div class="empty"><h2>Nothing in ${esc(current.name)} yet</h2><p>New products for this category are being prepared. <a href="/shop">See all products</a>.</p></div>` : `<div class="empty"><h2>No products found</h2><p>Try a different search or <a href="/shop">clear the filters</a>.</p></div>`}
 ${res.pages > 1 ? `<nav class="pager" aria-label="Pages">${res.page > 1 ? `<a class="btn btn-outline" href="${qs({ page: res.page - 1 })}" rel="prev">Previous</a>` : ''}<span>Page ${res.page} of ${res.pages}</span>${res.page < res.pages ? `<a class="btn btn-outline" href="${qs({ page: res.page + 1 })}" rel="next">Next</a>` : ''}</nav>` : ''}</div>`;
   return layout(ctx, { title: t, desc: current?.description || `Browse ${t.toLowerCase()} at ${C.short}.`, body, canonicalPath: '/shop' + (query.category ? `?category=${query.category}` : ''), noindex: !!(query.search || res.page > 1) });
 }
