@@ -43,7 +43,7 @@ const nav = (active) => `<nav class="admin-nav" aria-label="Admin">${[['', 'Dash
 <form method="post" action="/admin/logout" class="inline">__CSRF__<button class="link-btn" type="submit">Log out</button></form></nav>`;
 function page(ctx, s, active, title, inner) {
   const body = `<div class="wrap section"><h1>${esc(title)}</h1>${nav(active).replace('__CSRF__', `<input type="hidden" name="_csrf" value="${esc(s.csrf)}">`)}${inner}</div>`;
-  return layout({ ...ctx, csrf: s.csrf }, { title: `Admin: ${title}`, body, noindex: true });
+  return layout({ ...ctx, csrf: s.csrf }, { title: `Admin: ${title}`, body, noindex: true, admin: true });
 }
 const csrf = (s) => `<input type="hidden" name="_csrf" value="${esc(s.csrf)}">`;
 const when = (t) => esc(String(t || '').slice(0, 16));
@@ -68,7 +68,7 @@ function register(route, h) {
   route('GET', '/admin/login', (ctx) => {
     if (currentSession(ctx)) return h.redirect(ctx, '/admin');
     const noAdmin = !q.get('SELECT 1 x FROM admin_users LIMIT 1');
-    h.send(ctx, 200, layout(ctx, { title: 'Admin login', noindex: true, body: `<div class="wrap section narrow"><h1>Admin login</h1>${noAdmin ? '<p class="alert">No admin user exists yet. Create one with <code>npm run create-admin</code> (see README).</p>' : ''}
+    h.send(ctx, 200, layout(ctx, { title: 'Admin login', noindex: true, admin: true, body: `<div class="wrap section narrow"><h1>Admin login</h1>${noAdmin ? '<p class="alert">No admin user exists yet. Create one with <code>npm run create-admin</code> (see README).</p>' : ''}
 <form method="post" action="/admin/login" class="form">${h.csrfField(ctx)}<div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" required></div><div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required></div><button class="btn" type="submit">Log in</button></form></div>` }));
   });
   route('POST', '/admin/login', (ctx) => {

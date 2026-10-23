@@ -34,7 +34,9 @@ Manual / browser checks done (Playwright + Chromium, scripts kept outside the re
 
 ## v0.10 additions (2026-10-22)
 - `tests/admin-portal.test.js` (11 tests): password with symbols; unknown user/wrong password handled identically (this found and fixed a 500 error); session cookie flags and keyed-hash storage; every admin page and POST refused when signed out; CSRF; activity log (no passwords); password change rules and session invalidation; dashboard counts only verified payments; Health Centre runs, uses only the five statuses, shows no secrets, detects a fake "paid" order and a missing photo file; proxy IP handling; `.env.local` ignored by Git.
-- Total: **62 tests, all pass** (`npm test`).
+- `tests/admin-isolation.test.js` (6 tests): anonymous and forged-cookie requests to every admin URL are redirected or refused; shopper cart/CSRF cookies give no admin access; logout invalidates a replayed cookie; expired sessions refused; `X-Robots-Tag` on admin; public pages and sitemap contain no admin links; staff header differs from shop header.
+- Browser checks run by hand in Playwright (`npm run qa:browser`): desktop + phone browse/cart/checkout, admin login/orders/order detail/health, anonymous admin URL -> login. Results are in the owner report; not part of `npm test`.
+- Total: **70 tests, all pass** (`npm test`).
 - Browser: `npm run qa:browser` (optional Playwright) browsed home, shop, category, search, product, cart (add, quantity 2, remove), checkout page and six admin pages at 1366x850 and 390x844: no broken images, no sideways scrolling, no console errors.
 - Live Health Check on the local site: 52 PASS, 0 FAIL, 6 WARNING (development mode, local SITE_URL, preliminary delivery fees, no phone/address, no backups), 11 NOT RUN (with reasons), 3 BLOCKED (Paystack key, Paystack webhook, email service).
 - Not run: real Paystack calls, real email, supplier calls, HTTPS behaviour, Lighthouse/contrast scan, load testing.

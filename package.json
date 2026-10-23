@@ -1,6 +1,6 @@
 {
   "name": "nexoraith-store",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "description": "Nexoraith Absolute Ventures Ltd - e-commerce storefront, orders, payments and supplier groundwork",
   "engines": {

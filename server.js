@@ -37,6 +37,7 @@ function send(ctx, status, body, type = 'text/html; charset=utf-8', extra = {}) 
   const headers = { 'Content-Type': type, 'Cache-Control': 'no-store', ...SECURITY_HEADERS, ...extra };
   // Plain-text and XML responses (robots.txt, sitemap.xml, webhooks) contain no scripts; a page-style CSP only stops the browser's own viewer styling them.
   if (!/^text\/html/.test(type)) headers['Content-Security-Policy'] = "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'";
+  if (ctx.path.startsWith('/admin')) headers['X-Robots-Tag'] = 'noindex, nofollow, noarchive';
   if (ctx.setCookies.length) headers['Set-Cookie'] = ctx.setCookies;
   res.writeHead(status, headers); res.end(ctx.method === 'HEAD' ? undefined : body);
 }

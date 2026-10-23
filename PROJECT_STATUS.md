@@ -1,4 +1,4 @@
-# Project Status (updated 2026-10-22, v0.10.0)
+# Project Status (updated 2026-10-23, v0.10.1)
 
 **Business model (owner instruction, 2026-10-21):** customers order exact items; the owner sources them personally in the market and arranges delivery. No dropshipping, no automatic supplier fulfilment. DummyJSON is only a temporary source of demo product data.
 
@@ -83,3 +83,8 @@ Kept on purpose: general image handling (upload checks, neutral placeholder, bro
 
 ## Assumptions (documented, changeable)
 Currency NGN; review-first default; 10 calendar days; Africa/Lagos; preliminary delivery Lagos NGN 2,500 / other Nigeria NGN 4,500 (must be ticked Confirmed for production checkout); catalogue prices = DummyJSON USD x NGN 1,500 (owner's chosen conversion; not verified local market prices).
+
+## Update 2026-10-23 (v0.10.1)
+- Completed and tested: customer policy pages no longer carry internal review labels; staff area visually and structurally separated from the shop; X-Robots-Tag on /admin; 70/70 automated tests; browser QA (desktop + phone) and order -> admin e2e in Playwright.
+- Still unverified (needs owner/external access): real Paystack keys and webhook delivery, real email sending, HTTPS/secure cookies on a live domain, Railway deployment and volume persistence, restore from backup, Lighthouse/contrast scan, load testing.
+- Still open for the owner: confirm delivery fees, have the policy text (refund time limits, NDPA wording, governing law) reviewed, confirm rights to the 100 product photos (20 flagged), replace the shared admin password, keep the repo private.

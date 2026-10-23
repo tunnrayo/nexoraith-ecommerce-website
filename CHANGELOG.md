@@ -1,4 +1,8 @@
 # Changelog
+## 0.10.1 - 2026-10-23
+- Customer pages: removed internal review labels ("Draft policy", "pending confirmation", "placeholder") from FAQ, Shipping, Returns, Privacy and Terms; policies rewritten as plain statements with no invented refund periods, guarantees or legal approval claims. Genuine policy gaps are listed in the owner's private notes, not on the site.
+- Admin isolation: the staff area now has its own header ("Staff area", "View shop") and minimal footer, no shop navigation, search or cart; every /admin response sends `X-Robots-Tag: noindex, nofollow, noarchive`.
+- Fix: FAQ punctuation. Tests: 70 (new `tests/admin-isolation.test.js`, 6 tests).
 ## 0.10.0 - 2026-10-22
 - Privacy before publishing to GitHub: the owner's private market (reference) prices and the margin rule were removed from the committed catalogue file and from history; they now live in the Git-ignored `data/catalogue/private/reference-prices.json`. Import works with or without it and never erases a saved cost. (v0.8-v0.10 were combined into this single commit for that reason.)
 - Admin: Website Health-Check Centre (`/admin/health`, ~70 live checks, statuses PASS/FAIL/WARNING/NOT RUN/BLOCKED, last result stored), Activity log (`/admin/audit`, migration v8 `admin_audit`), Account page with password change, dashboard Business overview (verified payments only).

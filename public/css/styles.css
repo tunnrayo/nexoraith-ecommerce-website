@@ -203,3 +203,5 @@ details{background:#fff;border:1px solid var(--line);border-radius:var(--r);padd
   .panel{padding:16px} .cta-box{padding:22px} .hero-cta .btn{width:100%} .filters>div{flex:1 1 100%} .filters select,.filters input{width:100%}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+.staff-tag{margin-left:12px;padding:3px 10px;border:1px solid var(--gold,#C9A66B);border-radius:99px;color:var(--gold,#C9A66B);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}.staff-link{margin-left:auto;color:#fff;font-size:.9rem}
