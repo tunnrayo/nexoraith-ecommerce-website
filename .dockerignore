@@ -1,0 +1,11 @@
+node_modules
+.git
+.env
+.env.*
+!.env.example
+data/*.db*
+data/uploads
+data/backups
+data/catalogue/private
+qa-screenshots
+*.log
